@@ -17,6 +17,7 @@ namespace Frolics.Signals {
 			callbacks.Clear();
 		}
 
+		// Diff
 		public void Invoke(T signal) {
 			foreach (Action<T> callback in callbacks) {
 				callback.Invoke(signal);
