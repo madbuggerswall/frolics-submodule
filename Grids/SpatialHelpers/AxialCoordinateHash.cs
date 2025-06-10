@@ -17,6 +17,7 @@ namespace Frolics.Grids.SpatialHelpers {
 		};
 
 		private readonly Dictionary<Vector2Int, T> axialMap;
+		private readonly Dictionary<T, Vector2Int> axialCoordinatesByCells;
 
 		private readonly float cellDiameter;
 		private readonly T[] cells;
@@ -25,6 +26,7 @@ namespace Frolics.Grids.SpatialHelpers {
 			this.cellDiameter = grid.GetCellDiameter();
 			this.cells = grid.GetCells();
 			this.axialMap = MapCellsByAxialCoordinates();
+			this.axialCoordinatesByCells = MapAxialCoordinatesByCells(axialMap);
 		}
 
 		private Dictionary<Vector2Int, T> MapCellsByAxialCoordinates() {
@@ -37,6 +39,14 @@ namespace Frolics.Grids.SpatialHelpers {
 			}
 
 			return cellsByAxialCoordinates;
+		}
+
+		private Dictionary<T, Vector2Int> MapAxialCoordinatesByCells(Dictionary<Vector2Int, T> map) {
+			Dictionary<T, Vector2Int> invertedAxialMap = new();
+			foreach ((Vector2Int axialCoordinate, T cell) in map)
+				invertedAxialMap.TryAdd(cell, axialCoordinate);
+
+			return invertedAxialMap;
 		}
 
 		// Use World Position → Approximate Hex Coordinate Hash
@@ -109,6 +119,16 @@ namespace Frolics.Grids.SpatialHelpers {
 
 			fieldCell = null;
 			return false;
+		}
+
+		public Vector2Int GetAxialCoordinates(T cell) {
+			return axialCoordinatesByCells.GetValueOrDefault(cell);
+		}
+
+		public int GetAxialDistance(Vector2Int first, Vector2Int second) {
+			int deltaQ = Mathf.Abs(first.x - second.x);
+			int deltaR = Mathf.Abs(first.y - second.y);
+			return (deltaQ + deltaQ + deltaR + deltaR) / 2;
 		}
 	}
 }
