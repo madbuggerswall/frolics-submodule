@@ -1,18 +1,22 @@
+using System;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Frolics.Grids.SpatialHelpers {
+	public enum AxialDirection { East, NorthEast, NorthWest, West, SouthWest, SouthEast }
+
 	public struct CubeCoord {
 		public int q;
 		public int r;
 		public int s;
 
-		public static CubeCoord[] directionVectors = {
-			new CubeCoord(1, 0, -1), // East
-			new CubeCoord(0, 1, -1), // North East
-			new CubeCoord(-1, 1, 0), // North West
-			new CubeCoord(-1, 0, 1), // West
-			new CubeCoord(0, -1, 1), // South West
-			new CubeCoord(1, -1, 0) // South East
+		private static readonly CubeCoord[] DirectionVectors = {
+			new(1, 0, -1), // East
+			new(1, -1, 0), // North East
+			new(0, -1, 1), // North West
+			new(-1, 0, 1), // West
+			new(-1, 1, 0), // South West
+			new(0, 1, -1), // South East
 		};
 
 		public CubeCoord(int q, int r, int s) {
@@ -21,18 +25,56 @@ namespace Frolics.Grids.SpatialHelpers {
 			this.s = s;
 		}
 
+		public CubeCoord GetNeighbor(int neighborIndex) {
+			return this + GetDirection(neighborIndex);
+		}
+
+		public static CubeCoord Round(float fractionalQ, float fractionalR, float fractionalS) {
+			// Round each cube component
+			int roundedQ = (int) Math.Round(fractionalQ, MidpointRounding.AwayFromZero);
+			int roundedR = (int) Math.Round(fractionalR, MidpointRounding.AwayFromZero);
+			int roundedS = (int) Math.Round(fractionalS, MidpointRounding.AwayFromZero);
+
+			// Calculate differences from the original fractional values
+			float deltaQ = Mathf.Abs(roundedQ - fractionalQ);
+			float deltaR = Mathf.Abs(roundedR - fractionalR);
+			float deltaS = Mathf.Abs(roundedS - fractionalS);
+
+			if (deltaQ > deltaR && deltaQ > deltaS)
+				roundedQ = -roundedR - roundedS;
+			else if (deltaR > deltaS)
+				roundedR = -roundedQ - roundedS;
+			else
+				roundedS = -roundedQ - roundedR;
+
+			return new CubeCoord(roundedQ, roundedR, roundedS);
+		}
+
+		public static CubeCoord[] LineDraw(CubeCoord start, CubeCoord end) {
+			int distance = Distance(start, end);
+			CubeCoord[] cubeCoords = new CubeCoord[distance + 1];
+
+			// if distance == 0 return {start}
+
+			for (int i = 0; i < distance + 1; i++) {
+				Vector3 roundedCubeCoord = Vector3.Lerp(start.ToVector3(), end.ToVector3(), 1f / distance * i);
+				cubeCoords[i] = Round(roundedCubeCoord.x, roundedCubeCoord.y, roundedCubeCoord.z);
+			}
+
+			return cubeCoords;
+		}
 
 		public static int Distance(CubeCoord lhs, CubeCoord rhs) {
 			CubeCoord vec = lhs - rhs;
 			return (Mathf.Abs(vec.q) + Mathf.Abs(vec.r) + Mathf.Abs(vec.s)) / 2;
 		}
 
-		public CubeCoord GetDirection(int directionIndex) {
-			return directionVectors[directionIndex];
+		public static CubeCoord GetDirection(int directionIndex) {
+			return DirectionVectors[directionIndex];
 		}
 
-		public CubeCoord GetNeighbor(CubeCoord center, int neighborIndex) {
-			return center + GetDirection(neighborIndex);
+		public static CubeCoord GetDirection(AxialDirection axialDirection) {
+			return DirectionVectors[(int) axialDirection];
 		}
 
 		// Operator overloads
@@ -57,12 +99,5 @@ namespace Frolics.Grids.SpatialHelpers {
 		}
 
 		public static bool operator !=(CubeCoord lhs, CubeCoord rhs) => !(lhs == rhs);
-
-		// TODO Migrate this to an extension class
-		public static AxialCoord ToAxialCoord(CubeCoord cubeCoord) {
-			int axialQ = cubeCoord.q;
-			int axialR = cubeCoord.r;
-			return new AxialCoord(axialQ, axialR);
-		}
 	}
 }
