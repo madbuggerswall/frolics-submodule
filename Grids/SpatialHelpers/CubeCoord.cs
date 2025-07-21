@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace Frolics.Grids.SpatialHelpers {
 	public enum AxialDirection { East, NorthEast, NorthWest, West, SouthWest, SouthEast }
@@ -50,16 +49,28 @@ namespace Frolics.Grids.SpatialHelpers {
 			return new CubeCoord(roundedQ, roundedR, roundedS);
 		}
 
-		public static CubeCoord[] LineDraw(CubeCoord start, CubeCoord end) {
+		public static CubeCoord[] Line(CubeCoord start, CubeCoord end) {
 			int distance = Distance(start, end);
+			if (distance == 0)
+				return new[] { start };
+
 			CubeCoord[] cubeCoords = new CubeCoord[distance + 1];
-
-			// if distance == 0 return {start}
-
 			for (int i = 0; i < distance + 1; i++) {
 				Vector3 roundedCubeCoord = Vector3.Lerp(start.ToVector3(), end.ToVector3(), 1f / distance * i);
 				cubeCoords[i] = Round(roundedCubeCoord.x, roundedCubeCoord.y, roundedCubeCoord.z);
 			}
+
+			return cubeCoords;
+		}
+
+		public static CubeCoord[] Range(CubeCoord center, int range) {
+			int coordCount = 1 + 3 * range * (range + 1);
+			CubeCoord[] cubeCoords = new CubeCoord[coordCount];
+			int i = 0;
+			
+			for (int q = -range; q <= range; q++)
+				for (int r = Mathf.Max(-range, -q - range); r <= Mathf.Min(range, -q + range); r++)
+					cubeCoords[i++] = new CubeCoord(q, r, -q - r) + center;
 
 			return cubeCoords;
 		}
