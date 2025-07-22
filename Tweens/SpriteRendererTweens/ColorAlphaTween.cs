@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Frolics.Tweens.SpriteRendererTweens {
 	public class ColorAlphaTween : Tween {
 		private readonly SpriteRenderer tweener;
-		private readonly (float initial, float target) alpha;
+		private (float initial, float target) alpha;
 
 		public ColorAlphaTween(SpriteRenderer tweener, float targetAlpha, float duration) : base(duration) {
 			this.tweener = tweener;
@@ -15,6 +15,10 @@ namespace Frolics.Tweens.SpriteRendererTweens {
 			Color tweenerColor = tweener.color;
 			tweenerColor.a = Mathf.Lerp(alpha.initial, alpha.target, progress);
 			tweener.color = tweenerColor;
+		}
+
+		protected override void SampleInitialState() {
+			this.alpha.initial = tweener.color.a;
 		}
 	}
 }

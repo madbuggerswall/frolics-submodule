@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Frolics.Tweens.TransformTweens {
 	public class ScaleTween : Tween {
 		private readonly Transform tweener;
-		private readonly (Vector3 initial, Vector3 target) localScale;
+		private (Vector3 initial, Vector3 target) localScale;
 
 		public ScaleTween(Transform tweener, Vector3 targetScale, float duration) : base(duration) {
 			this.tweener = tweener;
@@ -13,6 +13,10 @@ namespace Frolics.Tweens.TransformTweens {
 
 		protected override void UpdateTween() {
 			tweener.localScale = Vector3.Lerp(localScale.initial, localScale.target, progress);
+		}
+
+		protected override void SampleInitialState() {
+			this.localScale.initial = tweener.localScale;
 		}
 	}
 }

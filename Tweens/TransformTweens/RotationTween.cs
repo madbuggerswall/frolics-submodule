@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Frolics.Tweens.TransformTweens {
 	public class RotationTween : Tween {
 		private readonly Transform tweener;
-		private readonly (Quaternion initial, Quaternion target) rotation;
+		private (Quaternion initial, Quaternion target) rotation;
 
 		public RotationTween(Transform tweener, Quaternion targetRotation, float duration) : base(duration) {
 			this.tweener = tweener;
@@ -13,6 +13,10 @@ namespace Frolics.Tweens.TransformTweens {
 
 		protected override void UpdateTween() {
 			tweener.rotation = Quaternion.Lerp(rotation.initial, rotation.target, progress);
+		}
+
+		protected override void SampleInitialState() {
+			this.rotation.initial = tweener.rotation;
 		}
 	}
 }

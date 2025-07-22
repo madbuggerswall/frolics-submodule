@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Frolics.Tweens.RectTransformTweens {
 	public class EulerAnglesTween : Tween {
 		private readonly RectTransform tweener;
-		private readonly (Vector3 initial, Vector3 target) eulerAngles;
+		private (Vector3 initial, Vector3 target) eulerAngles;
 
 		public EulerAnglesTween(RectTransform tweener, Vector3 targetAngle, float duration) : base(duration) {
 			this.tweener = tweener;
@@ -13,6 +13,10 @@ namespace Frolics.Tweens.RectTransformTweens {
 
 		protected override void UpdateTween() {
 			tweener.eulerAngles = Vector3.Lerp(eulerAngles.initial, eulerAngles.target, progress);
+		}
+
+		protected override void SampleInitialState() {
+			this.eulerAngles.initial = tweener.eulerAngles;
 		}
 	}
 }

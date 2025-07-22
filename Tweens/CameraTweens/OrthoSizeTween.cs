@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Frolics.Tweens.CameraTweens {
 	public class OrthoSizeTween : Tween {
 		private readonly Camera tweener;
-		private readonly (float initial, float target) orthoSize;
+		private (float initial, float target) orthoSize;
 
 		public OrthoSizeTween(Camera tweener, float targetOrthoSize, float duration) : base(duration) {
 			this.tweener = tweener;
@@ -13,6 +13,10 @@ namespace Frolics.Tweens.CameraTweens {
 
 		protected override void UpdateTween() {
 			tweener.orthographicSize = Mathf.Lerp(orthoSize.initial, orthoSize.target, progress);
+		}
+
+		protected override void SampleInitialState() {
+			this.orthoSize.initial = tweener.orthographicSize;
 		}
 	}
 }

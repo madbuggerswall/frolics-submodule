@@ -38,6 +38,7 @@ namespace Frolics.Tweens {
 		private void Rewind() {
 			progress = 0;
 			elapsed = 0;
+			SampleInitialState();
 		}
 
 		public void Stop(bool invokeCallback = false) {
@@ -86,5 +87,6 @@ namespace Frolics.Tweens {
 		internal bool IsPlaying() { return progress is > 0 and < 1; }
 
 		protected abstract void UpdateTween();
+		protected abstract void SampleInitialState();
 	}
 }

@@ -34,5 +34,9 @@ namespace Frolics.Tweens.TransformTweens {
 			float deltaAngle = targetAngle - currentAngle;
 			tweener.RotateAround(pivot, axis, deltaAngle);
 		}
+
+		protected override void SampleInitialState() {
+			throw new System.NotImplementedException();
+		}
 	}
 }
