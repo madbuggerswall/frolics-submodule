@@ -6,6 +6,7 @@ namespace Frolics.Grids {
 	public class CircleGrid<T> : Grid<T> where T : CircleCell {
 		private readonly CircleGridNeighborHelper<T> neighborHelper;
 
+		// NOTE HexGrid<CircleCell> HexGrid<HexCell> initialized via AxialCoordinates (Doubled or Offset)
 		protected CircleGrid(CellFactory<T> cellFactory, Vector2Int gridSize, float cellDiameter) {
 			this.cellDiameter = cellDiameter;
 			this.gridSize = gridSize;

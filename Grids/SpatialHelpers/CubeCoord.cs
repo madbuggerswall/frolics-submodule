@@ -56,18 +56,22 @@ namespace Frolics.Grids.SpatialHelpers {
 
 			CubeCoord[] cubeCoords = new CubeCoord[distance + 1];
 			for (int i = 0; i < distance + 1; i++) {
-				Vector3 roundedCubeCoord = Vector3.Lerp(start.ToVector3(), end.ToVector3(), 1f / distance * i);
-				cubeCoords[i] = Round(roundedCubeCoord.x, roundedCubeCoord.y, roundedCubeCoord.z);
+				(float q, float r, float s) floatingCubeCoord = Lerp(start, end, 1f / distance * i);
+				cubeCoords[i] = Round(floatingCubeCoord.q, floatingCubeCoord.r, floatingCubeCoord.s);
 			}
 
 			return cubeCoords;
+		}
+
+		public static (float, float, float) Lerp(CubeCoord start, CubeCoord end, float t) {
+			return (Mathf.Lerp(start.q, end.q, t), Mathf.Lerp(start.r, end.r, t), Mathf.Lerp(start.s, end.s, t));
 		}
 
 		public static CubeCoord[] Range(CubeCoord center, int range) {
 			int coordCount = 1 + 3 * range * (range + 1);
 			CubeCoord[] cubeCoords = new CubeCoord[coordCount];
 			int i = 0;
-			
+
 			for (int q = -range; q <= range; q++)
 				for (int r = Mathf.Max(-range, -q - range); r <= Mathf.Min(range, -q + range); r++)
 					cubeCoords[i++] = new CubeCoord(q, r, -q - r) + center;

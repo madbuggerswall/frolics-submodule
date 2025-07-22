@@ -1,17 +1,14 @@
-using System;
 using System.Collections.Generic;
-using Core.FieldGrids;
 using Frolics.Utilities;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace Frolics.Grids.SpatialHelpers {
 	// NOTE Also do this for SquareCells
 	// IDEA Rename to AxialCellMapper<T> or AxialGridHelper<T>
 	// https://www.redblobgames.com/grids/hexagons/
 	public class AxialCoordinateHash<T> where T : CircleCell {
-		private readonly Dictionary<AxialCoord, T> axialMap;
-		private readonly Dictionary<T, AxialCoord> axialCoordinatesByCells;
+		private readonly Dictionary<AxialCoord, T> cellsByAxialCoord;
+		private readonly Dictionary<T, AxialCoord> axialCoordsByCell;
 
 		private readonly float cellDiameter;
 		private readonly T[] cells;
@@ -19,11 +16,12 @@ namespace Frolics.Grids.SpatialHelpers {
 		public AxialCoordinateHash(CircleGrid<T> grid) {
 			this.cellDiameter = grid.GetCellDiameter();
 			this.cells = grid.GetCells();
-			this.axialMap = MapCellsByAxialCoordinates();
-			this.axialCoordinatesByCells = MapAxialCoordinatesByCells(axialMap);
+			
+			this.cellsByAxialCoord = MapCellsByAxialCoord();
+			this.axialCoordsByCell = MapAxialCoordsByCell(cellsByAxialCoord);
 		}
 
-		private Dictionary<AxialCoord, T> MapCellsByAxialCoordinates() {
+		private Dictionary<AxialCoord, T> MapCellsByAxialCoord() {
 			Dictionary<AxialCoord, T> cellsByAxialCoordinates = new();
 
 			foreach (T cell in cells) {
@@ -35,7 +33,7 @@ namespace Frolics.Grids.SpatialHelpers {
 			return cellsByAxialCoordinates;
 		}
 
-		private Dictionary<T, AxialCoord> MapAxialCoordinatesByCells(Dictionary<AxialCoord, T> map) {
+		private Dictionary<T, AxialCoord> MapAxialCoordsByCell(Dictionary<AxialCoord, T> map) {
 			Dictionary<T, AxialCoord> invertedAxialMap = new();
 			foreach ((AxialCoord axialCoordinate, T cell) in map)
 				invertedAxialMap.TryAdd(cell, axialCoordinate);
@@ -57,15 +55,15 @@ namespace Frolics.Grids.SpatialHelpers {
 
 		public bool TryGetCell(Vector3 worldPosition, out T fieldCell) {
 			AxialCoord centerAxial = AxialCoord.WorldToAxial(worldPosition, cellDiameter);
-			return axialMap.TryGetValue(centerAxial, out fieldCell);
+			return cellsByAxialCoord.TryGetValue(centerAxial, out fieldCell);
 		}
 
 		public AxialCoord GetAxialCoordinates(T cell) {
-			return axialCoordinatesByCells.GetValueOrDefault(cell);
+			return axialCoordsByCell.GetValueOrDefault(cell);
 		}
 
 		public T GetCell(AxialCoord axialCoord) {
-			return axialMap.GetValueOrDefault(axialCoord);
+			return cellsByAxialCoord.GetValueOrDefault(axialCoord);
 		}
 	}
 }

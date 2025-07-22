@@ -1,3 +1,4 @@
+using Frolics.Grids.SpatialHelpers;
 using Frolics.Utilities;
 using UnityEngine;
 
@@ -8,7 +9,7 @@ namespace Frolics.Grids {
 		public override bool IsInsideCell(Vector3 point) {
 			float radius = diameter / 2f;
 			float radiusSquared = radius * radius;
-			
+
 			// Disregard Z since it's a 2D operation
 			float distanceSquared = (worldPosition.GetXY() - point.GetXY()).sqrMagnitude;
 			return distanceSquared <= radiusSquared;
