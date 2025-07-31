@@ -46,7 +46,7 @@ namespace Frolics.Tweens {
 
 		private void UpdateAllRigidbodyTweens() {
 			for (int i = rigidbodyTweens.Count - 1; i >= 0; i--) {
-				Tween tween = rigidbodyTweens[i];
+				RigidbodyTween tween = rigidbodyTweens[i];
 
 				// Remove completed tween efficiently by swapping with last and popping
 				if (!tween.IsCompleted()) {

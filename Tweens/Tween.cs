@@ -56,6 +56,10 @@ namespace Frolics.Tweens {
 			this.easeFunction = Ease.Get(easeType);
 		}
 
+		public void SetEase(AnimationCurve animationCurve) {
+			this.easeFunction = new Curve(animationCurve);
+		}
+
 		public void SetRepeat() {
 			throw new NotImplementedException();
 		}
@@ -73,6 +77,8 @@ namespace Frolics.Tweens {
 		internal void UpdateProgress(float deltaTime) {
 			elapsed += deltaTime;
 
+			// IDEA Rename progress to easedTime
+			// IDEA Make normalizedTime a member field
 			float normalizedTime = Mathf.Clamp01(elapsed / duration);
 			progress = easeFunction.Evaluate(normalizedTime);
 

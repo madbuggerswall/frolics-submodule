@@ -6,16 +6,8 @@ namespace Frolics.Tweens.RigidbodyTweens {
 			return new PositionTween(tweener, targetPosition, duration);
 		}
 
-		public static PositionXTween PlayPositionX(this Rigidbody tweener, float targetX, float duration) {
-			return new PositionXTween(tweener, targetX, duration);
-		}
-
-		public static PositionYTween PlayPositionY(this Rigidbody tweener, float targetY, float duration) {
-			return new PositionYTween(tweener, targetY, duration);
-		}
-
-		public static PositionZTween PlayPositionZ(this Rigidbody tweener, float targetZ, float duration) {
-			return new PositionZTween(tweener, targetZ, duration);
+		public static PositionXYZTween PlayPositionXYZ(this Rigidbody tweener, Vector3 targetPosition, float duration) {
+			return new PositionXYZTween(tweener, targetPosition, duration);
 		}
 	}
 }
