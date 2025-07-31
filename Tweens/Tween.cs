@@ -14,7 +14,7 @@ namespace Frolics.Tweens {
 		private readonly float duration;
 
 		// Dependencies
-		private readonly TweenManager tweenManager;
+		protected readonly TweenManager tweenManager;
 
 		private Tween() {
 			elapsed = 0;
@@ -30,12 +30,12 @@ namespace Frolics.Tweens {
 			this.duration = duration;
 		}
 
-		public void Play() {
+		public virtual void Play() {
 			Rewind();
 			tweenManager.AddTween(this);
 		}
 
-		private void Rewind() {
+		protected void Rewind() {
 			progress = 0;
 			elapsed = 0;
 			SampleInitialState();
@@ -88,5 +88,18 @@ namespace Frolics.Tweens {
 
 		protected abstract void UpdateTween();
 		protected abstract void SampleInitialState();
+	}
+
+	public abstract class RigidbodyTween : Tween {
+		protected Rigidbody tweener;
+
+		public RigidbodyTween(Rigidbody tweener, float duration) : base(duration) {
+			this.tweener = tweener;
+		}
+
+		public override void Play() {
+			Rewind();
+			tweenManager.AddTween(this);
+		}
 	}
 }
