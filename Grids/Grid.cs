@@ -9,7 +9,7 @@ namespace Frolics.Grids {
 		protected Vector3 centerPoint;
 		protected float cellDiameter;
 
-		protected T[] GenerateCells(CellFactory<T> cellFactory, Vector2[] cellPositions) {
+		protected T[] GenerateCells(CellFactory<T> cellFactory, Vector3[] cellPositions) {
 			T[] cells = new T[cellPositions.Length];
 
 			for (int i = 0; i < cellPositions.Length; i++)

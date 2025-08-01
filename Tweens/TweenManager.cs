@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Frolics.Contexts;
 using UnityEngine;
 
-// TODO Needs a tween pool
 namespace Frolics.Tweens {
 	public class TweenManager : MonoBehaviour, IInitializable {
 		private List<Tween> tweens;
