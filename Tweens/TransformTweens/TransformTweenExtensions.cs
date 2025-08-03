@@ -18,6 +18,10 @@ namespace Frolics.Tweens.TransformTweens {
 			return new PositionZTween(tweener, targetZ, duration);
 		}
 
+		public static PositionXYZTween PlayPositionXYZ(this Transform tweener, Vector3 targetPosition, float duration) {
+			return new PositionXYZTween(tweener, targetPosition, duration);
+		}
+
 		public static ScaleTween PlayScale(this Transform tweener, Vector3 targetScale, float duration) {
 			return new ScaleTween(tweener, targetScale, duration);
 		}
