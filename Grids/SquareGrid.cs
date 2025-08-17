@@ -1,12 +1,10 @@
-using System;
 using Frolics.Grids.NeighborHelpers;
-using Frolics.Utilities;
 using UnityEngine;
 
 namespace Frolics.Grids {
-	public abstract class SquareGrid<T> : Grid<T> where T : SquareCell {
-		public enum GridPlane { XY, XZ, YZ }
+	public enum GridPlane { XY, XZ, YZ }
 
+	public abstract class SquareGrid<T> : Grid<T> where T : SquareCell {
 		public struct CellParams {
 			public CellFactory<T> CellFactory { get; set; }
 			public float CellDiameter { get; set; }
