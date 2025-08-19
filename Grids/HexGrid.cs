@@ -17,17 +17,17 @@ namespace Frolics.Grids {
 		private readonly Dictionary<AxialCoord, T> cellsByAxialCoord = new();
 		private readonly Dictionary<T, AxialCoord> axialCoordsByCell = new();
 
-		protected HexGrid(CellFactory<T> cellFactory, Vector2Int gridSize, float cellDiameter) {
-			this.cellDiameter = cellDiameter;
-			this.gridSize = gridSize;
+		protected HexGrid(GridParams gridParams, CellParams cellParams) {
+			this.gridPlane = gridParams.GridPlane;
+			this.cellDiameter = cellParams.CellDiameter;
+			this.gridSize = gridParams.GridSize;
 			this.gridLength = GetFittingGridSize(gridSize);
 
-			this.cells = GenerateCells(cellFactory, gridSize);
+			this.cells = GenerateCells(cellParams.CellFactory);
 			this.centerPoint = CalculateGridCenterPoint();
 		}
 
-
-		private T[] GenerateCells(CellFactory<T> cellFactory, Vector2Int gridSize) {
+		private T[] GenerateCells(CellFactory<T> cellFactory) {
 			int evenRowCount = Mathf.CeilToInt(gridSize.y / 2f);
 			T[] cells = new T[gridSize.x * gridSize.y + evenRowCount];
 
@@ -36,11 +36,12 @@ namespace Frolics.Grids {
 
 				for (int x = 0; x < rowSizeInCells; x++) {
 					AxialCoord axialCoord = new OffsetOddRCoord(x, -y).ToAxial();
-					Vector3 worldPosition = AxialCoord.AxialToWorld(axialCoord, cellDiameter);
+					Vector3 positionXY = AxialCoord.AxialToWorld(axialCoord, cellDiameter);
+					Vector3 position = ConvertPositionPlane(positionXY.x, positionXY.y, gridPlane);
 
 					int evenRowsPassed = Mathf.CeilToInt(y / 2f);
 					int positionIndex = x + y * gridSize.x + evenRowsPassed;
-					T cell = cellFactory.Create(worldPosition, cellDiameter);
+					T cell = cellFactory.Create(position, cellDiameter);
 					cells[positionIndex] = cell;
 
 					cellsByAxialCoord.Add(axialCoord, cell);
