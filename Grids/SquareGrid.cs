@@ -20,31 +20,31 @@ namespace Frolics.Grids {
 		protected SquareGrid(GridParams gridParams, CellParams cellParams) {
 			this.cellDiameter = cellParams.CellDiameter;
 			this.gridSize = gridParams.GridSize;
-
-			this.gridSizeInLength = GetFittingGridSize(gridSize);
-
-			Vector3[] cellPositions = GenerateCellPositions(gridSize, gridParams.GridPlane);
-			this.centerPoint = CalculateGridCenterPoint(cellPositions);
-			this.cells = GenerateCells(cellParams.CellFactory, cellPositions);
+			this.gridLength = GetFittingGridLength(gridSize);
+			
+			this.cells = GenerateCells(cellParams.CellFactory, gridSize, gridParams.GridPlane);
+			this.centerPoint = CalculateGridCenterPoint();
 
 			this.neighborHelper = new SquareGridNeighborHelper<T>(this, false);
 		}
 
-		private Vector3[] GenerateCellPositions(Vector2Int gridSizeInCells, GridPlane gridPlane) {
-			Vector3[] cellPositions = new Vector3[gridSizeInCells.x * gridSizeInCells.y];
+		private T[] GenerateCells(CellFactory<T> cellFactory, Vector2Int gridSize, GridPlane gridPlane) {
+			T[] cells = new T[gridSize.x * gridSize.y];
 			Vector3 cellSpacing = new(cellDiameter, cellDiameter);
 			Vector3 cellOffset = new(cellDiameter / 2, cellDiameter / 2);
 			Vector2Int index = Vector2Int.zero;
 
-			for (index.y = 0; index.y < gridSizeInCells.y; index.y++) {
-				for (index.x = 0; index.x < gridSizeInCells.x; index.x++) {
+			for (index.y = 0; index.y < gridSize.y; index.y++) {
+				for (index.x = 0; index.x < gridSize.x; index.x++) {
 					float posX = cellOffset.x + index.x * cellSpacing.x;
 					float posY = cellOffset.y + index.y * cellSpacing.y;
-					cellPositions[index.x + index.y * gridSizeInCells.x] = GetCellPosition(posX, posY, gridPlane);
+					Vector3 cellPosition = GetCellPosition(posX, posY, gridPlane);
+
+					cells[index.x + index.y * gridSize.x] = cellFactory.Create(cellPosition, cellDiameter);
 				}
 			}
 
-			return cellPositions;
+			return cells;
 		}
 
 		private Vector3 GetCellPosition(float posX, float posY, GridPlane gridPlane) {
@@ -56,15 +56,15 @@ namespace Frolics.Grids {
 			};
 		}
 
-		private Vector3 CalculateGridCenterPoint(Vector3[] cellPositions) {
+		private Vector3 CalculateGridCenterPoint() {
 			Vector3 positionSum = Vector3.zero;
-			for (int i = 0; i < cellPositions.Length; i++)
-				positionSum += cellPositions[i];
+			for (int i = 0; i < cells.Length; i++)
+				positionSum += cells[i].GetWorldPosition();
 
-			return (positionSum / cellPositions.Length);
+			return positionSum / cells.Length;
 		}
 
-		private Vector2 GetFittingGridSize(Vector2Int gridSizeInCells) {
+		private Vector2 GetFittingGridLength(Vector2Int gridSizeInCells) {
 			return new Vector2(gridSizeInCells.x * cellDiameter, gridSizeInCells.y * cellDiameter);
 		}
 

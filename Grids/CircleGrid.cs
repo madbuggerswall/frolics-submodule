@@ -15,11 +15,10 @@ namespace Frolics.Grids {
 		protected CircleGrid(CellFactory<T> cellFactory, Vector2Int gridSize, float cellDiameter) {
 			this.cellDiameter = cellDiameter;
 			this.gridSize = gridSize;
-			this.gridSizeInLength = GetFittingGridSize(gridSize);
+			this.gridLength = GetFittingGridSize(gridSize);
 
-			Vector2[] cellPositions = GenerateCellPositions(gridSize);
-			this.centerPoint = CalculateGridCenterPoint(cellPositions);
-			this.cells = GenerateCells(cellFactory, cellPositions);
+			this.cells = GenerateCells(cellFactory, gridSize);
+			this.centerPoint = CalculateGridCenterPoint();
 
 			// this.neighborHelper = new CircleGridNeighborHelper<T>(this);
 		}
@@ -91,18 +90,14 @@ namespace Frolics.Grids {
 		}
 
 
-		private Vector3 CalculateGridCenterPoint(Vector2[] cellPositions) {
-			Vector2 positionSum = Vector3.zero;
+		private Vector3 CalculateGridCenterPoint() {
+			Vector3 positionSum = Vector3.zero;
 
-			for (int i = 0; i < cellPositions.Length; i++)
-				positionSum += cellPositions[i];
+			for (int i = 0; i < cells.Length; i++)
+				positionSum += cells[i].GetWorldPosition();
 
-			return (positionSum / cellPositions.Length).WithZ(0f);
+			return positionSum / cells.Length;
 		}
-		//
-		// public T[] GetNeighbors(T cell) {
-		// 	return neighborHelper.GetCellNeighbors(cell);
-		// }
 
 		// Redundant
 		private T GetCell(Vector2Int index) {

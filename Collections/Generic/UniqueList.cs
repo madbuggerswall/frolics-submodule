@@ -1,8 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Frolics.Collections.Generic {
-	public class UniqueList<T> {
+	public class UniqueList<T> : IEnumerable<T> {
 		private readonly List<T> items;            // Contiguous storage
 		private readonly Dictionary<T, int> index; // Maps item -> index in List
 
@@ -111,5 +112,9 @@ namespace Frolics.Collections.Generic {
 				if (!Remove(item))
 					Add(item);
 		}
+
+		public IEnumerator<T> GetEnumerator() => items.GetEnumerator();
+
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 }

@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace Frolics.Grids {
 	public class CircleCell : Cell {
+		// IDEA Can hold axial coordinate
 		public CircleCell(Vector3 worldPosition, float diameter) : base(worldPosition, diameter) { }
 
 		public override bool IsInsideCell(Vector3 point) {
