@@ -13,7 +13,7 @@ namespace Frolics.Grids.SpatialHelpers {
 		private readonly float cellDiameter;
 		private readonly T[] cells;
 
-		public AxialCoordinateHash(CircleGrid<T> grid) {
+		public AxialCoordinateHash(HexGrid<T> grid) {
 			this.cellDiameter = grid.GetCellDiameter();
 			this.cells = grid.GetCells();
 			
@@ -25,7 +25,7 @@ namespace Frolics.Grids.SpatialHelpers {
 			Dictionary<AxialCoord, T> cellsByAxialCoordinates = new();
 
 			foreach (T cell in cells) {
-				AxialCoord axial = AxialCoord.WorldToAxial(cell.GetWorldPosition().GetXY(), cellDiameter);
+				AxialCoord axial = AxialCoord.WorldToAxial(cell.GetPosition().GetXY(), cellDiameter);
 				if (!cellsByAxialCoordinates.TryAdd(axial, cell))
 					Debug.Log("Oh no");
 			}
@@ -41,17 +41,7 @@ namespace Frolics.Grids.SpatialHelpers {
 			return invertedAxialMap;
 		}
 
-		private void AxialStudy() {
-			float cellRadius = cellDiameter / 2;
 
-			// Hexagon (pointy-top)
-			float size = 2f / Mathf.Sqrt(3f) * cellRadius;
-			float width = 2f * cellRadius;
-			float height = 2f * size;
-
-			float horizontalSpacing = width;
-			float verticalSpacing = 3f / 4f * height;
-		}
 		//
 		// public bool TryGetCell(Vector3 worldPosition, out T fieldCell) {
 		// 	AxialCoord centerAxial = AxialCoord.WorldToAxial(worldPosition, cellDiameter);

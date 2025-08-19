@@ -31,15 +31,15 @@ namespace Frolics.Grids.SpatialHelpers {
 			return CubeCoord.Distance(lhsCube, rhsCube);
 		}
 
-		public static Vector2 AxialToWorld(AxialCoord axialCoord, float cellDiameter) {
+		public static Vector3 AxialToWorld(AxialCoord axialCoord, float cellDiameter) {
 			float cellRadius = cellDiameter / 2;
 			float size = 2f / Sqrt(3f) * cellRadius;
 			float x = Sqrt(3) * axialCoord.q + Sqrt(3) / 2 * axialCoord.r;
 			float y = 3f / 2f * axialCoord.r;
-			return new Vector2(x * size, -y * size);
+			return new Vector3(x * size, -y * size);
 		}
 
-		public static AxialCoord WorldToAxial(Vector2 worldPosition, float cellDiameter) {
+		public static AxialCoord WorldToAxial(Vector3 worldPosition, float cellDiameter) {
 			float cellRadius = cellDiameter / 2;
 
 			// Hexagon (pointy-top)

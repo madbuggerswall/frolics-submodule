@@ -59,7 +59,7 @@ namespace Frolics.Grids {
 		private Vector3 CalculateGridCenterPoint() {
 			Vector3 positionSum = Vector3.zero;
 			for (int i = 0; i < cells.Length; i++)
-				positionSum += cells[i].GetWorldPosition();
+				positionSum += cells[i].GetPosition();
 
 			return positionSum / cells.Length;
 		}

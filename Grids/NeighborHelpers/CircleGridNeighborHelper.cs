@@ -7,11 +7,11 @@ namespace Frolics.Grids.NeighborHelpers {
 		private readonly int gridHeight;
 		private readonly Dictionary<T, T[]> neighborsByCell;
 		
-		public CircleGridNeighborHelper(CircleGrid<T> circleGrid) {
-			this.gridWidth = circleGrid.GetGridSize().x;
-			this.gridHeight = circleGrid.GetGridSize().y;
+		public CircleGridNeighborHelper(HexGrid<T> hexGrid) {
+			this.gridWidth = hexGrid.GetGridSize().x;
+			this.gridHeight = hexGrid.GetGridSize().y;
 
-			this.neighborsByCell = MapNeighborsByCell(circleGrid.GetCells());
+			this.neighborsByCell = MapNeighborsByCell(hexGrid.GetCells());
 		}
 
 		public T[] GetCellNeighbors(T cell) {
