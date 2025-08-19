@@ -59,5 +59,57 @@ namespace Frolics.Collections.Generic {
 			items.Clear();
 			index.Clear();
 		}
+
+
+		//  Set Operations
+		/// <summary>
+		/// Modifies this list so it contains only elements that are also in <paramref name="other"/>.
+		/// </summary>
+		public void IntersectWith(IEnumerable<T> other) {
+			if (other is null)
+				throw new ArgumentNullException(nameof(other));
+
+			// Build a temporary HashSet for O(1) membership checks
+			HashSet<T> keep = new HashSet<T>(other);
+
+			// Iterate backwards so removal doesn’t mess up indices
+			for (int i = items.Count - 1; i >= 0; i--)
+				if (!keep.Contains(items[i]))
+					Remove(items[i]);
+		}
+
+		/// <summary>
+		/// Modifies this list so it contains all elements that are in itself or in <paramref name="other"/>.
+		/// </summary>
+		public void UnionWith(IEnumerable<T> other) {
+			if (other is null)
+				throw new ArgumentNullException(nameof(other));
+
+			foreach (T item in other)
+				Add(item);
+		}
+
+		/// <summary>
+		/// Removes all elements in <paramref name="other"/> from this list.
+		/// </summary>
+		public void ExceptWith(IEnumerable<T> other) {
+			if (other is null)
+				throw new ArgumentNullException(nameof(other));
+
+			foreach (T item in other)
+				Remove(item);
+		}
+
+		/// <summary>
+		/// Modifies this list so it contains only elements present in exactly one of the two sets.
+		/// </summary>
+		public void SymmetricExceptWith(IEnumerable<T> other) {
+			if (other is null)
+				throw new ArgumentNullException(nameof(other));
+
+			foreach (T item in other)
+				if (!Remove(item))
+					Add(item);
+		}
 	}
 }
