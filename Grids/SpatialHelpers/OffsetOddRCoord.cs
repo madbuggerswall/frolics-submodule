@@ -1,5 +1,3 @@
-using System;
-
 namespace Frolics.Grids.SpatialHelpers {
 	public struct OffsetOddRCoord {
 		public int column;
@@ -16,6 +14,9 @@ namespace Frolics.Grids.SpatialHelpers {
 			this.column = column;
 			this.row = row;
 		}
+
+		public override string ToString() => $"({column}, {row})";
+
 
 		public OffsetOddRCoord GetNeighbor(int neighborIndex) {
 			int parity = this.row & 1;

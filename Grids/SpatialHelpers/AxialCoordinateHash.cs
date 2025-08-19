@@ -52,18 +52,18 @@ namespace Frolics.Grids.SpatialHelpers {
 			float horizontalSpacing = width;
 			float verticalSpacing = 3f / 4f * height;
 		}
-
-		public bool TryGetCell(Vector3 worldPosition, out T fieldCell) {
-			AxialCoord centerAxial = AxialCoord.WorldToAxial(worldPosition, cellDiameter);
-			return cellsByAxialCoord.TryGetValue(centerAxial, out fieldCell);
-		}
-
-		public AxialCoord GetAxialCoordinates(T cell) {
-			return axialCoordsByCell.GetValueOrDefault(cell);
-		}
-
-		public T GetCell(AxialCoord axialCoord) {
-			return cellsByAxialCoord.GetValueOrDefault(axialCoord);
-		}
+		//
+		// public bool TryGetCell(Vector3 worldPosition, out T fieldCell) {
+		// 	AxialCoord centerAxial = AxialCoord.WorldToAxial(worldPosition, cellDiameter);
+		// 	return cellsByAxialCoord.TryGetValue(centerAxial, out fieldCell);
+		// }
+		//
+		// public AxialCoord GetAxialCoordinates(T cell) {
+		// 	return axialCoordsByCell.GetValueOrDefault(cell);
+		// }
+		//
+		// public T GetCell(AxialCoord axialCoord) {
+		// 	return cellsByAxialCoord.GetValueOrDefault(axialCoord);
+		// }
 	}
 }

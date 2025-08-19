@@ -2,8 +2,6 @@ using System;
 using UnityEngine;
 
 namespace Frolics.Grids.SpatialHelpers {
-	public enum AxialDirection { East, NorthEast, NorthWest, West, SouthWest, SouthEast }
-
 	public struct CubeCoord {
 		public int q;
 		public int r;

@@ -31,7 +31,8 @@ namespace Frolics.Grids.SpatialHelpers {
 			return CubeCoord.Distance(lhsCube, rhsCube);
 		}
 
-		public static Vector2 AxialToWorld(AxialCoord axialCoord, float cellRadius) {
+		public static Vector2 AxialToWorld(AxialCoord axialCoord, float cellDiameter) {
+			float cellRadius = cellDiameter / 2;
 			float size = 2f / Sqrt(3f) * cellRadius;
 			float x = Sqrt(3) * axialCoord.q + Sqrt(3) / 2 * axialCoord.r;
 			float y = 3f / 2f * axialCoord.r;
