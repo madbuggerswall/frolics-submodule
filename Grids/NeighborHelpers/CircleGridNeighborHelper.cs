@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Frolics.Grids.NeighborHelpers {
-	public class CircleGridNeighborHelper<T> where T : CircleCell {
+	public class CircleGridNeighborHelper<T> where T : HexCell {
 		private readonly int gridWidth;
 		private readonly int gridHeight;
 		private readonly Dictionary<T, T[]> neighborsByCell;
@@ -30,8 +30,8 @@ namespace Frolics.Grids.NeighborHelpers {
 			return neighborsByCell;
 		}
 
-		private Dictionary<CircleCell, int> MapCellsByIndex(CircleCell[] circleCells) {
-			Dictionary<CircleCell, int> circleCellsByIndex = new();
+		private Dictionary<HexCell, int> MapCellsByIndex(HexCell[] circleCells) {
+			Dictionary<HexCell, int> circleCellsByIndex = new();
 
 			for (int i = 0; i < circleCells.Length; i++)
 				circleCellsByIndex.Add(circleCells[i], i);

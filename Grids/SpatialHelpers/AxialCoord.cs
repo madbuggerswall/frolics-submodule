@@ -6,7 +6,7 @@ namespace Frolics.Grids.SpatialHelpers {
 		public int q;
 		public int r;
 
-		private static readonly AxialCoord[] DirectionVectors = {
+		public static readonly AxialCoord[] DirectionVectors = {
 			new(1, 0),  // East
 			new(1, -1), // North East
 			new(0, -1), // North West
@@ -20,7 +20,7 @@ namespace Frolics.Grids.SpatialHelpers {
 			this.r = r;
 		}
 
-		public AxialCoord GetNeighbor(AxialCoord center, int neighborIndex) {
+		public static AxialCoord GetNeighbor(AxialCoord center, int neighborIndex) {
 			return center + DirectionVectors[neighborIndex];
 		}
 

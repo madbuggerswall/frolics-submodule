@@ -13,21 +13,26 @@ namespace Frolics.Grids {
 	/// <summary>
 	///	Represents a pointy-top hexagonal grid using the offset odd-r coordinate system.
 	/// </summary>
-	public class HexGrid<T> : Grid<T> where T : CircleCell {
+	public class HexGrid<T> : Grid<T> where T : HexCell {
 		private readonly Dictionary<AxialCoord, T> cellsByAxialCoord = new();
-		private readonly Dictionary<T, AxialCoord> axialCoordsByCell = new();
 
-		protected HexGrid(GridParams gridParams, CellParams cellParams) {
-			this.gridPlane = gridParams.GridPlane;
-			this.cellDiameter = cellParams.CellDiameter;
-			this.gridSize = gridParams.GridSize;
+		protected HexGrid(
+			HexCellFactory<T> cellFactory,
+			Vector2Int gridSize,
+			float cellDiameter,
+			GridPlane gridPlane = GridPlane.XZ
+		) {
+			this.gridSize = gridSize;
+			this.gridPlane = gridPlane;
+			this.cellDiameter = cellDiameter;
+
 			this.gridLength = GetFittingGridSize(gridSize);
-
-			this.cells = GenerateCells(cellParams.CellFactory);
+			this.cells = GenerateCells(cellFactory);
 			this.centerPoint = CalculateGridCenterPoint();
 		}
 
-		private T[] GenerateCells(CellFactory<T> cellFactory) {
+
+		private T[] GenerateCells(HexCellFactory<T> cellFactory) {
 			int evenRowCount = Mathf.CeilToInt(gridSize.y / 2f);
 			T[] cells = new T[gridSize.x * gridSize.y + evenRowCount];
 
@@ -41,11 +46,10 @@ namespace Frolics.Grids {
 
 					int evenRowsPassed = Mathf.CeilToInt(y / 2f);
 					int positionIndex = x + y * gridSize.x + evenRowsPassed;
-					T cell = cellFactory.Create(position, cellDiameter);
+					T cell = cellFactory.Create(axialCoord, position, cellDiameter);
 					cells[positionIndex] = cell;
 
 					cellsByAxialCoord.Add(axialCoord, cell);
-					axialCoordsByCell.Add(cell, axialCoord);
 				}
 			}
 
@@ -76,11 +80,6 @@ namespace Frolics.Grids {
 		public bool TryGetCell(AxialCoord axialCoord, out T cell) {
 			return cellsByAxialCoord.TryGetValue(axialCoord, out cell);
 		}
-
-		public AxialCoord GetAxialCoordinates(T cell) {
-			return axialCoordsByCell.GetValueOrDefault(cell);
-		}
-
 
 		private void AxialStudy() {
 			float cellRadius = cellDiameter / 2;

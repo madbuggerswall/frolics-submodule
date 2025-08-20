@@ -6,7 +6,7 @@ namespace Frolics.Grids.SpatialHelpers {
 	// NOTE Also do this for SquareCells
 	// IDEA Rename to AxialCellMapper<T> or AxialGridHelper<T>
 	// https://www.redblobgames.com/grids/hexagons/
-	public class AxialCoordinateHash<T> where T : CircleCell {
+	public class AxialCoordinateHash<T> where T : HexCell {
 		private readonly Dictionary<AxialCoord, T> cellsByAxialCoord;
 		private readonly Dictionary<T, AxialCoord> axialCoordsByCell;
 
