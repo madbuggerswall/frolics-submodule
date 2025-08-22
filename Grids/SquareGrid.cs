@@ -1,41 +1,45 @@
-using Frolics.Grids.NeighborHelpers;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Frolics.Grids {
 	public abstract class SquareGrid<T> : Grid<T> where T : SquareCell {
-		protected readonly SquareGridNeighborHelper<T> neighborHelper;
+		private readonly Dictionary<SquareCoord, T> cellsBySquareCoord = new();
 
-		protected SquareGrid(GridParams gridParams, CellParams cellParams) {
-			this.gridPlane = gridParams.GridPlane;
-			this.cellDiameter = cellParams.CellDiameter;
-			this.gridSize = gridParams.GridSize;
+		protected SquareGrid(
+			SquareCellFactory<T> cellFactory,
+			Vector2Int gridSize,
+			float cellDiameter,
+			GridPlane gridPlane = GridPlane.XY
+		) {
+			this.gridPlane = gridPlane;
+			this.cellDiameter = cellDiameter;
+			this.gridSize = gridSize;
 			this.gridLength = GetFittingGridLength(gridSize);
 
-			this.cells = GenerateCells(cellParams.CellFactory);
+			this.cells = GenerateCells(cellFactory);
 			this.centerPoint = CalculateGridCenterPoint();
-
-			this.neighborHelper = new SquareGridNeighborHelper<T>(this, false);
 		}
 
-		private T[] GenerateCells(CellFactory<T> cellFactory) {
+		private T[] GenerateCells(SquareCellFactory<T> cellFactory) {
 			T[] cells = new T[gridSize.x * gridSize.y];
 			Vector3 cellSpacing = new(cellDiameter, cellDiameter);
 			Vector3 cellOffset = new(cellDiameter / 2, cellDiameter / 2);
-			Vector2Int index = Vector2Int.zero;
 
-			for (index.y = 0; index.y < gridSize.y; index.y++) {
-				for (index.x = 0; index.x < gridSize.x; index.x++) {
-					float posX = cellOffset.x + index.x * cellSpacing.x;
-					float posY = cellOffset.y + index.y * cellSpacing.y;
-					Vector3 cellPosition = ConvertPositionPlane(posX, posY, gridPlane);
+			for (int y = 0; y < gridSize.y; y++) {
+				for (int x = 0; x < gridSize.x; x++) {
+					float posX = cellOffset.x + x * cellSpacing.x;
+					float posY = cellOffset.y + y * cellSpacing.y;
+					Vector3 cellPosition = gridPlane.ConvertPositionPlane(posX, posY);
 
-					cells[index.x + index.y * gridSize.x] = cellFactory.Create(cellPosition, cellDiameter);
+					SquareCoord squareCoord = new(x, y);
+					T cell = cellFactory.Create(squareCoord, cellPosition, cellDiameter);
+					cells[x + y * gridSize.x] = cell;
+					cellsBySquareCoord.Add(squareCoord, cell);
 				}
 			}
 
 			return cells;
 		}
-
 
 		private Vector3 CalculateGridCenterPoint() {
 			Vector3 positionSum = Vector3.zero;
@@ -49,8 +53,13 @@ namespace Frolics.Grids {
 			return new Vector2(gridSizeInCells.x * cellDiameter, gridSizeInCells.y * cellDiameter);
 		}
 
-		public T[] GetNeighbors(T cell) {
-			return neighborHelper.GetCellNeighbors(cell);
+		public bool TryGetCell(Vector3 worldPosition, out T cell) {
+			SquareCoord center = SquareCoord.WorldToSquareCoord(worldPosition, cellDiameter);
+			return cellsBySquareCoord.TryGetValue(center, out cell);
+		}
+
+		public bool TryGetCell(SquareCoord squareCoord, out T cell) {
+			return cellsBySquareCoord.TryGetValue(squareCoord, out cell);
 		}
 	}
 }

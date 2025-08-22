@@ -22,7 +22,6 @@ namespace Frolics.Grids {
 			return distanceSquared <= radiusSquared;
 		}
 
-		public void SetAxialCoord(AxialCoord axialCoord) => this.axialCoord = axialCoord;
 		public AxialCoord GetAxialCoord() => this.axialCoord;
 	}
 }

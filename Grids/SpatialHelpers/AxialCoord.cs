@@ -4,9 +4,6 @@ using static UnityEngine.Mathf;
 
 namespace Frolics.Grids.SpatialHelpers {
 	public struct AxialCoord : IEquatable<AxialCoord> {
-		public int q;
-		public int r;
-
 		public static readonly AxialCoord[] DirectionVectors = {
 			new(1, 0),  // East
 			new(1, -1), // North East
@@ -15,6 +12,9 @@ namespace Frolics.Grids.SpatialHelpers {
 			new(-1, 1), // South West
 			new(0, 1)   // South East
 		};
+
+		public int q;
+		public int r;
 
 		public AxialCoord(int q, int r) {
 			this.q = q;

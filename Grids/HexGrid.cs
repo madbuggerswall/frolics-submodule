@@ -20,7 +20,7 @@ namespace Frolics.Grids {
 			HexCellFactory<T> cellFactory,
 			Vector2Int gridSize,
 			float cellDiameter,
-			GridPlane gridPlane = GridPlane.XZ
+			GridPlane gridPlane = GridPlane.XY
 		) {
 			this.gridSize = gridSize;
 			this.gridPlane = gridPlane;
@@ -42,7 +42,7 @@ namespace Frolics.Grids {
 				for (int x = 0; x < rowSizeInCells; x++) {
 					AxialCoord axialCoord = new OffsetOddRCoord(x, -y).ToAxial();
 					Vector3 positionXY = AxialCoord.AxialToWorld(axialCoord, cellDiameter);
-					Vector3 position = ConvertPositionPlane(positionXY.x, positionXY.y, gridPlane);
+					Vector3 position = gridPlane.ConvertPositionPlane(positionXY.x, positionXY.y);
 
 					int evenRowsPassed = Mathf.CeilToInt(y / 2f);
 					int positionIndex = x + y * gridSize.x + evenRowsPassed;

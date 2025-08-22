@@ -1,20 +1,7 @@
 using UnityEngine;
 
 namespace Frolics.Grids {
-	public enum GridPlane { XY, XZ, YZ }
-
 	public abstract class Grid<T> where T : Cell {
-		public struct CellParams {
-			public CellFactory<T> CellFactory { get; set; }
-			public float CellDiameter { get; set; }
-		}
-
-		public struct GridParams {
-			public Vector2Int GridSize { get; set; }
-			public GridPlane GridPlane { get; set; }
-		}
-
-
 		protected T[] cells;
 
 		protected GridPlane gridPlane;
@@ -35,13 +22,5 @@ namespace Frolics.Grids {
 		public T[] GetCells() => cells;
 
 		// Static
-		protected static Vector3 ConvertPositionPlane(float posX, float posY, GridPlane gridPlane) {
-			return gridPlane switch {
-				GridPlane.XY => new Vector3(posX, posY),
-				GridPlane.XZ => new Vector3(posX, 0, posY),
-				GridPlane.YZ => new Vector3(0, posX, posY),
-				_ => new Vector3(posX, posY)
-			};
-		}
 	}
 }

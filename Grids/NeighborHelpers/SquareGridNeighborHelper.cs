@@ -13,7 +13,7 @@ namespace Frolics.Grids.NeighborHelpers {
 			this.gridHeight = squareGrid.GetGridSize().y;
 			this.edgesOnly = edgesOnly;
 
-			this.neighborsByCell = MapNeighborsByCell(squareGrid.GetCells());
+			// this.neighborsByCell = MapNeighborsByCell(squareGrid.GetCells());
 		}
 
 		public T[] GetCellNeighbors(T cell) {
