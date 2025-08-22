@@ -1,8 +1,9 @@
+using System;
 using UnityEngine;
 using static UnityEngine.Mathf;
 
 namespace Frolics.Grids.SpatialHelpers {
-	public struct AxialCoord {
+	public struct AxialCoord : IEquatable<AxialCoord> {
 		public int q;
 		public int r;
 
@@ -64,7 +65,8 @@ namespace Frolics.Grids.SpatialHelpers {
 
 
 		// Optional: equality support
-		public override bool Equals(object obj) => obj is AxialCoord other && q == other.q && r == other.r;
+		public bool Equals(AxialCoord other) => q == other.q && r == other.r;
+		public override bool Equals(object obj) => obj is AxialCoord other && Equals(other);
 		public override int GetHashCode() => new Vector2Int(q, r).GetHashCode();
 
 		public static bool operator ==(AxialCoord lhs, AxialCoord rhs) => lhs.q == rhs.q && lhs.r == rhs.r;
