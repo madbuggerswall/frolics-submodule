@@ -1,10 +1,11 @@
+using System;
 using UnityEngine;
 
 namespace Frolics.Grids {
 	public class SquareCell : Cell {
-		protected Vector2Int squareCoord;
+		protected SquareCoord squareCoord;
 
-		public SquareCell(Vector2Int squareCoord, Vector3 position, float diameter) : base(position, diameter) {
+		public SquareCell(SquareCoord squareCoord, Vector3 position, float diameter) : base(position, diameter) {
 			this.squareCoord = squareCoord;
 		}
 
@@ -16,10 +17,10 @@ namespace Frolics.Grids {
 			return inHorizontally && inVertically;
 		}
 
-		public Vector2Int GetSquareCoord() => this.squareCoord;
+		public SquareCoord GetSquareCoord() => this.squareCoord;
 	}
 
-	public struct SquareCoord {
+	public struct SquareCoord : IEquatable<SquareCoord> {
 		public static readonly SquareCoord[] Directions = {
 			new(1, 0),   // Right
 			new(1, 1),   // Up Right
@@ -30,7 +31,7 @@ namespace Frolics.Grids {
 			new(0, -1),  // Down
 			new(0, 1)    // Down Right
 		};
-		
+
 		public int x;
 		public int y;
 
@@ -55,5 +56,10 @@ namespace Frolics.Grids {
 			float z = squareCoord.y * cellDiameter;
 			return new Vector3(x, 0f, z); // y=0 for flat grid
 		}
+
+		// IEquatable
+		public bool Equals(SquareCoord other) => x == other.x && y == other.y;
+		public override bool Equals(object obj) => obj is SquareCoord other && Equals(other);
+		public override int GetHashCode() => new Vector2Int(x, y).GetHashCode();
 	}
 }
