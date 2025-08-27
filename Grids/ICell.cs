@@ -1,4 +1,3 @@
-using Frolics.Grids.SpatialHelpers;
 using UnityEngine;
 
 namespace Frolics.Grids {

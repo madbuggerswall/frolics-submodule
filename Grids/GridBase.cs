@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 namespace Frolics.Grids {
 	public abstract class GridBase<T, TCoord> : IGrid<T>

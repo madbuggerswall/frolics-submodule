@@ -1,4 +1,3 @@
-using System;
 using Frolics.Grids.SpatialHelpers;
 using UnityEngine;
 
