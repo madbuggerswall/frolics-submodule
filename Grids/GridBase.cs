@@ -9,6 +9,7 @@ namespace Frolics.Grids {
 		[SerializeField] protected Vector2 gridLength;
 		[SerializeField] protected Vector2Int gridSize;
 		[SerializeField] protected Vector3 centerPoint;
+		[SerializeField] protected Vector3 pivotPoint;
 		[SerializeField] protected float cellDiameter;
 
 		protected readonly ICoordinateConverter<TCoord> coordinateConverter;
@@ -19,9 +20,11 @@ namespace Frolics.Grids {
 		public Vector2Int GridSize => gridSize;
 		public float CellDiameter => cellDiameter;
 		public Vector3 CenterPoint => centerPoint;
+		public Vector3 PivotPoint => pivotPoint;
 
 		protected GridBase(
 			ICoordinateConverter<TCoord> coordinateConverter,
+			Vector3 pivotPoint,
 			Vector2Int gridSize,
 			float cellDiameter,
 			GridPlane gridPlane = GridPlane.XZ
@@ -30,6 +33,7 @@ namespace Frolics.Grids {
 			this.gridSize = gridSize;
 			this.cellDiameter = cellDiameter;
 			this.gridPlane = gridPlane;
+			this.pivotPoint = pivotPoint;
 			ValidateGrid();
 		}
 
@@ -55,17 +59,10 @@ namespace Frolics.Grids {
 			return positionSum / cells.Length;
 		}
 
-		public T GetCell(int index) {
-			if (index < 0 || index >= cells.Length)
-				throw new IndexOutOfRangeException($"Index {index} is out of range [0, {cells.Length})");
-
-			return cells[index];
-		}
-
 		public T[] GetCells() => cells ?? Array.Empty<T>();
 
-		public virtual bool TryGetCell(Vector3 worldPosition, out T cell) {
-			return coordinateMapper.TryGetCell(worldPosition, out cell);
+		public virtual bool TryGetCell(Vector3 position, out T cell) {
+			return coordinateMapper.TryGetCell(position, out cell);
 		}
 
 		public bool TryGetCell(TCoord coordinate, out T cell) {

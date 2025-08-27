@@ -31,8 +31,8 @@ namespace Frolics.Grids.SpatialHelpers {
 
 		public static Vector3 SquareCoordToWorld(SquareCoord squareCoord, float cellDiameter) {
 			float x = squareCoord.x * cellDiameter;
-			float z = squareCoord.y * cellDiameter;
-			return new Vector3(x, 0f, z); // y=0 for flat grid
+			float y = squareCoord.y * cellDiameter;
+			return new Vector3(x, y); // y=0 for flat grid
 		}
 
 		public static int Distance(SquareCoord from, SquareCoord to)

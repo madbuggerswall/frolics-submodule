@@ -12,10 +12,11 @@ namespace Frolics.Grids {
 
 		public HexGrid(
 			ICellFactory<T, AxialCoord> cellFactory,
+			Vector3 pivotPoint,
 			Vector2Int gridSize,
 			float cellDiameter,
 			GridPlane gridPlane = GridPlane.XZ
-		) : base(new AxialCoordinateConverter(), gridSize, cellDiameter, gridPlane) {
+		) : base(new AxialCoordinateConverter(), pivotPoint, gridSize, cellDiameter, gridPlane) {
 			this.cellFactory = cellFactory ?? throw new ArgumentNullException(nameof(cellFactory));
 
 			this.cells = GenerateCells();
