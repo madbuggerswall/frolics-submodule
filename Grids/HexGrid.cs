@@ -1,38 +1,30 @@
+using System;
 using System.Collections.Generic;
 using Frolics.Grids.SpatialHelpers;
 using UnityEngine;
 
 namespace Frolics.Grids {
-	// float cellRadius = cellDiameter / 2;
-	// float size = 2f / Sqrt(3f) * cellRadius;
-	// float width = 2f * cellRadius;
-	// float height = 2f * size;
-	// float horizontalSpacing = width;
-	// float verticalSpacing = 3f / 4f * height;
-
 	/// <summary>
-	///	Represents a pointy-top hexagonal grid using the offset odd-r coordinate system.
+	///	Represents a pointy-top hexagonal grid initialized with offset odd-r coords.
 	/// </summary>
-	public class HexGrid<T> : Grid<T> where T : HexCell {
-		private readonly Dictionary<AxialCoord, T> cellsByAxialCoord = new();
+	public class HexGrid<T> : GridBase<T, AxialCoord> where T : HexCell {
+		private readonly ICellFactory<T, AxialCoord> cellFactory;
 
-		protected HexGrid(
-			HexCellFactory<T> cellFactory,
+		public HexGrid(
+			ICellFactory<T, AxialCoord> cellFactory,
 			Vector2Int gridSize,
 			float cellDiameter,
-			GridPlane gridPlane = GridPlane.XY
-		) {
-			this.gridSize = gridSize;
-			this.gridPlane = gridPlane;
-			this.cellDiameter = cellDiameter;
+			GridPlane gridPlane = GridPlane.XZ
+		) : base(new AxialCoordinateConverter(), gridSize, cellDiameter, gridPlane) {
+			this.cellFactory = cellFactory ?? throw new ArgumentNullException(nameof(cellFactory));
 
-			this.gridLength = GetFittingGridSize(gridSize);
-			this.cells = GenerateCells(cellFactory);
+			this.cells = GenerateCells();
+			this.gridLength = CalculateGridLength();
 			this.centerPoint = CalculateGridCenterPoint();
+			this.coordinateMapper = new CoordinateMapper<T, AxialCoord>(this, coordinateConverter);
 		}
 
-
-		private T[] GenerateCells(HexCellFactory<T> cellFactory) {
+		private T[] GenerateCells() {
 			int evenRowCount = Mathf.CeilToInt(gridSize.y / 2f);
 			T[] cells = new T[gridSize.x * gridSize.y + evenRowCount];
 
@@ -46,51 +38,45 @@ namespace Frolics.Grids {
 
 					int evenRowsPassed = Mathf.CeilToInt(y / 2f);
 					int positionIndex = x + y * gridSize.x + evenRowsPassed;
-					T cell = cellFactory.Create(axialCoord, position, cellDiameter);
+					T cell = cellFactory.CreateCell(axialCoord, position, cellDiameter);
 					cells[positionIndex] = cell;
-
-					cellsByAxialCoord.Add(axialCoord, cell);
 				}
 			}
 
 			return cells;
 		}
 
-		private Vector2 GetFittingGridSize(Vector2Int gridSizeInCells) {
-			float width = gridSizeInCells.x * cellDiameter;
-			float height = (gridSizeInCells.y - 1) * cellDiameter * Mathf.Cos(30 * Mathf.Deg2Rad);
+		private Vector2 CalculateGridLength() {
+			float width = gridSize.x * cellDiameter;
+			float height = (gridSize.y - 1) * cellDiameter * Mathf.Cos(30 * Mathf.Deg2Rad);
 
 			return new Vector2(width, height);
 		}
 
-		private Vector3 CalculateGridCenterPoint() {
-			Vector3 positionSum = Vector3.zero;
-			for (int i = 0; i < cells.Length; i++)
-				positionSum += cells[i].GetPosition();
+		// Hex-specific operations using the enhanced SpatialHelpers
+		public T[] GetCellsInRange(AxialCoord center, int range) {
+			CubeCoord cubeCenter = center.ToCube();
+			CubeCoord[] cubeCoords = CubeCoord.Range(cubeCenter, range);
+			List<T> cells = new(cubeCoords.Length);
 
-			return positionSum / cells.Length;
+			for (int i = 0; i < cubeCoords.Length; i++)
+				if (TryGetCell(cubeCoords[i].ToAxial(), out T cell))
+					cells.Add(cell);
+
+			return cells.ToArray();
 		}
 
+		public T[] GetCellsOnLine(AxialCoord start, AxialCoord end) {
+			CubeCoord startCube = start.ToCube();
+			CubeCoord endCube = end.ToCube();
+			CubeCoord[] lineCoords = CubeCoord.Line(startCube, endCube);
+			List<T> cells = new(lineCoords.Length);
 
-		public bool TryGetCell(Vector3 worldPosition, out T cell) {
-			AxialCoord centerAxial = AxialCoord.WorldToAxial(worldPosition, cellDiameter);
-			return cellsByAxialCoord.TryGetValue(centerAxial, out cell);
-		}
+			for (int i = 0; i < lineCoords.Length; i++)
+				if (TryGetCell(lineCoords[i].ToAxial(), out T cell))
+					cells.Add(cell);
 
-		public bool TryGetCell(AxialCoord axialCoord, out T cell) {
-			return cellsByAxialCoord.TryGetValue(axialCoord, out cell);
-		}
-
-		private void AxialStudy() {
-			float cellRadius = cellDiameter / 2;
-
-			// Hexagon (pointy-top)
-			float size = 2f / Mathf.Sqrt(3f) * cellRadius;
-			float width = 2f * cellRadius;
-			float height = 2f * size;
-
-			float horizontalSpacing = width;
-			float verticalSpacing = 3f / 4f * height;
+			return cells.ToArray();
 		}
 	}
 }

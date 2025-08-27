@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
-using static UnityEngine.Mathf;
 
 namespace Frolics.Grids.SpatialHelpers {
+	[Serializable]
 	public struct AxialCoord : IEquatable<AxialCoord> {
 		public static readonly AxialCoord[] DirectionVectors = {
 			new(1, 0),  // East
@@ -21,55 +21,53 @@ namespace Frolics.Grids.SpatialHelpers {
 			this.r = r;
 		}
 
-		public static AxialCoord GetNeighbor(AxialCoord center, int neighborIndex) {
-			return center + DirectionVectors[neighborIndex];
-		}
-
-		// No matter which way you write it, axial hex distance is derived from the Manhattan distance on cubes.
 		public static int Distance(AxialCoord lhs, AxialCoord rhs) {
-			CubeCoord lhsCube = lhs.ToCubeCoord();
-			CubeCoord rhsCube = rhs.ToCubeCoord();
+			CubeCoord lhsCube = lhs.ToCube();
+			CubeCoord rhsCube = rhs.ToCube();
 			return CubeCoord.Distance(lhsCube, rhsCube);
 		}
 
 		public static Vector3 AxialToWorld(AxialCoord axialCoord, float cellDiameter) {
-			float cellRadius = cellDiameter / 2;
-			float size = 2f / Sqrt(3f) * cellRadius;
-			float x = Sqrt(3) * axialCoord.q + Sqrt(3) / 2 * axialCoord.r;
+			if (cellDiameter <= 0)
+				throw new ArgumentException("Cell diameter must be positive", nameof(cellDiameter));
+
+			float cellRadius = cellDiameter / 2f;
+			float size = 2f / Mathf.Sqrt(3f) * cellRadius;
+			float x = Mathf.Sqrt(3) * axialCoord.q + Mathf.Sqrt(3) / 2 * axialCoord.r;
 			float y = 3f / 2f * axialCoord.r;
 			return new Vector3(x * size, -y * size);
 		}
 
 		public static AxialCoord WorldToAxial(Vector3 worldPosition, float cellDiameter) {
-			float cellRadius = cellDiameter / 2;
+			if (cellDiameter <= 0)
+				throw new ArgumentException("Cell diameter must be positive", nameof(cellDiameter));
 
-			// Hexagon (pointy-top)
-			float size = 2f / Sqrt(3f) * cellRadius;
+			float cellRadius = cellDiameter / 2f;
+			float size = 2f / Mathf.Sqrt(3f) * cellRadius;
 			float x = worldPosition.x / size;
 			float y = -worldPosition.y / size;
 
 			// Cartesian to hex
-			float fractionalQ = Sqrt(3f) / 3f * x - 1f / 3f * y;
+			float fractionalQ = Mathf.Sqrt(3f) / 3f * x - 1f / 3f * y;
 			float fractionalR = 2f / 3f * y;
 			float fractionalS = -fractionalQ - fractionalR;
 
 			CubeCoord cubeCoord = CubeCoord.Round(fractionalQ, fractionalR, fractionalS);
-			return cubeCoord.ToAxialCoord();
+			return cubeCoord.ToAxial();
 		}
 
-		public override string ToString() => $"({q}, {r})";
+		public override string ToString() => $"Axial({q}, {r})";
 
 		// Operator overloads
 		public static AxialCoord operator +(AxialCoord lhs, AxialCoord rhs) => new(lhs.q + rhs.q, lhs.r + rhs.r);
 		public static AxialCoord operator -(AxialCoord lhs, AxialCoord rhs) => new(lhs.q - rhs.q, lhs.r - rhs.r);
 
-
-		// Optional: equality support
+		// IEquatable implementation
 		public bool Equals(AxialCoord other) => q == other.q && r == other.r;
 		public override bool Equals(object obj) => obj is AxialCoord other && Equals(other);
-		public override int GetHashCode() => new Vector2Int(q, r).GetHashCode();
+		public override int GetHashCode() => HashCode.Combine(q, r);
 
-		public static bool operator ==(AxialCoord lhs, AxialCoord rhs) => lhs.q == rhs.q && lhs.r == rhs.r;
-		public static bool operator !=(AxialCoord lhs, AxialCoord rhs) => !(lhs == rhs);
+		public static bool operator ==(AxialCoord lhs, AxialCoord rhs) => lhs.Equals(rhs);
+		public static bool operator !=(AxialCoord lhs, AxialCoord rhs) => !lhs.Equals(rhs);
 	}
 }

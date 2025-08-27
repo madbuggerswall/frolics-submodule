@@ -1,65 +1,61 @@
+using System;
 using System.Collections.Generic;
+using Frolics.Grids.SpatialHelpers;
 using UnityEngine;
 
 namespace Frolics.Grids {
-	public abstract class SquareGrid<T> : Grid<T> where T : SquareCell {
-		private readonly Dictionary<SquareCoord, T> cellsBySquareCoord = new();
+	public class SquareGrid<T> : GridBase<T, SquareCoord> where T : SquareCell {
+		private readonly ICellFactory<T, SquareCoord> cellFactory;
 
-		protected SquareGrid(
-			SquareCellFactory<T> cellFactory,
+		public SquareGrid(
+			ICellFactory<T, SquareCoord> cellFactory,
 			Vector2Int gridSize,
 			float cellDiameter,
-			GridPlane gridPlane = GridPlane.XY
-		) {
-			this.gridPlane = gridPlane;
-			this.cellDiameter = cellDiameter;
-			this.gridSize = gridSize;
-			this.gridLength = GetFittingGridLength(gridSize);
+			GridPlane gridPlane = GridPlane.XZ
+		) : base(new SquareCoordinateConverter(), gridSize, cellDiameter, gridPlane) {
+			this.cellFactory = cellFactory;
 
-			this.cells = GenerateCells(cellFactory);
+			this.cells = GenerateCells();
+			this.gridLength = CalculateGridLength();
 			this.centerPoint = CalculateGridCenterPoint();
+			this.coordinateMapper = new CoordinateMapper<T, SquareCoord>(this, coordinateConverter);
 		}
 
-		private T[] GenerateCells(SquareCellFactory<T> cellFactory) {
+		private T[] GenerateCells() {
 			T[] cells = new T[gridSize.x * gridSize.y];
-			Vector3 cellSpacing = new(cellDiameter, cellDiameter);
-			Vector3 cellOffset = new(cellDiameter / 2, cellDiameter / 2);
 
 			for (int y = 0; y < gridSize.y; y++) {
 				for (int x = 0; x < gridSize.x; x++) {
-					float posX = cellOffset.x + x * cellSpacing.x;
-					float posY = cellOffset.y + y * cellSpacing.y;
-					Vector3 cellPosition = gridPlane.ConvertPositionPlane(posX, posY);
-
-					SquareCoord squareCoord = new(x, y);
-					T cell = cellFactory.Create(squareCoord, cellPosition, cellDiameter);
+					SquareCoord coordinate = new(x, y);
+					Vector3 position = SquareCoord.SquareCoordToWorld(coordinate, cellDiameter);
+					T cell = cellFactory.CreateCell(coordinate, position, cellDiameter);
 					cells[x + y * gridSize.x] = cell;
-					cellsBySquareCoord.Add(squareCoord, cell);
 				}
 			}
 
 			return cells;
 		}
 
-		private Vector3 CalculateGridCenterPoint() {
-			Vector3 positionSum = Vector3.zero;
-			for (int i = 0; i < cells.Length; i++)
-				positionSum += cells[i].GetPosition();
-
-			return positionSum / cells.Length;
+		private Vector2 CalculateGridLength() {
+			return new Vector2(gridSize.x * cellDiameter, gridSize.y * cellDiameter);
 		}
 
-		private Vector2 GetFittingGridLength(Vector2Int gridSizeInCells) {
-			return new Vector2(gridSizeInCells.x * cellDiameter, gridSizeInCells.y * cellDiameter);
-		}
+		// Square-specific pathfinding operations
+		public T[] GetCellsInRange(SquareCoord center, int radius) {
+			List<T> cells = new List<T>();
 
-		public bool TryGetCell(Vector3 worldPosition, out T cell) {
-			SquareCoord center = SquareCoord.WorldToSquareCoord(worldPosition, cellDiameter);
-			return cellsBySquareCoord.TryGetValue(center, out cell);
-		}
+			for (int dx = -radius; dx <= radius; dx++) {
+				for (int dy = -radius; dy <= radius; dy++) {
+					if (Math.Max(Math.Abs(dx), Math.Abs(dy)) > radius)
+						continue;
 
-		public bool TryGetCell(SquareCoord squareCoord, out T cell) {
-			return cellsBySquareCoord.TryGetValue(squareCoord, out cell);
+					SquareCoord coord = center + new SquareCoord(dx, dy);
+					if (TryGetCell(coord, out T cell))
+						cells.Add(cell);
+				}
+			}
+
+			return cells.ToArray();
 		}
 	}
 }

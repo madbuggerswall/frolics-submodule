@@ -1,27 +1,26 @@
+using System;
 using Frolics.Grids.SpatialHelpers;
-using Frolics.Utilities;
 using UnityEngine;
 
 namespace Frolics.Grids {
-	/// <summary>
-	///	Represents a pointy-top hexagonal grid cell.
-	/// </summary>
-	public class HexCell : Cell {
-		protected AxialCoord axialCoord;
+	[Serializable]
+	public class HexCell : CellBase<AxialCoord> {
+		[SerializeField] private AxialCoord coordinate;
 
-		protected HexCell(AxialCoord axialCoord, Vector3 position, float diameter) : base(position, diameter) {
-			this.axialCoord = axialCoord;
+		public HexCell(AxialCoord coordinate, Vector3 position, float diameter) : base(position, diameter) {
+			this.coordinate = coordinate;
 		}
 
 		public override bool IsInsideCell(Vector3 point) {
 			float radius = diameter / 2f;
 			float radiusSquared = radius * radius;
+			float distanceSquared = (position - point).sqrMagnitude;
 
-			// Disregard Z since it's a 2D operation
-			float distanceSquared = (position.GetXY() - point.GetXY()).sqrMagnitude;
 			return distanceSquared <= radiusSquared;
 		}
 
-		public AxialCoord GetAxialCoord() => this.axialCoord;
+		public override AxialCoord GetCoord() {
+			return coordinate;
+		}
 	}
 }

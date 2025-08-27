@@ -1,8 +1,8 @@
-namespace Frolics.Grids.SpatialHelpers {
-	public struct OffsetOddRCoord {
-		public int column;
-		public int row;
+using System;
 
+namespace Frolics.Grids.SpatialHelpers {
+	[Serializable]
+	public struct OffsetOddRCoord : IEquatable<OffsetOddRCoord> {
 		private static readonly OffsetOddRCoord[,] DirectionVectors = {
 			// Even rows (row % 2 == 0)
 			{ new(1, 0), new(0, -1), new(-1, -1), new(-1, 0), new(-1, 1), new(0, 1) },
@@ -10,22 +10,17 @@ namespace Frolics.Grids.SpatialHelpers {
 			{ new(1, 0), new(1, -1), new(0, -1), new(-1, 0), new(0, 1), new(1, 1) }
 		};
 
+		public int column;
+		public int row;
+
 		public OffsetOddRCoord(int column, int row) {
 			this.column = column;
 			this.row = row;
 		}
 
-		public override string ToString() => $"({column}, {row})";
-
-
-		public OffsetOddRCoord GetNeighbor(int neighborIndex) {
-			int parity = this.row & 1;
-			OffsetOddRCoord diff = DirectionVectors[parity, neighborIndex];
-			return new OffsetOddRCoord(this.column + diff.column, this.row + diff.row);
-		}
-
-		public static int Distance(OffsetOddRCoord lhs, OffsetOddRCoord rhs) {
-			return AxialCoord.Distance(lhs.ToAxial(), rhs.ToAxial());
-		}
+		public bool Equals(OffsetOddRCoord other) => column == other.column && row == other.row;
+		public override bool Equals(object obj) => obj is OffsetOddRCoord other && Equals(other);
+		public override int GetHashCode() => HashCode.Combine(column, row);
+		public override string ToString() => $"OffsetOddR({column}, {row})";
 	}
 }
