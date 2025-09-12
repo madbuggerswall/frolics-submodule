@@ -16,6 +16,7 @@ namespace Frolics.Input.Standalone {
 		public Action<MouseData> MouseReleaseEvent { get; set; } = delegate { };
 
 		public Action<KeyData> KeyPressEvent { get; set; } = delegate { };
+		public Action<KeyData> KeyPressHeldEvent { get; set; } = delegate { };
 		public Action<KeyData> KeyReleaseEvent { get; set; } = delegate { };
 
 		private ReadOnlyArray<KeyControl> allKeys = Keyboard.current.allKeys;
@@ -65,10 +66,13 @@ namespace Frolics.Input.Standalone {
 
 		private void ReadKeyboardButtonInput(KeyControl keyControl) {
 			bool pressStarted = keyControl.wasPressedThisFrame;
+			bool pressHeld = keyControl.isPressed;
 			bool pressReleased = keyControl.wasReleasedThisFrame;
 
 			if (pressStarted)
 				KeyPressEvent.Invoke(new KeyData(keyControl));
+			else if (pressHeld)
+				KeyPressHeldEvent.Invoke(new KeyData(keyControl));
 			else if (pressReleased)
 				KeyReleaseEvent.Invoke(new KeyData(keyControl));
 		}
