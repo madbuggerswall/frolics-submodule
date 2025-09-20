@@ -8,10 +8,10 @@ namespace Frolics.Grids {
 	///	Represents a pointy-top hexagonal grid initialized with offset odd-r coords.
 	/// </summary>
 	public class HexGrid<T> : GridBase<T, AxialCoord> where T : HexCell {
-		private readonly ICellFactory<T, AxialCoord> cellFactory;
+		private readonly HexCellFactory<T> cellFactory;
 
 		public HexGrid(
-			ICellFactory<T, AxialCoord> cellFactory,
+			HexCellFactory<T> cellFactory,
 			Vector3 pivotPoint,
 			Vector2Int gridSize,
 			float cellDiameter,

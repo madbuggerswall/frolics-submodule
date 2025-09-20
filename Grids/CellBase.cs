@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Frolics.Grids {
 	[Serializable]
-	public abstract class CellBase<TCoord> : ICell where TCoord : struct, IEquatable<TCoord> {
+	public abstract class CellBase<TCoord> where TCoord : struct, IEquatable<TCoord> {
 		[SerializeField] protected Vector3 position;
 		[SerializeField] protected float diameter;
 

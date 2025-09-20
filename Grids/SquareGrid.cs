@@ -5,10 +5,10 @@ using UnityEngine;
 
 namespace Frolics.Grids {
 	public class SquareGrid<T> : GridBase<T, SquareCoord> where T : SquareCell {
-		private readonly ICellFactory<T, SquareCoord> cellFactory;
+		private readonly SquareCellFactory<T> cellFactory;
 
 		public SquareGrid(
-			ICellFactory<T, SquareCoord> cellFactory,
+			SquareCellFactory<T> cellFactory,
 			Vector3 pivotPoint,
 			Vector2Int gridSize,
 			float cellDiameter,

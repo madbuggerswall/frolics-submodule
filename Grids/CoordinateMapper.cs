@@ -13,7 +13,7 @@ namespace Frolics.Grids {
 		private readonly ICoordinateConverter<TCoord> converter;
 		private readonly float cellDiameter;
 
-		public CoordinateMapper(IGrid<TCell> grid, ICoordinateConverter<TCoord> converter) {
+		public CoordinateMapper(GridBase<TCell, TCoord> grid, ICoordinateConverter<TCoord> converter) {
 			this.converter = converter;
 			this.cellDiameter = grid.CellDiameter;
 

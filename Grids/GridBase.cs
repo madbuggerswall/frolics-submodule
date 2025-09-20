@@ -2,8 +2,7 @@ using System;
 using UnityEngine;
 
 namespace Frolics.Grids {
-	public abstract class GridBase<T, TCoord> : IGrid<T>
-		where T : CellBase<TCoord> where TCoord : struct, IEquatable<TCoord> {
+	public abstract class GridBase<T, TCoord> where T : CellBase<TCoord> where TCoord : struct, IEquatable<TCoord> {
 		[SerializeField] protected T[] cells;
 		[SerializeField] protected GridPlane gridPlane;
 		[SerializeField] protected Vector2 gridLength;
