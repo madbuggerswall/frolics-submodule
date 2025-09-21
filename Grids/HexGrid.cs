@@ -16,30 +16,34 @@ namespace Frolics.Grids {
 			Vector2Int gridSize,
 			float cellDiameter,
 			GridPlane gridPlane = GridPlane.XZ
-		) : base(new AxialCoordinateConverter(), pivotPoint, gridSize, cellDiameter, gridPlane) {
+		) : base(pivotPoint, gridSize, cellDiameter, gridPlane) {
 			this.cellFactory = cellFactory ?? throw new ArgumentNullException(nameof(cellFactory));
 
 			this.cells = GenerateCells();
 			this.gridLength = CalculateGridLength();
 			this.centerPoint = CalculateGridCenterPoint();
-			this.coordinateMapper = new CoordinateMapper<T, AxialCoord>(this, coordinateConverter);
+			this.coordinateMapper = new CoordinateMapper<T, AxialCoord>(this, new AxialCoordinateConverter());
 		}
 
 		private T[] GenerateCells() {
 			int evenRowCount = Mathf.CeilToInt(gridSize.y / 2f);
 			T[] cells = new T[gridSize.x * gridSize.y + evenRowCount];
+			
+			Vector2 pivotPlanePosition = gridPlane.WorldToPlanePosition(pivotPoint);
+			AxialCoord pivotCoord = AxialCoord.PlaneToAxial(pivotPlanePosition, cellDiameter);
+			float planeHeight = gridPlane.GetPlaneHeight(pivotPoint);
 
 			for (int y = 0; y < gridSize.y; y++) {
 				int rowSizeInCells = y % 2 == 0 ? (gridSize.x + 1) : gridSize.x;
 
 				for (int x = 0; x < rowSizeInCells; x++) {
-					AxialCoord axialCoord = new OffsetOddRCoord(x, -y).ToAxial();
-					Vector3 positionXY = AxialCoord.AxialToWorld(axialCoord, cellDiameter);
-					Vector3 position = gridPlane.ConvertPositionPlane(positionXY.x, positionXY.y);
+					AxialCoord axialCoord = new OffsetOddRCoord(x, -y).ToAxial() + pivotCoord;
+					Vector2 planePosition = AxialCoord.AxialToPlane(axialCoord, cellDiameter);
+					Vector3 worldPosition = gridPlane.PlaneToWorldPosition(planePosition, planeHeight);
 
 					int evenRowsPassed = Mathf.CeilToInt(y / 2f);
 					int positionIndex = x + y * gridSize.x + evenRowsPassed;
-					T cell = cellFactory.CreateCell(axialCoord, position, cellDiameter);
+					T cell = cellFactory.CreateCell(axialCoord, worldPosition, cellDiameter);
 					cells[positionIndex] = cell;
 				}
 			}

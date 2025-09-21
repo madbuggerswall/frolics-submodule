@@ -3,10 +3,8 @@ using Frolics.Grids.SpatialHelpers;
 using UnityEngine;
 
 namespace Frolics.Grids {
-	[Serializable]
 	public class SquareCell : CellBase<SquareCoord> {
-		[SerializeField] private SquareCoord coordinate;
-
+		private readonly SquareCoord coordinate;
 
 		public SquareCell(SquareCoord coordinate, Vector3 position, float diameter) : base(position, diameter) {
 			this.coordinate = coordinate;

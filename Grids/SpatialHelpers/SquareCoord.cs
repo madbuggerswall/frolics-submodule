@@ -23,16 +23,16 @@ namespace Frolics.Grids.SpatialHelpers {
 			this.y = y;
 		}
 
-		public static SquareCoord WorldToSquareCoord(Vector3 worldPosition, float cellDiameter) {
-			int x = Mathf.RoundToInt(worldPosition.x / cellDiameter);
-			int y = Mathf.RoundToInt(worldPosition.z / cellDiameter); // using z for 2D grid in XZ plane
+		public static SquareCoord PlaneToSquareCoord(Vector2 position, float cellDiameter) {
+			int x = Mathf.RoundToInt(position.x / cellDiameter);
+			int y = Mathf.RoundToInt(position.y / cellDiameter); // using z for 2D grid in XZ plane
 			return new SquareCoord(x, y);
 		}
 
-		public static Vector3 SquareCoordToWorld(SquareCoord squareCoord, float cellDiameter) {
+		public static Vector2 SquareCoordToPlane(SquareCoord squareCoord, float cellDiameter) {
 			float x = squareCoord.x * cellDiameter;
 			float y = squareCoord.y * cellDiameter;
-			return new Vector3(x, y); // y=0 for flat grid
+			return new Vector2(x, y);
 		}
 
 		public static int Distance(SquareCoord from, SquareCoord to)

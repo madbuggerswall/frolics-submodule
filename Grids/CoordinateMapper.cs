@@ -11,11 +11,15 @@ namespace Frolics.Grids {
 		private readonly Dictionary<TCoord, TCell> cellsByCoord;
 		private readonly Dictionary<TCell, TCoord> coordsByCell;
 		private readonly ICoordinateConverter<TCoord> converter;
+
 		private readonly float cellDiameter;
+		private readonly GridPlane gridPlane;
 
 		public CoordinateMapper(GridBase<TCell, TCoord> grid, ICoordinateConverter<TCoord> converter) {
 			this.converter = converter;
+
 			this.cellDiameter = grid.CellDiameter;
+			this.gridPlane = grid.GridPlane;
 
 			TCell[] cells = grid.GetCells();
 			this.cellsByCoord = new Dictionary<TCoord, TCell>(cells.Length);
@@ -28,19 +32,27 @@ namespace Frolics.Grids {
 			}
 		}
 
-		public bool TryGetCell(Vector3 worldPosition, out TCell cell)
-			=> cellsByCoord.TryGetValue(converter.WorldToCoord(worldPosition, cellDiameter), out cell);
+		public bool TryGetCell(Vector3 worldPosition, out TCell cell) {
+			Vector2 planePosition = gridPlane.WorldToPlanePosition(worldPosition);
+			TCoord coord = converter.PlaneToCoord(planePosition, cellDiameter);
+			return cellsByCoord.TryGetValue(coord, out cell);
+		}
 
-		public bool TryGetCell(TCoord coordinate, out TCell cell)
-			=> cellsByCoord.TryGetValue(coordinate, out cell);
+		public bool TryGetCell(TCoord coordinate, out TCell cell) {
+			return cellsByCoord.TryGetValue(coordinate, out cell);
+		}
 
-		public bool TryGetCoordinate(TCell cell, out TCoord coordinate)
-			=> coordsByCell.TryGetValue(cell, out coordinate);
+		// TODO Methods below are redundant
+		public bool TryGetCoordinate(TCell cell, out TCoord coordinate) {
+			return coordsByCell.TryGetValue(cell, out coordinate);
+		}
 
-		public TCell GetCell(TCoord coordinate)
-			=> cellsByCoord.GetValueOrDefault(coordinate);
+		public TCell GetCell(TCoord coordinate) {
+			return cellsByCoord.GetValueOrDefault(coordinate);
+		}
 
-		public TCoord GetCoordinate(TCell cell)
-			=> coordsByCell.GetValueOrDefault(cell);
+		public TCoord GetCoordinate(TCell cell) {
+			return coordsByCell.GetValueOrDefault(cell);
+		}
 	}
 }

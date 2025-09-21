@@ -27,21 +27,15 @@ namespace Frolics.Grids.SpatialHelpers {
 			return CubeCoord.Distance(lhsCube, rhsCube);
 		}
 
-		public static Vector3 AxialToWorld(AxialCoord axialCoord, float cellDiameter) {
-			if (cellDiameter <= 0)
-				throw new ArgumentException("Cell diameter must be positive", nameof(cellDiameter));
-
+		public static Vector2 AxialToPlane(AxialCoord axialCoord, float cellDiameter) {
 			float cellRadius = cellDiameter / 2f;
 			float size = 2f / Mathf.Sqrt(3f) * cellRadius;
 			float x = Mathf.Sqrt(3) * axialCoord.q + Mathf.Sqrt(3) / 2 * axialCoord.r;
 			float y = 3f / 2f * axialCoord.r;
-			return new Vector3(x * size, -y * size);
+			return new Vector2(x * size, -y * size);
 		}
 
-		public static AxialCoord WorldToAxial(Vector3 worldPosition, float cellDiameter) {
-			if (cellDiameter <= 0)
-				throw new ArgumentException("Cell diameter must be positive", nameof(cellDiameter));
-
+		public static AxialCoord PlaneToAxial(Vector2 worldPosition, float cellDiameter) {
 			float cellRadius = cellDiameter / 2f;
 			float size = 2f / Mathf.Sqrt(3f) * cellRadius;
 			float x = worldPosition.x / size;

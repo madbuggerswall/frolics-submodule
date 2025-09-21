@@ -2,10 +2,10 @@ using UnityEngine;
 
 namespace Frolics.Grids.SpatialHelpers {
 	public class AxialCoordinateConverter : ICoordinateConverter<AxialCoord> {
-		public AxialCoord WorldToCoord(Vector3 worldPosition, float cellDiameter)
-			=> AxialCoord.WorldToAxial(worldPosition, cellDiameter);
+		public AxialCoord PlaneToCoord(Vector2 planePosition, float cellDiameter)
+			=> AxialCoord.PlaneToAxial(planePosition, cellDiameter);
 
-		public Vector3 CoordToWorld(AxialCoord coordinate, float cellDiameter)
-			=> AxialCoord.AxialToWorld(coordinate, cellDiameter);
+		public Vector2 CoordToPlane(AxialCoord coordinate, float cellDiameter)
+			=> AxialCoord.AxialToPlane(coordinate, cellDiameter);
 	}
 }
