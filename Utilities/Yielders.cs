@@ -3,29 +3,24 @@ using UnityEngine;
 
 namespace Frolics.Utilities {
 	public static class Yielders {
+		private static readonly Dictionary<float, WaitForSeconds> WaitTimes = new();
+		private static readonly Dictionary<float, WaitForSecondsRealtime> WaitTimesReal = new();
 
-		static Dictionary<float, WaitForSeconds> waitTimes = new Dictionary<float, WaitForSeconds>();
-		static Dictionary<float, WaitForSecondsRealtime> waitTimesReal = new Dictionary<float, WaitForSecondsRealtime>();
+		public static WaitForEndOfFrame WaitForEndOfFrame { get; } = new WaitForEndOfFrame();
+		public static WaitForFixedUpdate WaitForFixedUpdate { get; } = new WaitForFixedUpdate();
 
-		static WaitForEndOfFrame endOfFrame = new WaitForEndOfFrame();
-		public static WaitForEndOfFrame waitForEndOfFrame { get { return endOfFrame; } }
+		public static WaitForSeconds WaitForSeconds(float seconds) {
+			if (!WaitTimes.ContainsKey(seconds))
+				WaitTimes.Add(seconds, new WaitForSeconds(seconds));
 
-		static WaitForFixedUpdate fixedUpdate = new WaitForFixedUpdate();
-		public static WaitForFixedUpdate waitForFixedUpdate { get { return fixedUpdate; } }
-
-		public static WaitForSeconds waitForSeconds(float seconds) {
-			if (!waitTimes.ContainsKey(seconds))
-				waitTimes.Add(seconds, new WaitForSeconds(seconds));
-		
-			return waitTimes[seconds];
-		}
-	
-		public static WaitForSecondsRealtime waitForSecondsRealtime(float seconds) {
-			if (!waitTimesReal.ContainsKey(seconds))
-				waitTimesReal.Add(seconds, new WaitForSecondsRealtime(seconds));
-		
-			return waitTimesReal[seconds];
+			return WaitTimes[seconds];
 		}
 
+		public static WaitForSecondsRealtime WaitForSecondsRealtime(float seconds) {
+			if (!WaitTimesReal.ContainsKey(seconds))
+				WaitTimesReal.Add(seconds, new WaitForSecondsRealtime(seconds));
+
+			return WaitTimesReal[seconds];
+		}
 	}
 }

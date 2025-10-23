@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Frolics.Utilities {
 	public static class SaveManager {
-		public static void save<T>(T serializable, string filePath) {
+		public static void Save<T>(T serializable, string filePath) {
 			string json = JsonUtility.ToJson(serializable, false);
 			Debug.Log(json);
 
@@ -14,7 +14,7 @@ namespace Frolics.Utilities {
 			}
 		}
 
-		public static T load<T>(string filePath) {
+		public static T Load<T>(string filePath) {
 			string objectAsJSON;
 
 			using (FileStream file = File.Open(filePath, FileMode.Open)) {
@@ -26,7 +26,7 @@ namespace Frolics.Utilities {
 			return JsonUtility.FromJson<T>(objectAsJSON);
 		}
 
-		public static void overwrite<T>(T objectToOverwrite, string filePath) {
+		public static void Overwrite<T>(T objectToOverwrite, string filePath) {
 			string objectAsJSON;
 
 			using (FileStream file = File.Open(filePath, FileMode.Open)) {
@@ -38,7 +38,7 @@ namespace Frolics.Utilities {
 			JsonUtility.FromJsonOverwrite(objectAsJSON, objectToOverwrite);
 		}
 
-		public static bool exists(string filePath) {
+		public static bool Exists(string filePath) {
 			return File.Exists(filePath);
 		}
 	}
