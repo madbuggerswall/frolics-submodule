@@ -1,53 +1,85 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Frolics.Grids {
-	public abstract class GridBase<T, TCoord> where T : CellBase<TCoord> where TCoord : struct, IEquatable<TCoord> {
-		protected readonly GridPlane gridPlane;
+	public abstract class GridBase<TCell, TCoord>
+		where TCell : CellBase<TCoord> where TCoord : struct, IEquatable<TCoord> {
 		protected readonly Vector2Int gridSize;
-		protected readonly Vector3 pivotPoint;
-		protected float cellDiameter;
+		protected readonly float cellDiameter;
 
-		protected Vector3 centerPoint;
-		protected Vector2 gridLength;
-		protected T[] cells;
+		private readonly GridPlane gridPlane;
+		private readonly Vector3 pivotPoint;
 
-		protected CoordinateMapper<T, TCoord> coordinateMapper;
+		private readonly ICellFactory<TCell, TCoord> cellFactory;
+		private readonly ICoordinateConverter<TCoord> converter;
+		private readonly ICoordinateGenerator<TCoord> generator;
+		private readonly ICellLookup<TCell, TCoord> lookup;
 
-		public GridPlane GridPlane => gridPlane;
-		public Vector2 GridLength => gridLength;
-		public Vector2Int GridSize => gridSize;
-		public float CellDiameter => cellDiameter;
-		public Vector3 CenterPoint => centerPoint;
-		public Vector3 PivotPoint => pivotPoint;
+		private readonly TCell[] cells;
 
 		protected GridBase(
 			Vector3 pivotPoint,
 			Vector2Int gridSize,
 			float cellDiameter,
-			GridPlane gridPlane = GridPlane.XZ
+			GridPlane gridPlane,
+			ICellFactory<TCell, TCoord> cellFactory,
+			ICoordinateConverter<TCoord> converter,
+			ICoordinateGenerator<TCoord> generator,
+			ICellLookup<TCell, TCoord> lookup
 		) {
 			this.gridSize = gridSize;
 			this.cellDiameter = cellDiameter;
 			this.gridPlane = gridPlane;
 			this.pivotPoint = pivotPoint;
+
+			this.cellFactory = cellFactory;
+			this.converter = converter;
+			this.generator = generator;
+			this.lookup = lookup;
+
+			this.cells = GenerateCells();
 		}
 
-		protected Vector3 CalculateGridCenterPoint() {
-			if (cells == null || cells.Length == 0)
-				return Vector3.zero;
+		private TCell[] GenerateCells() {
+			Vector2 pivotPlanePosition = gridPlane.WorldToPlanePosition(pivotPoint);
+			TCoord pivotCoord = converter.PlaneToCoord(pivotPlanePosition, cellDiameter);
 
-			Vector3 positionSum = Vector3.zero;
-			for (int i = 0; i < cells.Length; i++)
-				positionSum += cells[i].Position;
+			List<TCoord> cellCoords = generator.Generate(gridSize, pivotCoord);
+			TCell[] cells = new TCell[cellCoords.Count];
 
-			return positionSum / cells.Length;
+			for (int i = 0; i < cellCoords.Count; i++)
+				cells[i] = cellFactory.CreateCell(cellCoords[i]);
+
+			return cells;
 		}
 
-		public T[] GetCells() => cells;
 
-		public bool TryGetCell(Vector3 position, out T cell) => coordinateMapper.TryGetCell(position, out cell);
+		public Vector3 GetWorldPosition(TCell cell) {
+			float planeHeight = gridPlane.GetOrthogonalCoordinate(pivotPoint);
+			Vector2 planePosition = converter.CoordToPlane(cell.GetCoord(), cellDiameter);
+			Vector3 worldPosition = gridPlane.PlaneToWorldPosition(planePosition, planeHeight);
+			return worldPosition;
+		}
 
-		public bool TryGetCell(TCoord coordinate, out T cell) => coordinateMapper.TryGetCell(coordinate, out cell);
+		public bool TryGetCell(Vector3 worldPosition, out TCell cell) {
+			Vector2 planePosition = gridPlane.WorldToPlanePosition(worldPosition);
+			TCoord coord = converter.PlaneToCoord(planePosition, cellDiameter);
+			return lookup.TryGetCell(coord, out cell);
+		}
+
+		public bool TryGetCell(TCoord coord, out TCell cell) {
+			return lookup.TryGetCell(coord, out cell);
+		}
+
+		public abstract Vector2 GetGridLength();
+		public abstract Vector2 GetCenterPoint();
+
+
+		public GridPlane GetGridPlane() => gridPlane;
+		public Vector2Int GetGridSize() => gridSize;
+		public float GetCellDiameter() => cellDiameter;
+		public Vector3 GetPivotPoint() => pivotPoint;
+		public TCell[] GetCells() => cells;
 	}
 }

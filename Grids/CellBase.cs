@@ -2,19 +2,14 @@ using System;
 using UnityEngine;
 
 namespace Frolics.Grids {
+	// Might be a ICell interface
 	public abstract class CellBase<TCoord> where TCoord : struct, IEquatable<TCoord> {
-		protected Vector3 position;
-		protected float diameter;
+		private readonly TCoord coordinate;
 
-		public Vector3 Position => position;
-		public float Diameter => diameter;
-
-		protected CellBase(Vector3 position, float diameter) {
-			this.position = position;
-			this.diameter = diameter;
+		protected CellBase(TCoord coordinate) {
+			this.coordinate = coordinate;
 		}
 
-		public abstract bool IsInsideCell(Vector3 point);
-		public abstract TCoord GetCoord();
+		public TCoord GetCoord() => coordinate;
 	}
 }
