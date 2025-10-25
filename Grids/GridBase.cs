@@ -38,6 +38,10 @@ namespace Frolics.Grids {
 			this.lookup = lookup;
 
 			this.cells = GenerateCells();
+
+			// Initialize lookup
+			for (int i = 0; i < cells.Length; i++)
+				lookup.Add(cells[i]);
 		}
 
 		private TCell[] GenerateCells() {

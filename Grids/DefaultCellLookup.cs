@@ -9,10 +9,8 @@ namespace Frolics.Grids {
 		where TCell : CellBase<TCoord> where TCoord : struct, IEquatable<TCoord> {
 		private readonly Dictionary<TCoord, TCell> cellsByCoord = new();
 
-		public void Add(GridBase<TCell, TCoord> grid) {
-			TCell[] cells = grid.GetCells();
-			for (int i = 0; i < cells.Length; i++)
-				cellsByCoord.Add(cells[i].GetCoord(), cells[i]);
+		public void Add(TCell cell) {
+			cellsByCoord.Add(cell.GetCoord(), cell);
 		}
 
 		public bool TryGetCell(TCoord coordinate, out TCell cell) {
