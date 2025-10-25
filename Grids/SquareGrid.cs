@@ -26,9 +26,5 @@ namespace Frolics.Grids {
 		public override Vector2 GetGridLength() {
 			return new Vector2(gridSize.x * cellDiameter, gridSize.y * cellDiameter);
 		}
-
-		public override Vector2 GetCenterPoint() {
-			return GetGridLength() * 0.5f;
-		}
 	}
 }

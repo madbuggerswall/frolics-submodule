@@ -7,9 +7,8 @@ namespace Frolics.Grids {
 		where TCell : CellBase<TCoord> where TCoord : struct, IEquatable<TCoord> {
 		protected readonly Vector2Int gridSize;
 		protected readonly float cellDiameter;
-
-		private readonly GridPlane gridPlane;
-		private readonly Vector3 pivotPoint;
+		protected readonly GridPlane gridPlane;
+		protected readonly Vector3 pivotPoint;
 
 		private readonly ICellFactory<TCell, TCoord> cellFactory;
 		private readonly ICoordinateConverter<TCoord> converter;
@@ -54,6 +53,12 @@ namespace Frolics.Grids {
 			return cells;
 		}
 
+		public Vector3 GetCenterPoint() {
+			Vector2 pivotPlanePos = gridPlane.WorldToPlanePosition(pivotPoint) - Vector2.one * cellDiameter * 0.5f;
+			Vector2 centerPlanePos = pivotPlanePos + GetGridLength() * .5f;
+			float planeHeight = gridPlane.GetOrthogonalCoordinate(pivotPoint);
+			return gridPlane.PlaneToWorldPosition(centerPlanePos, planeHeight);
+		}
 
 		public Vector3 GetWorldPosition(TCell cell) {
 			float planeHeight = gridPlane.GetOrthogonalCoordinate(pivotPoint);
@@ -73,8 +78,6 @@ namespace Frolics.Grids {
 		}
 
 		public abstract Vector2 GetGridLength();
-		public abstract Vector2 GetCenterPoint();
-
 
 		public GridPlane GetGridPlane() => gridPlane;
 		public Vector2Int GetGridSize() => gridSize;
