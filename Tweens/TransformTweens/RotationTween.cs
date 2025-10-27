@@ -12,7 +12,7 @@ namespace Frolics.Tweens.TransformTweens {
 		}
 
 		protected override void UpdateTween() {
-			tweener.rotation = Quaternion.Lerp(rotation.initial, rotation.target, progress);
+			tweener.rotation = Quaternion.Lerp(rotation.initial, rotation.target, easedTime);
 		}
 
 		protected override void SampleInitialState() {

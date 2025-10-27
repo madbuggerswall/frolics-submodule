@@ -12,7 +12,7 @@ namespace Frolics.Tweens.RectTransformTweens {
 		}
 
 		protected override void UpdateTween() {
-			tweener.anchoredPosition = Vector2.Lerp(anchoredPosition.initial, anchoredPosition.target, progress);
+			tweener.anchoredPosition = Vector2.Lerp(anchoredPosition.initial, anchoredPosition.target, easedTime);
 		}
 
 		protected override void SampleInitialState() {

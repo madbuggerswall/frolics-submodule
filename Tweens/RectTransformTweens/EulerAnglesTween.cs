@@ -12,7 +12,7 @@ namespace Frolics.Tweens.RectTransformTweens {
 		}
 
 		protected override void UpdateTween() {
-			tweener.eulerAngles = Vector3.Lerp(eulerAngles.initial, eulerAngles.target, progress);
+			tweener.eulerAngles = Vector3.Lerp(eulerAngles.initial, eulerAngles.target, easedTime);
 		}
 
 		protected override void SampleInitialState() {

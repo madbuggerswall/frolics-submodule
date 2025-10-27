@@ -10,7 +10,7 @@ namespace Frolics.Tweens.RigidbodyTweens {
 		}
 
 		protected override void UpdateTween() {
-			tweener.MovePosition(Vector3.Lerp(position.initial, position.target, progress));
+			tweener.MovePosition(Vector3.Lerp(position.initial, position.target, easedTime));
 		}
 
 		protected override void SampleInitialState() {

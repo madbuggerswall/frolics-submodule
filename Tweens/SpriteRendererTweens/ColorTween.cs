@@ -12,7 +12,7 @@ namespace Frolics.Tweens.SpriteRendererTweens {
 		}
 
 		protected override void UpdateTween() {
-			tweener.color = Color.Lerp(color.initial, color.target, progress);
+			tweener.color = Color.Lerp(color.initial, color.target, easedTime);
 		}
 
 		protected override void SampleInitialState() {

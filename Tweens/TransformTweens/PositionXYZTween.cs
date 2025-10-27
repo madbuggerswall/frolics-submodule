@@ -2,24 +2,18 @@ using System;
 using Frolics.Tweens.Easing;
 using UnityEngine;
 
-namespace Frolics.Tweens.RigidbodyTweens {
-	/// <summary>
-	/// A Rigidbody tween that allows independent easing functions for each position axis (X, Y, Z).
-	/// This class is useful when you want to animate a Rigidbody's position with different motion profiles
-	/// on each axis simultaneously.
-	/// </summary>
-	/// <remarks>
-	/// Using <c>SetEase</c> may produce unintended results.
-	/// Use <c>SetEasePosX</c>, <c>SetEasePosY</c>, or <c>SetEasePosZ</c> instead.
-	/// </remarks>
-	public class PositionXYZTween : RigidbodyTween {
+namespace Frolics.Tweens.TransformTweens {
+	public class PositionXYZTween : Tween {
+		private readonly Transform tweener;
+
 		private Func<float, float> easeFunctionPosX = Ease.Get(Ease.Type.Linear);
 		private Func<float, float> easeFunctionPosY = Ease.Get(Ease.Type.Linear);
 		private Func<float, float> easeFunctionPosZ = Ease.Get(Ease.Type.Linear);
 
 		private (Vector3 initial, Vector3 target) position;
 
-		public PositionXYZTween(Rigidbody tweener, Vector3 targetPosition, float duration) : base(tweener, duration) {
+		public PositionXYZTween(Transform tweener, Vector3 targetPosition, float duration) : base(duration) {
+			this.tweener = tweener;
 			this.position.initial = tweener.position;
 			this.position.target = targetPosition;
 		}
@@ -31,7 +25,7 @@ namespace Frolics.Tweens.RigidbodyTweens {
 			float easedY = Mathf.Lerp(position.initial.y, position.target.y, easeFunctionPosY(easedTime));
 			float easedZ = Mathf.Lerp(position.initial.z, position.target.z, easeFunctionPosZ(easedTime));
 
-			tweener.MovePosition(new Vector3(easedX, easedY, easedZ));
+			tweener.position = new Vector3(easedX, easedY, easedZ);
 		}
 
 		protected override void SampleInitialState() {

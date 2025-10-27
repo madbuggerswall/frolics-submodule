@@ -7,9 +7,9 @@ using UnityEngine;
 namespace Frolics.Tweens {
 	public abstract class Tween {
 		private Action onCompleteCallback;
-		private EaseFunction easeFunction;
+		private Func<float, float> easeFunction;
 
-		protected float progress;
+		protected float easedTime;
 		private float elapsed;
 		private readonly float duration;
 
@@ -18,7 +18,7 @@ namespace Frolics.Tweens {
 
 		private Tween() {
 			elapsed = 0;
-			progress = 0;
+			easedTime = 0;
 			duration = 1;
 			easeFunction = Ease.Get(Ease.Type.Linear);
 
@@ -36,13 +36,13 @@ namespace Frolics.Tweens {
 		}
 
 		protected void Rewind() {
-			progress = 0;
+			easedTime = 0;
 			elapsed = 0;
 			SampleInitialState();
 		}
 
 		public void Stop(bool invokeCallback = false) {
-			progress = 1;
+			easedTime = 1;
 			if (invokeCallback)
 				onCompleteCallback?.Invoke();
 		}
@@ -56,10 +56,13 @@ namespace Frolics.Tweens {
 			this.easeFunction = Ease.Get(easeType);
 		}
 
+		// Creates a delegate instance pointing to the instance method Evaluate of the specific animationCurve object.
+		// Hence, no closure
 		public void SetEase(AnimationCurve animationCurve) {
-			this.easeFunction = new Curve(animationCurve);
+			this.easeFunction = animationCurve.Evaluate;
 		}
 
+		// TODO int cycles = -1 (infinity)
 		public void SetRepeat() {
 			throw new NotImplementedException();
 		}
@@ -68,6 +71,7 @@ namespace Frolics.Tweens {
 			this.onCompleteCallback = callback;
 		}
 
+		// TODO float normalizedTime/time, Action callback
 		public void InsertCallback() {
 			throw new NotImplementedException();
 		}
@@ -80,32 +84,19 @@ namespace Frolics.Tweens {
 			// IDEA Rename progress to easedTime
 			// IDEA Make normalizedTime a member field
 			float normalizedTime = Mathf.Clamp01(elapsed / duration);
-			progress = easeFunction.Evaluate(normalizedTime);
+			easedTime = easeFunction(normalizedTime);
 
 			UpdateTween();
 
 			// IDEA Callback can be called from TweenManager
-			if (progress >= 1)
+			if (easedTime >= 1)
 				onCompleteCallback?.Invoke();
 		}
 
-		internal bool IsCompleted() { return progress >= 1; }
-		internal bool IsPlaying() { return progress is > 0 and < 1; }
+		internal bool IsCompleted() { return easedTime >= 1; }
+		internal bool IsPlaying() { return easedTime is > 0 and < 1; }
 
 		protected abstract void UpdateTween();
 		protected abstract void SampleInitialState();
-	}
-
-	public abstract class RigidbodyTween : Tween {
-		protected Rigidbody tweener;
-
-		public RigidbodyTween(Rigidbody tweener, float duration) : base(duration) {
-			this.tweener = tweener;
-		}
-
-		public override void Play() {
-			Rewind();
-			tweenManager.AddTween(this);
-		}
 	}
 }

@@ -12,7 +12,7 @@ namespace Frolics.Tweens.RectTransformTweens {
 		}
 
 		protected override void UpdateTween() {
-			tweener.localScale = Vector3.Lerp(localScale.initial, localScale.target, progress);
+			tweener.localScale = Vector3.Lerp(localScale.initial, localScale.target, easedTime);
 		}
 
 		protected override void SampleInitialState() {

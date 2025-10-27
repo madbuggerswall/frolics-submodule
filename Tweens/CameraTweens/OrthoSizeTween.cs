@@ -12,7 +12,7 @@ namespace Frolics.Tweens.CameraTweens {
 		}
 
 		protected override void UpdateTween() {
-			tweener.orthographicSize = Mathf.Lerp(orthoSize.initial, orthoSize.target, progress);
+			tweener.orthographicSize = Mathf.Lerp(orthoSize.initial, orthoSize.target, easedTime);
 		}
 
 		protected override void SampleInitialState() {
