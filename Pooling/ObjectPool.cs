@@ -39,13 +39,11 @@ namespace Frolics.Pooling {
 		/// <summary>
 		/// Spawns an object from the pool.
 		/// </summary>
-		public T Spawn(T prefab, Vector3? position = null, Quaternion? rotation = null, Transform parent = null) {
+		public T Spawn(T prefab, Transform parent = null) {
 			T instance = GetObject(prefab);
-
 			instance.transform.SetParent(parent ?? root, false);
-			instance.transform.SetPositionAndRotation(position ?? Vector3.zero, rotation ?? Quaternion.identity);
-
 			instance.gameObject.SetActive(true);
+
 			return instance;
 		}
 

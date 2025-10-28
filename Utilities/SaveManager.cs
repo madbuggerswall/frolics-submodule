@@ -2,6 +2,7 @@ using System.IO;
 using UnityEngine;
 
 namespace Frolics.Utilities {
+	// TODO Rename this class
 	public static class SaveManager {
 		public static void Save<T>(T serializable, string filePath) {
 			string json = JsonUtility.ToJson(serializable, false);
