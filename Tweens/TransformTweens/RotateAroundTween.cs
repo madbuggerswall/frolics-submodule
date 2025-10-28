@@ -28,7 +28,7 @@ namespace Frolics.Tweens.TransformTweens {
 			float currentAngle = Vector3.SignedAngle(initialDirection, currentDirection, axis);
 
 			// Target angle at this progress
-			float targetAngle = Mathf.Lerp(angle.initial, angle.target, easedTime);
+			float targetAngle = Mathf.Lerp(angle.initial, angle.target, normalizedTime);
 
 			// Rotate by the delta
 			float deltaAngle = targetAngle - currentAngle;
