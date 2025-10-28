@@ -1,56 +1,66 @@
-using Frolics.Contexts;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Frolics.Pooling {
-	public class ObjectPool : MonoBehaviour, IInitializable {
-		private MonoBehaviourPool monoBehaviourPool;
-		private GameObjectPool gameObjectPool;
+	/// <summary>
+	/// Generic object pool for both GameObjects and MonoBehaviours.
+	/// Uses prefab reference as the key to avoid type collisions.
+	/// </summary>
+	public class ObjectPool<T> where T : Component {
+		private readonly Dictionary<T, Stack<T>> poolDictionary = new();
+		private readonly Dictionary<T, T> instanceToPrefab = new(); // reverse lookup
+		private readonly Transform root;
 
-		public void Initialize() {
-			monoBehaviourPool = new MonoBehaviourPool(transform);
-			gameObjectPool = new GameObjectPool(transform);
+		public ObjectPool(Transform root) {
+			this.root = root;
 		}
 
-		// MonoBehaviourPool
-		public T Spawn<T>(T prefab, Vector3 position) where T : MonoBehaviour {
-			return monoBehaviourPool.Spawn(prefab, position);
+		private T AddObject(T prefab, Stack<T> pool) {
+			T instance = Object.Instantiate(prefab, root, true);
+			instance.gameObject.SetActive(false);
+			instance.name = prefab.name + " (Pooled)";
+
+			pool.Push(instance);
+			instanceToPrefab[instance] = prefab;
+
+			return instance;
 		}
 
-		public T Spawn<T>(T prefab) where T : MonoBehaviour {
-			return monoBehaviourPool.Spawn(prefab);
+		private T GetObject(T prefab) {
+			if (poolDictionary.TryGetValue(prefab, out Stack<T> pool))
+				return pool.Count > 0 ? pool.Pop() : AddObject(prefab, pool);
+
+			pool = new Stack<T>();
+			poolDictionary[prefab] = pool;
+
+			return pool.Count > 0 ? pool.Pop() : AddObject(prefab, pool);
 		}
 
-		public T Spawn<T>(T prefab, Transform parent) where T : MonoBehaviour {
-			return monoBehaviourPool.Spawn(prefab, parent);
+		/// <summary>
+		/// Spawns an object from the pool.
+		/// </summary>
+		public T Spawn(T prefab, Vector3? position = null, Quaternion? rotation = null, Transform parent = null) {
+			T instance = GetObject(prefab);
+
+			instance.transform.SetParent(parent ?? root, false);
+			instance.transform.SetPositionAndRotation(position ?? Vector3.zero, rotation ?? Quaternion.identity);
+
+			instance.gameObject.SetActive(true);
+			return instance;
 		}
 
-		public T Spawn<T>(T prefab, Transform parent, Vector3 position) where T : MonoBehaviour {
-			return monoBehaviourPool.Spawn(prefab, parent, position);
-		}
+		/// <summary>
+		/// Returns an object to the pool.
+		/// </summary>
+		public void Despawn(T instance) {
+			if (!instanceToPrefab.TryGetValue(instance, out T prefab)) {
+				Debug.LogWarning($"Trying to despawn {instance.name}, but it was not pooled.");
+				return;
+			}
 
-		public void Despawn<T>(T spawnedObject) where T : MonoBehaviour {
-			monoBehaviourPool.Despawn(spawnedObject);
-		}
-
-		// GameObjectPool
-		public GameObject Spawn(GameObject prefab, Vector3 position) {
-			return gameObjectPool.Spawn(prefab, position);
-		}
-
-		public GameObject Spawn(GameObject prefab) {
-			return gameObjectPool.Spawn(prefab);
-		}
-
-		public GameObject Spawn(GameObject prefab, Transform parent) {
-			return gameObjectPool.Spawn(prefab, parent);
-		}
-
-		public GameObject Spawn(GameObject prefab, Transform parent, Vector3 position) {
-			return gameObjectPool.Spawn(prefab, parent, position);
-		}
-
-		public void Despawn(GameObject spawnedObject) {
-			gameObjectPool.Despawn(spawnedObject);
+			instance.gameObject.SetActive(false);
+			instance.transform.SetParent(root, false);
+			poolDictionary[prefab].Push(instance);
 		}
 	}
 }
