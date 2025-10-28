@@ -1,21 +1,51 @@
+using Frolics.Tweens.Experimental;
 using UnityEngine;
 
 namespace Frolics.Tweens.RectTransformTweens {
 	public static class RectTransformTweenExtensions {
-		public static AnchoredPositionTween PlayAnchoredPosition(
-			this RectTransform tweener,
-			Vector2 targetPosition,
+		public static PropertyTween<RectTransform, Vector2> TweenAnchoredPosition(
+			this RectTransform rt,
+			Vector2 target,
 			float duration
 		) {
-			return new AnchoredPositionTween(tweener, targetPosition, duration);
+			return new PropertyTween<RectTransform, Vector2>(
+				rt,
+				getter: r => r.anchoredPosition,
+				setter: (r, v) => r.anchoredPosition = v,
+				end: target,
+				duration: duration,
+				lerp: Vector2.Lerp
+			);
 		}
 
-		public static ScaleTween PlayScale(this RectTransform tweener, Vector3 targetScale, float duration) {
-			return new ScaleTween(tweener, targetScale, duration);
+		public static PropertyTween<RectTransform, Vector3> TweenLocalScale(
+			this RectTransform rt,
+			Vector3 target,
+			float duration
+		) {
+			return new PropertyTween<RectTransform, Vector3>(
+				rt,
+				getter: r => r.localScale,
+				setter: (r, v) => r.localScale = v,
+				end: target,
+				duration: duration,
+				lerp: Vector3.Lerp
+			);
 		}
 
-		public static EulerAnglesTween PlayEuler(this RectTransform tweener, Vector3 targetEuler, float duration) {
-			return new EulerAnglesTween(tweener, targetEuler, duration);
+		public static PropertyTween<RectTransform, Vector3> TweenEulerAngles(
+			this RectTransform rt,
+			Vector3 target,
+			float duration
+		) {
+			return new PropertyTween<RectTransform, Vector3>(
+				rt,
+				getter: r => r.eulerAngles,
+				setter: (r, v) => r.eulerAngles = v,
+				end: target,
+				duration: duration,
+				lerp: Vector3.Lerp
+			);
 		}
 	}
 }
