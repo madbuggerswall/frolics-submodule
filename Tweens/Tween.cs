@@ -3,22 +3,63 @@ using Frolics.Contexts;
 using Frolics.Tweens.Easing;
 using UnityEngine;
 
-// TODO Needs a tween pool
+
 namespace Frolics.Tweens {
+	/// <summary>
+	/// A generic tween that interpolates a specific property of a target object.
+	/// Avoids closures by storing the target reference and using a strongly typed
+	/// apply function.
+	/// </summary>
+	public class PropertyTween<TTarget, TValue> : Tween where TTarget : UnityEngine.Object {
+		private readonly TTarget target;
+		private readonly Func<TTarget, TValue> getter;
+		private readonly Action<TTarget, TValue> setter;
+		private readonly Func<TValue, TValue, float, TValue> lerp;
+
+		private TValue start;
+		private readonly TValue end;
+
+		public PropertyTween(
+			TTarget target,
+			Func<TTarget, TValue> getter,
+			Action<TTarget, TValue> setter,
+			TValue end,
+			float duration,
+			Func<TValue, TValue, float, TValue> lerp
+		) : base(duration) {
+			this.target = target;
+			this.getter = getter;
+			this.setter = setter;
+			this.end = end;
+			this.lerp = lerp;
+
+			start = getter(target);
+		}
+
+		protected override void UpdateTween() {
+			setter(target, lerp(start, end, normalizedTime));
+		}
+
+		protected override void SampleInitialState() {
+			start = getter(target);
+		}
+	}
+
+	// TODO Needs a tween pool
 	public abstract class Tween {
 		private Action onCompleteCallback;
-		private EaseFunction easeFunction;
+		private Func<float, float> easeFunction;
 
-		protected float progress;
-		private float elapsed;
+		protected float normalizedTime;
+		private float elapsedTime;
 		private readonly float duration;
 
 		// Dependencies
 		protected readonly TweenManager tweenManager;
 
 		private Tween() {
-			elapsed = 0;
-			progress = 0;
+			elapsedTime = 0;
+			normalizedTime = 0;
 			duration = 1;
 			easeFunction = Ease.Get(Ease.Type.Linear);
 
@@ -36,13 +77,13 @@ namespace Frolics.Tweens {
 		}
 
 		protected void Rewind() {
-			progress = 0;
-			elapsed = 0;
+			normalizedTime = 0;
+			elapsedTime = 0;
 			SampleInitialState();
 		}
 
 		public void Stop(bool invokeCallback = false) {
-			progress = 1;
+			normalizedTime = 1;
 			if (invokeCallback)
 				onCompleteCallback?.Invoke();
 		}
@@ -53,21 +94,26 @@ namespace Frolics.Tweens {
 		}
 
 		public void SetEase(Ease.Type easeType) {
-			this.easeFunction = Ease.Get(easeType);
+			easeFunction = Ease.Get(easeType);
 		}
 
+		// Creates a delegate instance pointing to the instance method Evaluate of the specific animationCurve object.
+		// Hence, no closure
 		public void SetEase(AnimationCurve animationCurve) {
-			this.easeFunction = new Curve(animationCurve);
+			easeFunction = animationCurve.Evaluate;
 		}
 
+		// TODO int cycles = -1 (infinity)
 		public void SetRepeat() {
 			throw new NotImplementedException();
 		}
 
 		public void SetOnComplete(Action callback) {
-			this.onCompleteCallback = callback;
+			onCompleteCallback = callback;
 		}
 
+		// TODO float normalizedTime/time, Action callback
+		// TODO Stop method should also invoke the inserted callbacks
 		public void InsertCallback() {
 			throw new NotImplementedException();
 		}
@@ -75,37 +121,20 @@ namespace Frolics.Tweens {
 
 		// Tween operations
 		internal void UpdateProgress(float deltaTime) {
-			elapsed += deltaTime;
-
-			// IDEA Rename progress to easedTime
-			// IDEA Make normalizedTime a member field
-			float normalizedTime = Mathf.Clamp01(elapsed / duration);
-			progress = easeFunction.Evaluate(normalizedTime);
+			elapsedTime += deltaTime;
+			normalizedTime = easeFunction(Mathf.Clamp01(elapsedTime / duration));
 
 			UpdateTween();
 
 			// IDEA Callback can be called from TweenManager
-			if (progress >= 1)
+			if (normalizedTime >= 1)
 				onCompleteCallback?.Invoke();
 		}
 
-		internal bool IsCompleted() { return progress >= 1; }
-		internal bool IsPlaying() { return progress is > 0 and < 1; }
+		internal bool IsCompleted() { return normalizedTime >= 1; }
+		internal bool IsPlaying() { return normalizedTime is > 0 and < 1; }
 
 		protected abstract void UpdateTween();
 		protected abstract void SampleInitialState();
-	}
-
-	public abstract class RigidbodyTween : Tween {
-		protected Rigidbody tweener;
-
-		public RigidbodyTween(Rigidbody tweener, float duration) : base(duration) {
-			this.tweener = tweener;
-		}
-
-		public override void Play() {
-			Rewind();
-			tweenManager.AddTween(this);
-		}
 	}
 }
