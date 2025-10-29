@@ -1,6 +1,8 @@
 using System;
+using Frolics.Tweens.Core;
+using Frolics.Tweens.Pooling;
 
-namespace Frolics.Tweens {
+namespace Frolics.Tweens.Types {
 	/// <summary>
 	/// A generic tween that interpolates a specific property of a target object.
 	/// Avoids closures by storing the target reference and using a strongly typed

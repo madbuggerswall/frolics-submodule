@@ -1,9 +1,9 @@
 using System;
 using Frolics.Tweens.Easing;
+using Frolics.Tweens.Pooling;
 using UnityEngine;
 
-
-namespace Frolics.Tweens {
+namespace Frolics.Tweens.Core {
 	// TODO Sequence : ISequence
 	public abstract class Tween {
 		private Action onCompleteCallback;

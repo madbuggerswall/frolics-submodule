@@ -1,39 +1,22 @@
 using System.Collections.Generic;
+using Frolics.Tweens.Factory;
+using Frolics.Tweens.Pooling;
+using Frolics.Utilities;
 using UnityEngine;
 
-namespace Frolics.Tweens {
-	public abstract class SingletonMono<T> : MonoBehaviour where T : MonoBehaviour {
-		private static T instance;
-
-		protected virtual void Awake() {
-			AssetSingleton();
-		}
-
-		private void AssetSingleton() {
-			if (instance != null && instance != this) {
-				Destroy(gameObject);
-				return;
-			}
-
-			instance = this as T;
-			DontDestroyOnLoad(gameObject);
-		}
-
-		public static T GetInstance() => instance;
-	}
-
-	public class TweenManager : SingletonMono<TweenManager> {
+namespace Frolics.Tweens.Core {
+	internal class TweenManager : SingletonMono<TweenManager> {
 		private List<Tween> tweens;
 		private List<Tween> rigidbodyTweens;
-
-		private TweenPool tweenPool;
+		
+		private ITweenPool tweenPool;
 		private TweenFactory tweenFactory;
 
 		protected override void Awake() {
 			base.Awake();
-			
+
 			tweenPool = new TweenPool();
-			tweenFactory = new TweenFactory(tweenPool);
+			tweenFactory = new TweenFactory(tweenPool, AddTween);
 		}
 
 		private void Update() {
@@ -44,7 +27,7 @@ namespace Frolics.Tweens {
 			UpdateTweens(rigidbodyTweens);
 		}
 
-		internal void AddTween(Tween tween) {
+		private void AddTween(Tween tween) {
 			// TODO check if the target is a RigidBody
 			tweens.Add(tween);
 		}
@@ -58,7 +41,7 @@ namespace Frolics.Tweens {
 					tween.UpdateProgress(Time.deltaTime);
 				} else {
 					tweens[i].Recycle(tweenPool);
-					
+
 					int lastIndex = tweens.Count - 1;
 					tweens[i] = tweens[lastIndex];
 					tweens.RemoveAt(lastIndex);

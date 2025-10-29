@@ -1,6 +1,8 @@
+using Frolics.Tweens.Core;
+using Frolics.Tweens.Pooling;
 using UnityEngine;
 
-namespace Frolics.Tweens.TransformTweens {
+namespace Frolics.Tweens.Types {
 	internal class RotateAroundTween : Tween {
 		private Transform tweener;
 		private Vector3 axis;

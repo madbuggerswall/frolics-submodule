@@ -1,16 +1,30 @@
-using Frolics.Tweens.TransformTweens;
+using System;
+using Frolics.Tweens.Core;
+using Frolics.Tweens.Pooling;
+using Frolics.Tweens.Types;
 using UnityEngine;
 
-namespace Frolics.Tweens {
+namespace Frolics.Tweens.Factory {
 	internal class TweenFactory {
 		private readonly ITweenPool tweenPool;
+		private readonly Action<Tween> register;
 
-		internal TweenFactory(ITweenPool tweenPool) => this.tweenPool = tweenPool;
+		internal TweenFactory(ITweenPool tweenPool, Action<Tween> register) {
+			this.tweenPool = tweenPool;
+			this.register = register;
+		}
+
+		private T Create<T>() where T : Tween, new() {
+			T tween = tweenPool.Spawn<T>();
+			register(tween);
+			return tween;
+		}
 
 		#region Transform Tweens
 
 		internal PropertyTween<Transform, Vector3> TweenPosition(Transform tweener, Vector3 target, float duration) {
-			var propertyTween = tweenPool.Spawn<PropertyTween<Transform, Vector3>>();
+			// var propertyTween = tweenPool.Spawn<PropertyTween<Transform, Vector3>>();
+			var propertyTween = Create<PropertyTween<Transform, Vector3>>();
 
 			propertyTween.Configure(
 				tweener: tweener,

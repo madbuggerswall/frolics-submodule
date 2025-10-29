@@ -1,3 +1,5 @@
+using Frolics.Tweens.Core;
+using Frolics.Tweens.Factory;
 using UnityEngine;
 
 namespace Frolics.Tweens.Extensions {

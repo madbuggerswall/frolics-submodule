@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Frolics.Tweens {
+namespace Frolics.Tweens.Pooling {
 	internal class TweenPool : ITweenPool {
 		private readonly Dictionary<System.Type, IGenericTweenPool> poolDictionary = new();
 

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using Frolics.Tweens.Core;
 
-namespace Frolics.Tweens {
+namespace Frolics.Tweens.Pooling {
 	internal class GenericTweenPool<T> : IGenericTweenPool where T : Tween, new() {
 		private readonly Stack<T> stack = new();
 
