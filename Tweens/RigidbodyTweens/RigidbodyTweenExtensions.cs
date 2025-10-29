@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace Frolics.Tweens.RigidbodyTweens {
 	public static class RigidbodyTweenExtensions {
+		// TODO Convert these to RigidbodyTween
 		public static PropertyTween<Rigidbody, Vector3> PlayPosition(
 			this Rigidbody rb,
 			Vector3 target,
@@ -11,7 +12,7 @@ namespace Frolics.Tweens.RigidbodyTweens {
 				rb,
 				getter: r => r.position,
 				setter: (r, v) => r.MovePosition(v),
-				end: target,
+				target: target,
 				duration: duration,
 				lerp: Vector3.Lerp
 			);
@@ -26,7 +27,7 @@ namespace Frolics.Tweens.RigidbodyTweens {
 				rb,
 				getter: r => r.rotation,
 				setter: (r, q) => r.MoveRotation(q),
-				end: target,
+				target: target,
 				duration: duration,
 				lerp: Quaternion.Lerp
 			);

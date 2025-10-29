@@ -11,7 +11,7 @@ namespace Frolics.Tweens.RectTransformTweens {
 				rt,
 				getter: r => r.anchoredPosition,
 				setter: (r, v) => r.anchoredPosition = v,
-				end: target,
+				target: target,
 				duration: duration,
 				lerp: Vector2.Lerp
 			);
@@ -26,7 +26,7 @@ namespace Frolics.Tweens.RectTransformTweens {
 				rt,
 				getter: r => r.localScale,
 				setter: (r, v) => r.localScale = v,
-				end: target,
+				target: target,
 				duration: duration,
 				lerp: Vector3.Lerp
 			);
@@ -41,7 +41,7 @@ namespace Frolics.Tweens.RectTransformTweens {
 				rt,
 				getter: r => r.eulerAngles,
 				setter: (r, v) => r.eulerAngles = v,
-				end: target,
+				target: target,
 				duration: duration,
 				lerp: Vector3.Lerp
 			);

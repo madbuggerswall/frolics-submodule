@@ -8,10 +8,10 @@ namespace Frolics.Tweens.TransformTweens {
 			float duration
 		) {
 			return new PropertyTween<Transform, Vector3>(
-				target: tweener,
+				tweener: tweener,
 				getter: t => t.position,
 				setter: (t, v) => t.position = v,
-				end: target,
+				target: target,
 				duration: duration,
 				lerp: Vector3.Lerp
 			);
@@ -23,10 +23,10 @@ namespace Frolics.Tweens.TransformTweens {
 			float duration
 		) {
 			return new PropertyTween<Transform, float>(
-				target: tweener,
+				tweener: tweener,
 				getter: t => t.position.x,
 				setter: (t, x) => t.position = new Vector3(x, t.position.y, t.position.z),
-				end: targetX,
+				target: targetX,
 				duration: duration,
 				lerp: Mathf.Lerp
 			);
@@ -38,10 +38,10 @@ namespace Frolics.Tweens.TransformTweens {
 			float duration
 		) {
 			return new PropertyTween<Transform, float>(
-				target: tweener,
+				tweener: tweener,
 				getter: t => t.position.y,
 				setter: (t, y) => t.position = new Vector3(t.position.x, y, t.position.z),
-				end: targetX,
+				target: targetX,
 				duration: duration,
 				lerp: Mathf.Lerp
 			);
@@ -53,10 +53,10 @@ namespace Frolics.Tweens.TransformTweens {
 			float duration
 		) {
 			return new PropertyTween<Transform, float>(
-				target: tweener,
+				tweener: tweener,
 				getter: t => t.position.z,
 				setter: (t, z) => t.position = new Vector3(t.position.x, t.position.y, z),
-				end: targetX,
+				target: targetX,
 				duration: duration,
 				lerp: Mathf.Lerp
 			);
@@ -68,10 +68,10 @@ namespace Frolics.Tweens.TransformTweens {
 			float duration
 		) {
 			return new PropertyTween<Transform, Vector3>(
-				target: tweener,
+				tweener: tweener,
 				getter: t => t.localScale,
 				setter: (t, v) => t.localScale = v,
-				end: target,
+				target: target,
 				duration: duration,
 				lerp: Vector3.Lerp
 			);
@@ -83,10 +83,10 @@ namespace Frolics.Tweens.TransformTweens {
 			float duration
 		) {
 			return new PropertyTween<Transform, Quaternion>(
-				target: tweener,
+				tweener: tweener,
 				getter: t => t.rotation,
 				setter: (t, q) => t.rotation = q,
-				end: target,
+				target: target,
 				duration: duration,
 				lerp: Quaternion.Lerp
 			);

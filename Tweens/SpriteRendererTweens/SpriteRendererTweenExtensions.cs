@@ -11,7 +11,7 @@ namespace Frolics.Tweens.SpriteRendererTweens {
 				spriteRenderer,
 				getter: s => s.color,
 				setter: (s, c) => s.color = c,
-				end: target,
+				target: target,
 				duration: duration,
 				lerp: Color.Lerp
 			);
@@ -30,7 +30,7 @@ namespace Frolics.Tweens.SpriteRendererTweens {
 					c.a = a;
 					s.color = c;
 				},
-				end: targetAlpha,
+				target: targetAlpha,
 				duration: duration,
 				lerp: Mathf.Lerp
 			);

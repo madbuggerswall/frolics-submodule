@@ -7,7 +7,7 @@ namespace Frolics.Tweens.CameraTweens {
 				cam,
 				getter: c => c.orthographicSize,
 				setter: (c, v) => c.orthographicSize = v,
-				end: target,
+				target: target,
 				duration: duration,
 				lerp: Mathf.Lerp
 			);

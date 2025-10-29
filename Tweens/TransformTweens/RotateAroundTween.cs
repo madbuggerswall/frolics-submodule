@@ -2,19 +2,23 @@ using UnityEngine;
 
 namespace Frolics.Tweens.TransformTweens {
 	public class RotateAroundTween : Tween {
-		private readonly Transform tweener;
-		private readonly Vector3 axis;
-		private readonly Vector3 pivot;
-		private readonly (float initial, float target) angle;
+		private Transform tweener;
+		private Vector3 axis;
+		private Vector3 pivot;
+		private (float initial, float target) angle;
 
-		private readonly Vector3 initialDirection;
+		private Vector3 initialDirection;
 
-		public RotateAroundTween(Transform tweener, Vector3 axis, Vector3 pivot, float targetAngle, float duration)
-			: base(duration) {
+		public RotateAroundTween(Transform tweener, Vector3 axis, Vector3 pivot, float targetAngle, float duration) {
+			Configure(tweener, axis, pivot, targetAngle, duration);
+		}
+
+		internal void Configure(Transform tweener, Vector3 axis, Vector3 pivot, float targetAngle, float duration) {
 			this.tweener = tweener;
 			this.axis = axis.normalized;
 			this.pivot = pivot;
 			this.angle.target = targetAngle;
+			this.duration = duration;
 
 			// Store initial direction from pivot to object
 			this.initialDirection = tweener.position - pivot;
