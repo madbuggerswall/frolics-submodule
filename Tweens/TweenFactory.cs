@@ -3,13 +3,13 @@ using UnityEngine;
 
 namespace Frolics.Tweens {
 	internal class TweenFactory {
-		private readonly TweenPool tweenPool;
+		private readonly ITweenPool tweenPool;
 
-		internal TweenFactory(TweenPool tweenPool) => this.tweenPool = tweenPool;
+		internal TweenFactory(ITweenPool tweenPool) => this.tweenPool = tweenPool;
 
 		#region Transform Tweens
 
-		public PropertyTween<Transform, Vector3> TweenPosition(Transform tweener, Vector3 target, float duration) {
+		internal PropertyTween<Transform, Vector3> TweenPosition(Transform tweener, Vector3 target, float duration) {
 			var propertyTween = tweenPool.Spawn<PropertyTween<Transform, Vector3>>();
 
 			propertyTween.Configure(
@@ -24,7 +24,7 @@ namespace Frolics.Tweens {
 			return propertyTween;
 		}
 
-		public PropertyTween<Transform, float> TweenPositionX(Transform tweener, float targetX, float duration) {
+		internal PropertyTween<Transform, float> TweenPositionX(Transform tweener, float targetX, float duration) {
 			var propertyTween = tweenPool.Spawn<PropertyTween<Transform, float>>();
 
 			propertyTween.Configure(
@@ -39,7 +39,7 @@ namespace Frolics.Tweens {
 			return propertyTween;
 		}
 
-		public PropertyTween<Transform, float> TweenPositionY(Transform tweener, float targetY, float duration) {
+		internal PropertyTween<Transform, float> TweenPositionY(Transform tweener, float targetY, float duration) {
 			var propertyTween = tweenPool.Spawn<PropertyTween<Transform, float>>();
 
 			propertyTween.Configure(
@@ -54,7 +54,7 @@ namespace Frolics.Tweens {
 			return propertyTween;
 		}
 
-		public PropertyTween<Transform, float> TweenPositionZ(Transform tweener, float targetX, float duration) {
+		internal PropertyTween<Transform, float> TweenPositionZ(Transform tweener, float targetX, float duration) {
 			var propertyTween = tweenPool.Spawn<PropertyTween<Transform, float>>();
 
 			propertyTween.Configure(
@@ -69,7 +69,7 @@ namespace Frolics.Tweens {
 			return propertyTween;
 		}
 
-		public PropertyTween<Transform, Vector3> TweenLocalScale(Transform tweener, Vector3 target, float duration) {
+		internal PropertyTween<Transform, Vector3> TweenLocalScale(Transform tweener, Vector3 target, float duration) {
 			var propertyTween = tweenPool.Spawn<PropertyTween<Transform, Vector3>>();
 
 			propertyTween.Configure(
@@ -84,7 +84,7 @@ namespace Frolics.Tweens {
 			return propertyTween;
 		}
 
-		public PropertyTween<Transform, Quaternion> TweenRotation(
+		internal PropertyTween<Transform, Quaternion> TweenRotation(
 			Transform tweener,
 			Quaternion target,
 			float duration
@@ -103,7 +103,7 @@ namespace Frolics.Tweens {
 			return propertyTween;
 		}
 
-		public RotateAroundTween TweenRotateAround(
+		internal RotateAroundTween TweenRotateAround(
 			Transform tweener,
 			Vector3 axis,
 			Vector3 pivot,
@@ -119,7 +119,7 @@ namespace Frolics.Tweens {
 
 		#region Rigidbody Tweens
 
-		public PropertyTween<Rigidbody, Vector3> TweenPosition(Rigidbody rb, Vector3 target, float duration) {
+		internal PropertyTween<Rigidbody, Vector3> TweenPosition(Rigidbody rb, Vector3 target, float duration) {
 			var propertyTween = tweenPool.Spawn<PropertyTween<Rigidbody, Vector3>>();
 
 			propertyTween.Configure(
@@ -134,7 +134,7 @@ namespace Frolics.Tweens {
 			return propertyTween;
 		}
 
-		public PropertyTween<Rigidbody, Quaternion> TweenRotation(Rigidbody rb, Quaternion target, float duration) {
+		internal PropertyTween<Rigidbody, Quaternion> TweenRotation(Rigidbody rb, Quaternion target, float duration) {
 			var propertyTween = tweenPool.Spawn<PropertyTween<Rigidbody, Quaternion>>();
 
 			propertyTween.Configure(
@@ -153,7 +153,7 @@ namespace Frolics.Tweens {
 
 		#region RectTransform Tweens
 
-		public PropertyTween<RectTransform, Vector2> TweenAnchoredPosition(
+		internal PropertyTween<RectTransform, Vector2> TweenAnchoredPosition(
 			RectTransform rt,
 			Vector2 target,
 			float duration
@@ -172,7 +172,11 @@ namespace Frolics.Tweens {
 			return propertyTween;
 		}
 
-		public PropertyTween<RectTransform, Vector3> TweenLocalScale(RectTransform rt, Vector3 target, float duration) {
+		internal PropertyTween<RectTransform, Vector3> TweenLocalScale(
+			RectTransform rt,
+			Vector3 target,
+			float duration
+		) {
 			var propertyTween = tweenPool.Spawn<PropertyTween<RectTransform, Vector3>>();
 
 			propertyTween.Configure(
@@ -187,7 +191,7 @@ namespace Frolics.Tweens {
 			return propertyTween;
 		}
 
-		public PropertyTween<RectTransform, Vector3> TweenEulerAngles(
+		internal PropertyTween<RectTransform, Vector3> TweenEulerAngles(
 			RectTransform rt,
 			Vector3 target,
 			float duration
@@ -210,7 +214,7 @@ namespace Frolics.Tweens {
 
 		#region Camera Tweens
 
-		public PropertyTween<Camera, float> TweenOrthoSize(Camera cam, float target, float duration) {
+		internal PropertyTween<Camera, float> TweenOrthoSize(Camera cam, float target, float duration) {
 			var propertyTween = tweenPool.Spawn<PropertyTween<Camera, float>>();
 
 			propertyTween.Configure(
@@ -229,7 +233,7 @@ namespace Frolics.Tweens {
 
 		#region SpriteRenderer Tweens
 
-		public PropertyTween<SpriteRenderer, Color> TweenColor(SpriteRenderer sr, Color target, float duration) {
+		internal PropertyTween<SpriteRenderer, Color> TweenColor(SpriteRenderer sr, Color target, float duration) {
 			var propertyTween = tweenPool.Spawn<PropertyTween<SpriteRenderer, Color>>();
 
 			propertyTween.Configure(
@@ -244,7 +248,7 @@ namespace Frolics.Tweens {
 			return propertyTween;
 		}
 
-		public PropertyTween<SpriteRenderer, float> TweenAlpha(SpriteRenderer sr, float targetAlpha, float duration) {
+		internal PropertyTween<SpriteRenderer, float> TweenAlpha(SpriteRenderer sr, float targetAlpha, float duration) {
 			var propertyTween = tweenPool.Spawn<PropertyTween<SpriteRenderer, float>>();
 
 			propertyTween.Configure(

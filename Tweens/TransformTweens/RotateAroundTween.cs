@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace Frolics.Tweens.TransformTweens {
-	public class RotateAroundTween : Tween {
+	internal class RotateAroundTween : Tween {
 		private Transform tweener;
 		private Vector3 axis;
 		private Vector3 pivot;
@@ -11,7 +11,7 @@ namespace Frolics.Tweens.TransformTweens {
 
 		public RotateAroundTween() { }
 
-		public RotateAroundTween(Transform tweener, Vector3 axis, Vector3 pivot, float targetAngle, float duration) {
+		internal RotateAroundTween(Transform tweener, Vector3 axis, Vector3 pivot, float targetAngle, float duration) {
 			Configure(tweener, axis, pivot, targetAngle, duration);
 		}
 

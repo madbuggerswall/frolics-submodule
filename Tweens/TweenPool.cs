@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 
 namespace Frolics.Tweens {
-	public class TweenPool : ITweenPool {
+	internal class TweenPool : ITweenPool {
 		private readonly Dictionary<System.Type, IGenericTweenPool> poolDictionary = new();
 
-		public T Spawn<T>() where T : Tween, new() {
+		T ITweenPool.Spawn<T>() {
 			if (!poolDictionary.TryGetValue(typeof(T), out IGenericTweenPool pool)) {
 				pool = new GenericTweenPool<T>();
 				poolDictionary.Add(typeof(T), pool);
@@ -13,7 +13,7 @@ namespace Frolics.Tweens {
 			return (T) pool.Spawn();
 		}
 
-		public void Despawn<T>(T tween) where T : Tween, new() {
+		void ITweenPool.Despawn<T>(T tween) {
 			if (!poolDictionary.TryGetValue(typeof(T), out IGenericTweenPool pool)) {
 				pool = new GenericTweenPool<T>();
 				poolDictionary.Add(typeof(T), pool);
