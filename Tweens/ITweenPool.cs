@@ -1,6 +1,6 @@
 namespace Frolics.Tweens {
-	public interface ITweenPool<T> where T : ITween {
-		T Spawn();
-		void Despawn(T tween);
+	public interface ITweenPool {
+		T Spawn<T>() where T : ITween, new();
+		void Despawn<T>(T tween) where T : ITween, new();
 	}
 }

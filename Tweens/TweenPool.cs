@@ -1,21 +1,21 @@
 using System.Collections.Generic;
 
 namespace Frolics.Tweens {
-	public class TweenPool {
-		private readonly Dictionary<System.Type, ITweenPool<Tween>> poolDictionary = new();
+	public class TweenPool : ITweenPool {
+		private readonly Dictionary<System.Type, IGenericTweenPool> poolDictionary = new();
 
-		public T Spawn<T>() where T : Tween {
-			if (!poolDictionary.TryGetValue(typeof(T), out ITweenPool<Tween> pool)) {
-				pool = new GenericTweenPool<Tween>();
+		public T Spawn<T>() where T : ITween, new() {
+			if (!poolDictionary.TryGetValue(typeof(T), out IGenericTweenPool pool)) {
+				pool = new GenericTweenPool<T>();
 				poolDictionary.Add(typeof(T), pool);
 			}
 
-			return pool.Spawn() as T;
+			return (T) pool.Spawn();
 		}
 
-		public void Despawn<T>(T tween) where T : Tween {
-			if (!poolDictionary.TryGetValue(typeof(T), out ITweenPool<Tween> pool)) {
-				pool = new GenericTweenPool<Tween>();
+		public void Despawn<T>(T tween) where T : ITween, new() {
+			if (!poolDictionary.TryGetValue(typeof(T), out IGenericTweenPool pool)) {
+				pool = new GenericTweenPool<T>();
 				poolDictionary.Add(typeof(T), pool);
 			}
 

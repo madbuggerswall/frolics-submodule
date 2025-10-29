@@ -1,10 +1,16 @@
 using System.Collections.Generic;
 
 namespace Frolics.Tweens {
-	public class GenericTweenPool<T> : ITweenPool<T> where T : ITween, new() {
+	public class GenericTweenPool<T> : IGenericTweenPool where T : ITween, new() {
 		private readonly Stack<T> stack = new();
 
-		public T Spawn() => stack.Count == 0 ? new T() : stack.Pop();
-		public void Despawn(T tween) => stack.Push(tween);
+		public ITween Spawn() {
+			return stack.Count == 0 ? new T() : stack.Pop();
+		}
+
+		public void Despawn(ITween tween) {
+			tween.Reset();
+			stack.Push((T) tween);
+		}
 	}
 }

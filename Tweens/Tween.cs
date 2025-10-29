@@ -25,6 +25,10 @@ namespace Frolics.Tweens {
 			easeFunction = Ease.Get(Ease.Type.Linear);
 		}
 
+		public void Recycle(ITweenPool pool) {
+			pool.Despawn(this);
+		}
+
 		public void Play() {
 			// IDEA Fire an event or set a bool flag 
 		}

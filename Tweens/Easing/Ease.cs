@@ -26,35 +26,7 @@ namespace Frolics.Tweens.Easing {
 			OutCirc,
 			InOutCirc
 		}
-
-		public static float Evaluate(Type type, float time) {
-			return type switch {
-				Type.Linear => EaseFunction.Linear(time),
-				Type.InQuad => EaseFunction.InQuad(time),
-				Type.OutQuad => EaseFunction.OutQuad(time),
-				Type.InOutQuad => EaseFunction.InOutQuad(time),
-				Type.InCubic => EaseFunction.InCubic(time),
-				Type.OutCubic => EaseFunction.OutCubic(time),
-				Type.InOutCubic => EaseFunction.InOutCubic(time),
-				Type.InQuart => EaseFunction.InQuart(time),
-				Type.OutQuart => EaseFunction.OutQuart(time),
-				Type.InOutQuart => EaseFunction.InOutQuart(time),
-				Type.InQuint => EaseFunction.InQuint(time),
-				Type.OutQuint => EaseFunction.OutQuint(time),
-				Type.InOutQuint => EaseFunction.InOutQuint(time),
-				Type.InSine => EaseFunction.InSine(time),
-				Type.OutSine => EaseFunction.OutSine(time),
-				Type.InOutSine => EaseFunction.InOutSine(time),
-				Type.InExpo => EaseFunction.InExpo(time),
-				Type.OutExpo => EaseFunction.OutExpo(time),
-				Type.InOutExpo => EaseFunction.InOutExpo(time),
-				Type.InCirc => EaseFunction.InCirc(time),
-				Type.OutCirc => EaseFunction.OutCirc(time),
-				Type.InOutCirc => EaseFunction.InOutCirc(time),
-				_ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-			};
-		}
-
+		
 		public static Func<float, float> Get(Type type) {
 			return type switch {
 				Type.Linear => EaseFunction.Linear,

@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Frolics.Tweens {
 	public interface ITween {
 		void Reset();
+		void Recycle(ITweenPool pool);
 
 		void Play();
 		void Stop(bool invokeCallback = false);
