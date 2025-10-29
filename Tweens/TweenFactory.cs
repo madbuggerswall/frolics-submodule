@@ -3,8 +3,10 @@ using UnityEngine;
 
 namespace Frolics.Tweens {
 	internal class TweenFactory {
-		private readonly TweenPool tweenPool = new();
-		
+		private readonly TweenPool tweenPool;
+
+		internal TweenFactory(TweenPool tweenPool) => this.tweenPool = tweenPool;
+
 		#region Transform Tweens
 
 		public PropertyTween<Transform, Vector3> TweenPosition(Transform tweener, Vector3 target, float duration) {
@@ -37,14 +39,14 @@ namespace Frolics.Tweens {
 			return propertyTween;
 		}
 
-		public PropertyTween<Transform, float> TweenPositionY(Transform tweener, float targetX, float duration) {
+		public PropertyTween<Transform, float> TweenPositionY(Transform tweener, float targetY, float duration) {
 			var propertyTween = tweenPool.Spawn<PropertyTween<Transform, float>>();
 
 			propertyTween.Configure(
 				tweener: tweener,
 				getter: t => t.position.y,
 				setter: (t, y) => t.position = new Vector3(t.position.x, y, t.position.z),
-				target: targetX,
+				target: targetY,
 				duration: duration,
 				lerp: Mathf.Lerp
 			);
@@ -101,7 +103,7 @@ namespace Frolics.Tweens {
 			return propertyTween;
 		}
 
-		public RotateAroundTween PlayRotateAround(
+		public RotateAroundTween TweenRotateAround(
 			Transform tweener,
 			Vector3 axis,
 			Vector3 pivot,
@@ -222,7 +224,6 @@ namespace Frolics.Tweens {
 
 			return propertyTween;
 		}
-		
 
 		#endregion
 

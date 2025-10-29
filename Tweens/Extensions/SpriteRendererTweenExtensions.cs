@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace Frolics.Tweens.SpriteRendererTweens {
+namespace Frolics.Tweens.Extensions {
 	public static class SpriteRendererTweenExtensions {
-		public static PropertyTween<SpriteRenderer, Color> TweenColor(
+		public static Tween TweenColor(
 			this SpriteRenderer spriteRenderer,
 			Color target,
 			float duration
@@ -10,7 +10,7 @@ namespace Frolics.Tweens.SpriteRendererTweens {
 			return TweenManager.GetInstance().GetTweenFactory().TweenColor(spriteRenderer, target, duration);
 		}
 
-		public static PropertyTween<SpriteRenderer, float> TweenAlpha(
+		public static Tween TweenAlpha(
 			this SpriteRenderer spriteRenderer,
 			float targetAlpha,
 			float duration

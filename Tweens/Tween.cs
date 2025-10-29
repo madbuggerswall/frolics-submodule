@@ -5,18 +5,21 @@ using UnityEngine;
 
 namespace Frolics.Tweens {
 	// TODO Sequence : ISequence
-	public class Tween : ITween {
+	public abstract class Tween {
 		private Action onCompleteCallback;
 		private Func<float, float> easeFunction;
 
-		protected float normalizedTime;
 		private float elapsedTime;
+		protected float normalizedTime;
 		protected float duration;
 
-		public Tween() => Reset();
+		protected Tween() => Reset();
 
-		// ITween
-		public void Reset() {
+		protected abstract void UpdateTween();
+		protected abstract void SampleInitialState();
+		internal abstract void Recycle(ITweenPool pool);
+
+		internal void Reset() {
 			elapsedTime = 0;
 			normalizedTime = 0;
 			duration = 1f;
@@ -25,10 +28,24 @@ namespace Frolics.Tweens {
 			easeFunction = Ease.Get(Ease.Type.Linear);
 		}
 
-		public void Recycle(ITweenPool pool) {
-			pool.Despawn(this);
-		}
+		internal void UpdateProgress(float deltaTime) {
+			elapsedTime += deltaTime;
+			normalizedTime = easeFunction(Mathf.Clamp01(elapsedTime / duration));
 
+			UpdateTween();
+
+			// IDEA Callback can be called from TweenManager
+			if (normalizedTime >= 1)
+				onCompleteCallback?.Invoke();
+		}
+		
+		internal bool IsCompleted() => normalizedTime >= 1;
+
+		// TODO This is the same with !IsCompleted, instead check the play bool
+		internal bool IsPlaying() => normalizedTime is > 0 and < 1;
+
+
+		// Interface
 		public void Play() {
 			// IDEA Fire an event or set a bool flag 
 		}
@@ -81,24 +98,5 @@ namespace Frolics.Tweens {
 			// IDEA Check the first item and continue to the next one once the call time is reached
 			throw new NotImplementedException();
 		}
-
-
-		// Tween operations
-		internal void UpdateProgress(float deltaTime) {
-			elapsedTime += deltaTime;
-			normalizedTime = easeFunction(Mathf.Clamp01(elapsedTime / duration));
-
-			UpdateTween();
-
-			// IDEA Callback can be called from TweenManager
-			if (normalizedTime >= 1)
-				onCompleteCallback?.Invoke();
-		}
-
-		internal bool IsCompleted() { return normalizedTime >= 1; }
-		internal bool IsPlaying() { return normalizedTime is > 0 and < 1; }
-
-		protected virtual void UpdateTween() { }
-		protected virtual void SampleInitialState() { }
 	}
 }

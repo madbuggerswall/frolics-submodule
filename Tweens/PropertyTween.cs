@@ -6,7 +6,7 @@ namespace Frolics.Tweens {
 	/// Avoids closures by storing the target reference and using a strongly typed
 	/// apply function.
 	/// </summary>
-	public sealed class PropertyTween<TTweener, TValue> : Tween where TTweener : UnityEngine.Object {
+	internal sealed class PropertyTween<TTweener, TValue> : Tween where TTweener : UnityEngine.Object {
 		private TTweener tweener;
 
 		private Func<TTweener, TValue> getter;
@@ -16,7 +16,9 @@ namespace Frolics.Tweens {
 		private TValue initial;
 		private TValue target;
 
-		public PropertyTween(
+		public PropertyTween() { }
+
+		internal PropertyTween(
 			TTweener tweener,
 			Func<TTweener, TValue> getter,
 			Action<TTweener, TValue> setter,
@@ -52,6 +54,11 @@ namespace Frolics.Tweens {
 
 		protected override void SampleInitialState() {
 			initial = getter(tweener);
+		}
+
+		internal override void Recycle(ITweenPool pool) {
+			Reset();
+			pool.Despawn(this);
 		}
 	}
 }

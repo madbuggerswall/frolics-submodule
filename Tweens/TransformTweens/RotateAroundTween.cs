@@ -9,6 +9,8 @@ namespace Frolics.Tweens.TransformTweens {
 
 		private Vector3 initialDirection;
 
+		public RotateAroundTween() { }
+
 		public RotateAroundTween(Transform tweener, Vector3 axis, Vector3 pivot, float targetAngle, float duration) {
 			Configure(tweener, axis, pivot, targetAngle, duration);
 		}
@@ -41,6 +43,11 @@ namespace Frolics.Tweens.TransformTweens {
 
 		protected override void SampleInitialState() {
 			throw new System.NotImplementedException();
+		}
+
+		internal override void Recycle(ITweenPool pool) {
+			Reset();
+			pool.Despawn(this);
 		}
 	}
 }

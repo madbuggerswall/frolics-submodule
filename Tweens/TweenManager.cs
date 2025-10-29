@@ -26,11 +26,14 @@ namespace Frolics.Tweens {
 		private List<Tween> tweens;
 		private List<Tween> rigidbodyTweens;
 
+		private TweenPool tweenPool;
 		private TweenFactory tweenFactory;
 
 		protected override void Awake() {
 			base.Awake();
-			tweenFactory = new TweenFactory();
+			
+			tweenPool = new TweenPool();
+			tweenFactory = new TweenFactory(tweenPool);
 		}
 
 		private void Update() {
@@ -42,7 +45,7 @@ namespace Frolics.Tweens {
 		}
 
 		internal void AddTween(Tween tween) {
-			// TODO
+			// TODO check if the target is a RigidBody
 			tweens.Add(tween);
 		}
 
@@ -54,6 +57,8 @@ namespace Frolics.Tweens {
 				if (!tween.IsCompleted()) {
 					tween.UpdateProgress(Time.deltaTime);
 				} else {
+					tweens[i].Recycle(tweenPool);
+					
 					int lastIndex = tweens.Count - 1;
 					tweens[i] = tweens[lastIndex];
 					tweens.RemoveAt(lastIndex);

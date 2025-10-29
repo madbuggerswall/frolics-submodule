@@ -1,6 +1,6 @@
 namespace Frolics.Tweens {
 	public interface IGenericTweenPool {
-		ITween Spawn();
-		void Despawn(ITween tween);
+		Tween Spawn();
+		void Despawn(Tween tween);
 	}
 }
