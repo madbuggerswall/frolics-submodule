@@ -7,14 +7,7 @@ namespace Frolics.Tweens.RectTransformTweens {
 			Vector2 target,
 			float duration
 		) {
-			return new PropertyTween<RectTransform, Vector2>(
-				rt,
-				getter: r => r.anchoredPosition,
-				setter: (r, v) => r.anchoredPosition = v,
-				target: target,
-				duration: duration,
-				lerp: Vector2.Lerp
-			);
+			return TweenManager.GetInstance().GetTweenFactory().TweenAnchoredPosition(rt, target, duration);
 		}
 
 		public static PropertyTween<RectTransform, Vector3> TweenLocalScale(
@@ -22,14 +15,7 @@ namespace Frolics.Tweens.RectTransformTweens {
 			Vector3 target,
 			float duration
 		) {
-			return new PropertyTween<RectTransform, Vector3>(
-				rt,
-				getter: r => r.localScale,
-				setter: (r, v) => r.localScale = v,
-				target: target,
-				duration: duration,
-				lerp: Vector3.Lerp
-			);
+			return TweenManager.GetInstance().GetTweenFactory().TweenLocalScale(rt, target, duration);
 		}
 
 		public static PropertyTween<RectTransform, Vector3> TweenEulerAngles(
@@ -37,14 +23,7 @@ namespace Frolics.Tweens.RectTransformTweens {
 			Vector3 target,
 			float duration
 		) {
-			return new PropertyTween<RectTransform, Vector3>(
-				rt,
-				getter: r => r.eulerAngles,
-				setter: (r, v) => r.eulerAngles = v,
-				target: target,
-				duration: duration,
-				lerp: Vector3.Lerp
-			);
+			return TweenManager.GetInstance().GetTweenFactory().TweenEulerAngles(rt, target, duration);
 		}
 	}
 }

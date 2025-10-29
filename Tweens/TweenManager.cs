@@ -1,34 +1,54 @@
+using System;
 using System.Collections.Generic;
 using Frolics.Contexts;
 using UnityEngine;
 
 namespace Frolics.Tweens {
-	public class TweenManager : MonoBehaviour, IInitializable {
-		private List<Tween> tweens;
-		private List<RigidbodyTween> rigidbodyTweens;
+	public abstract class SingletonMono<T> : MonoBehaviour where T : MonoBehaviour {
+		private static T instance;
 
-		public void Initialize() {
-			tweens = new List<Tween>();
-			rigidbodyTweens = new List<RigidbodyTween>();
+		protected virtual void Awake() {
+			AssetSingleton();
+		}
+
+		private void AssetSingleton() {
+			if (instance != null && instance != this) {
+				Destroy(gameObject);
+				return;
+			}
+
+			instance = this as T;
+			DontDestroyOnLoad(gameObject);
+		}
+
+		public static T GetInstance() => instance;
+	}
+
+	public class TweenManager : SingletonMono<TweenManager> {
+		private List<Tween> tweens;
+		private List<Tween> rigidbodyTweens;
+
+		private TweenFactory tweenFactory;
+
+		protected override void Awake() {
+			base.Awake();
+			tweenFactory = new TweenFactory();
 		}
 
 		private void Update() {
-			UpdateAllTweens();
+			UpdateTweens(tweens);
 		}
 
 		private void FixedUpdate() {
-			UpdateAllRigidbodyTweens();
+			UpdateTweens(rigidbodyTweens);
 		}
 
 		internal void AddTween(Tween tween) {
+			// TODO
 			tweens.Add(tween);
 		}
 
-		internal void AddTween(RigidbodyTween tween) {
-			rigidbodyTweens.Add(tween);
-		}
-
-		private void UpdateAllTweens() {
+		private void UpdateTweens(List<Tween> tweens) {
 			for (int i = tweens.Count - 1; i >= 0; i--) {
 				Tween tween = tweens[i];
 
@@ -43,19 +63,6 @@ namespace Frolics.Tweens {
 			}
 		}
 
-		private void UpdateAllRigidbodyTweens() {
-			for (int i = rigidbodyTweens.Count - 1; i >= 0; i--) {
-				RigidbodyTween tween = rigidbodyTweens[i];
-
-				// Remove completed tween efficiently by swapping with last and popping
-				if (!tween.IsCompleted()) {
-					tween.UpdateProgress(Time.deltaTime);
-				} else {
-					int lastIndex = rigidbodyTweens.Count - 1;
-					rigidbodyTweens[i] = rigidbodyTweens[lastIndex];
-					rigidbodyTweens.RemoveAt(lastIndex);
-				}
-			}
-		}
+		internal TweenFactory GetTweenFactory() => tweenFactory;
 	}
 }

@@ -8,14 +8,7 @@ namespace Frolics.Tweens.RigidbodyTweens {
 			Vector3 target,
 			float duration
 		) {
-			return new PropertyTween<Rigidbody, Vector3>(
-				rb,
-				getter: r => r.position,
-				setter: (r, v) => r.MovePosition(v),
-				target: target,
-				duration: duration,
-				lerp: Vector3.Lerp
-			);
+			return TweenManager.GetInstance().GetTweenFactory().TweenPosition(rb, target, duration);
 		}
 
 		public static PropertyTween<Rigidbody, Quaternion> PlayRotation(
@@ -23,14 +16,7 @@ namespace Frolics.Tweens.RigidbodyTweens {
 			Quaternion target,
 			float duration
 		) {
-			return new PropertyTween<Rigidbody, Quaternion>(
-				rb,
-				getter: r => r.rotation,
-				setter: (r, q) => r.MoveRotation(q),
-				target: target,
-				duration: duration,
-				lerp: Quaternion.Lerp
-			);
+			return TweenManager.GetInstance().GetTweenFactory().TweenRotation(rb, target, duration);
 		}
 	}
 }
