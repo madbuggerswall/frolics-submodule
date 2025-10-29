@@ -2,10 +2,11 @@ using Frolics.Tweens.TransformTweens;
 using UnityEngine;
 
 namespace Frolics.Tweens {
-	public class TweenFactory {
+	internal class TweenFactory {
 		private readonly TweenPool tweenPool = new();
+		
+		#region Transform Tweens
 
-		// Transform
 		public PropertyTween<Transform, Vector3> TweenPosition(Transform tweener, Vector3 target, float duration) {
 			var propertyTween = tweenPool.Spawn<PropertyTween<Transform, Vector3>>();
 
@@ -112,7 +113,10 @@ namespace Frolics.Tweens {
 			return rotateAroundTween;
 		}
 
-		// Rigidbody
+		#endregion
+
+		#region Rigidbody Tweens
+
 		public PropertyTween<Rigidbody, Vector3> TweenPosition(Rigidbody rb, Vector3 target, float duration) {
 			var propertyTween = tweenPool.Spawn<PropertyTween<Rigidbody, Vector3>>();
 
@@ -143,7 +147,10 @@ namespace Frolics.Tweens {
 			return propertyTween;
 		}
 
-		// Rect Transform
+		#endregion
+
+		#region RectTransform Tweens
+
 		public PropertyTween<RectTransform, Vector2> TweenAnchoredPosition(
 			RectTransform rt,
 			Vector2 target,
@@ -197,7 +204,10 @@ namespace Frolics.Tweens {
 			return propertyTween;
 		}
 
-		// Camera
+		#endregion
+
+		#region Camera Tweens
+
 		public PropertyTween<Camera, float> TweenOrthoSize(Camera cam, float target, float duration) {
 			var propertyTween = tweenPool.Spawn<PropertyTween<Camera, float>>();
 
@@ -212,8 +222,12 @@ namespace Frolics.Tweens {
 
 			return propertyTween;
 		}
+		
 
-		// Sprite Renderer
+		#endregion
+
+		#region SpriteRenderer Tweens
+
 		public PropertyTween<SpriteRenderer, Color> TweenColor(SpriteRenderer sr, Color target, float duration) {
 			var propertyTween = tweenPool.Spawn<PropertyTween<SpriteRenderer, Color>>();
 
@@ -247,5 +261,7 @@ namespace Frolics.Tweens {
 
 			return propertyTween;
 		}
+
+		#endregion
 	}
 }

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace Frolics.Tweens.Easing {
 	public static class Ease {
