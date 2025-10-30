@@ -3,7 +3,7 @@ using Frolics.Tweens.Factory;
 using UnityEngine;
 
 namespace Frolics.Tweens.Extensions {
-	internal static class TransformTweenExtensions {
+	public static class TransformTweenExtensions {
 		public static Tween TweenPosition(this Transform tweener, Vector3 target, float duration) {
 			return TweenManager.GetInstance().GetTweenFactory().TweenPosition(tweener, target, duration);
 		}

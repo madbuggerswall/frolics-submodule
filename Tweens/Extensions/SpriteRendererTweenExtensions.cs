@@ -2,7 +2,7 @@ using Frolics.Tweens.Core;
 using UnityEngine;
 
 namespace Frolics.Tweens.Extensions {
-	internal static class SpriteRendererTweenExtensions {
+	public static class SpriteRendererTweenExtensions {
 		public static Tween TweenColor(
 			this SpriteRenderer spriteRenderer,
 			Color target,

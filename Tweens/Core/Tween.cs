@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Frolics.Tweens.Core {
 	// TODO Sequence : ISequence
 	public abstract class Tween {
-		public enum CycleType { Restart, Yoyo }
+		public enum CycleType { Restart, Reflected }
 
 		private CycleType cycleType;
 		private Action onCompleteCallback;
@@ -63,11 +63,13 @@ namespace Frolics.Tweens.Core {
 			if (elapsedTime - delay <= 0f)
 				return;
 
-			float yoyoTime = (cycleType == CycleType.Yoyo && cyclesCompleted % 2 == 1) ? 1f : 0f;
-			easedTime = easeFunction(Mathf.Clamp01((elapsedTime - delay) / duration) - yoyoTime);
+			// Reflection about the vertical line x=a -> fr(x) = f(2a-x)  
+			float normalizedTime = Mathf.Clamp01((elapsedTime - delay) / duration);
+			bool isReflectionCycle = cycleType == CycleType.Reflected && cyclesCompleted % 2 == 1;
+			easedTime = easeFunction(isReflectionCycle ? 1 - normalizedTime : normalizedTime);
 			UpdateTween(easedTime);
 
-			if (easedTime < 1)
+			if (!IsCycleComplete())
 				return;
 
 			cyclesCompleted++;
@@ -78,6 +80,12 @@ namespace Frolics.Tweens.Core {
 
 			Complete();
 		}
+
+		private bool IsCycleComplete() {
+			bool isReflectionCycle = cycleType == CycleType.Reflected && cyclesCompleted % 2 == 1;
+			return (isReflectionCycle) ? Mathf.Approximately(easedTime, 0f) : Mathf.Approximately(easedTime, 1f);
+		}
+
 
 		internal bool IsCompleted() => isCompleted;
 		internal bool IsStopped() => isStopped;

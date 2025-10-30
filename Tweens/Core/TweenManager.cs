@@ -14,6 +14,9 @@ namespace Frolics.Tweens.Core {
 
 		protected override void Awake() {
 			base.Awake();
+			
+			tweens = new List<Tween>();
+			rigidbodyTweens = new List<Tween>();
 
 			tweenPool = new TweenPool();
 			tweenFactory = new TweenFactory(tweenPool, AddTween);

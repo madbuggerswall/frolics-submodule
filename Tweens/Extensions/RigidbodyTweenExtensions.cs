@@ -2,8 +2,7 @@ using Frolics.Tweens.Core;
 using UnityEngine;
 
 namespace Frolics.Tweens.Extensions {
-	internal static class RigidbodyTweenExtensions {
-		// TODO Convert these to RigidbodyTween
+	public static class RigidbodyTweenExtensions {
 		public static Tween PlayPosition(this Rigidbody rb, Vector3 target, float duration) {
 			return TweenManager.GetInstance().GetTweenFactory().TweenPosition(rb, target, duration);
 		}
