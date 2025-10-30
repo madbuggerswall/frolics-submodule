@@ -14,88 +14,87 @@ namespace Frolics.Tweens.Factory {
 			this.register = register;
 		}
 
-		private T Create<T>() where T : Tween, new() {
-			T tween = tweenPool.Spawn<T>();
-			register(tween);
-			return tween;
-		}
 
 		#region Transform Tweens
 
 		internal PropertyTween<Transform, Vector3> TweenPosition(Transform tweener, Vector3 target, float duration) {
-			// var propertyTween = tweenPool.Spawn<PropertyTween<Transform, Vector3>>();
-			var propertyTween = Create<PropertyTween<Transform, Vector3>>();
+			var tween = tweenPool.Spawn<PropertyTween<Transform, Vector3>>();
 
-			propertyTween.Configure(
+			tween.Configure(
 				tweener: tweener,
-				getter: t => t.position,
-				setter: (t, v) => t.position = v,
 				target: target,
 				duration: duration,
+				getter: t => t.position,
+				setter: (t, v) => t.position = v,
 				lerp: Vector3.Lerp
 			);
 
-			return propertyTween;
+			register(tween);
+			return tween;
 		}
 
 		internal PropertyTween<Transform, float> TweenPositionX(Transform tweener, float targetX, float duration) {
-			var propertyTween = tweenPool.Spawn<PropertyTween<Transform, float>>();
+			var tween = tweenPool.Spawn<PropertyTween<Transform, float>>();
 
-			propertyTween.Configure(
+			tween.Configure(
 				tweener: tweener,
-				getter: t => t.position.x,
-				setter: (t, x) => t.position = new Vector3(x, t.position.y, t.position.z),
 				target: targetX,
 				duration: duration,
+				getter: t => t.position.x,
+				setter: (t, x) => t.position = new Vector3(x, t.position.y, t.position.z),
 				lerp: Mathf.Lerp
 			);
 
-			return propertyTween;
+			register(tween);
+			return tween;
 		}
 
 		internal PropertyTween<Transform, float> TweenPositionY(Transform tweener, float targetY, float duration) {
-			var propertyTween = tweenPool.Spawn<PropertyTween<Transform, float>>();
+			var tween = tweenPool.Spawn<PropertyTween<Transform, float>>();
 
-			propertyTween.Configure(
+			tween.Configure(
 				tweener: tweener,
-				getter: t => t.position.y,
-				setter: (t, y) => t.position = new Vector3(t.position.x, y, t.position.z),
 				target: targetY,
 				duration: duration,
+				getter: t => t.position.y,
+				setter: (t, y) => t.position = new Vector3(t.position.x, y, t.position.z),
 				lerp: Mathf.Lerp
 			);
 
-			return propertyTween;
+			register(tween);
+			return tween;
 		}
 
 		internal PropertyTween<Transform, float> TweenPositionZ(Transform tweener, float targetX, float duration) {
-			var propertyTween = tweenPool.Spawn<PropertyTween<Transform, float>>();
+			var tween = tweenPool.Spawn<PropertyTween<Transform, float>>();
 
-			propertyTween.Configure(
+			tween.Configure(
 				tweener: tweener,
-				getter: t => t.position.z,
-				setter: (t, z) => t.position = new Vector3(t.position.x, t.position.y, z),
 				target: targetX,
 				duration: duration,
+				getter: t => t.position.z,
+				setter: (t, z) => t.position = new Vector3(t.position.x, t.position.y, z),
 				lerp: Mathf.Lerp
 			);
 
-			return propertyTween;
+			register(tween);
+			return tween;
 		}
 
 		internal PropertyTween<Transform, Vector3> TweenLocalScale(Transform tweener, Vector3 target, float duration) {
-			var propertyTween = tweenPool.Spawn<PropertyTween<Transform, Vector3>>();
+			var tween = tweenPool.Spawn<PropertyTween<Transform, Vector3>>();
 
-			propertyTween.Configure(
+			tween.Configure(
 				tweener: tweener,
-				getter: t => t.localScale,
-				setter: (t, v) => t.localScale = v,
 				target: target,
 				duration: duration,
+				getter: t => t.localScale,
+				setter: (t, v) => t.localScale = v,
 				lerp: Vector3.Lerp
 			);
 
-			return propertyTween;
+			register(tween);
+			return tween;
 		}
 
 		internal PropertyTween<Transform, Quaternion> TweenRotation(
@@ -103,18 +102,19 @@ namespace Frolics.Tweens.Factory {
 			Quaternion target,
 			float duration
 		) {
-			var propertyTween = tweenPool.Spawn<PropertyTween<Transform, Quaternion>>();
+			var tween = tweenPool.Spawn<PropertyTween<Transform, Quaternion>>();
 
-			propertyTween.Configure(
+			tween.Configure(
 				tweener: tweener,
-				getter: t => t.rotation,
-				setter: (t, q) => t.rotation = q,
 				target: target,
 				duration: duration,
+				getter: t => t.rotation,
+				setter: (t, q) => t.rotation = q,
 				lerp: Quaternion.Lerp
 			);
 
-			return propertyTween;
+			register(tween);
+			return tween;
 		}
 
 		internal RotateAroundTween TweenRotateAround(
@@ -124,9 +124,11 @@ namespace Frolics.Tweens.Factory {
 			float targetAngle,
 			float duration
 		) {
-			var rotateAroundTween = tweenPool.Spawn<RotateAroundTween>();
-			rotateAroundTween.Configure(tweener, axis, pivot, targetAngle, duration);
-			return rotateAroundTween;
+			var tween = tweenPool.Spawn<RotateAroundTween>();
+			tween.Configure(tweener, axis, pivot, targetAngle, duration);
+
+			register(tween);
+			return tween;
 		}
 
 		#endregion
@@ -134,33 +136,35 @@ namespace Frolics.Tweens.Factory {
 		#region Rigidbody Tweens
 
 		internal PropertyTween<Rigidbody, Vector3> TweenPosition(Rigidbody rb, Vector3 target, float duration) {
-			var propertyTween = tweenPool.Spawn<PropertyTween<Rigidbody, Vector3>>();
+			var tween = tweenPool.Spawn<PropertyTween<Rigidbody, Vector3>>();
 
-			propertyTween.Configure(
+			tween.Configure(
 				rb,
-				getter: r => r.position,
-				setter: (r, v) => r.MovePosition(v),
 				target: target,
 				duration: duration,
+				getter: r => r.position,
+				setter: (r, v) => r.MovePosition(v),
 				lerp: Vector3.Lerp
 			);
 
-			return propertyTween;
+			register(tween);
+			return tween;
 		}
 
 		internal PropertyTween<Rigidbody, Quaternion> TweenRotation(Rigidbody rb, Quaternion target, float duration) {
-			var propertyTween = tweenPool.Spawn<PropertyTween<Rigidbody, Quaternion>>();
+			var tween = tweenPool.Spawn<PropertyTween<Rigidbody, Quaternion>>();
 
-			propertyTween.Configure(
+			tween.Configure(
 				rb,
-				getter: r => r.rotation,
-				setter: (r, q) => r.MoveRotation(q),
 				target: target,
 				duration: duration,
+				getter: r => r.rotation,
+				setter: (r, q) => r.MoveRotation(q),
 				lerp: Quaternion.Lerp
 			);
 
-			return propertyTween;
+			register(tween);
+			return tween;
 		}
 
 		#endregion
@@ -172,18 +176,19 @@ namespace Frolics.Tweens.Factory {
 			Vector2 target,
 			float duration
 		) {
-			var propertyTween = tweenPool.Spawn<PropertyTween<RectTransform, Vector2>>();
+			var tween = tweenPool.Spawn<PropertyTween<RectTransform, Vector2>>();
 
-			propertyTween.Configure(
+			tween.Configure(
 				rt,
-				getter: r => r.anchoredPosition,
-				setter: (r, v) => r.anchoredPosition = v,
 				target: target,
 				duration: duration,
+				getter: r => r.anchoredPosition,
+				setter: (r, v) => r.anchoredPosition = v,
 				lerp: Vector2.Lerp
 			);
 
-			return propertyTween;
+			register(tween);
+			return tween;
 		}
 
 		internal PropertyTween<RectTransform, Vector3> TweenLocalScale(
@@ -191,18 +196,19 @@ namespace Frolics.Tweens.Factory {
 			Vector3 target,
 			float duration
 		) {
-			var propertyTween = tweenPool.Spawn<PropertyTween<RectTransform, Vector3>>();
+			var tween = tweenPool.Spawn<PropertyTween<RectTransform, Vector3>>();
 
-			propertyTween.Configure(
+			tween.Configure(
 				rt,
-				getter: r => r.localScale,
-				setter: (r, v) => r.localScale = v,
 				target: target,
 				duration: duration,
+				getter: r => r.localScale,
+				setter: (r, v) => r.localScale = v,
 				lerp: Vector3.Lerp
 			);
 
-			return propertyTween;
+			register(tween);
+			return tween;
 		}
 
 		internal PropertyTween<RectTransform, Vector3> TweenEulerAngles(
@@ -210,18 +216,19 @@ namespace Frolics.Tweens.Factory {
 			Vector3 target,
 			float duration
 		) {
-			var propertyTween = tweenPool.Spawn<PropertyTween<RectTransform, Vector3>>();
+			var tween = tweenPool.Spawn<PropertyTween<RectTransform, Vector3>>();
 
-			propertyTween.Configure(
+			tween.Configure(
 				rt,
-				getter: r => r.eulerAngles,
-				setter: (r, v) => r.eulerAngles = v,
 				target: target,
 				duration: duration,
+				getter: r => r.eulerAngles,
+				setter: (r, v) => r.eulerAngles = v,
 				lerp: Vector3.Lerp
 			);
 
-			return propertyTween;
+			register(tween);
+			return tween;
 		}
 
 		#endregion
@@ -229,18 +236,19 @@ namespace Frolics.Tweens.Factory {
 		#region Camera Tweens
 
 		internal PropertyTween<Camera, float> TweenOrthoSize(Camera cam, float target, float duration) {
-			var propertyTween = tweenPool.Spawn<PropertyTween<Camera, float>>();
+			var tween = tweenPool.Spawn<PropertyTween<Camera, float>>();
 
-			propertyTween.Configure(
+			tween.Configure(
 				cam,
-				getter: c => c.orthographicSize,
-				setter: (c, v) => c.orthographicSize = v,
 				target: target,
 				duration: duration,
+				getter: c => c.orthographicSize,
+				setter: (c, v) => c.orthographicSize = v,
 				lerp: Mathf.Lerp
 			);
 
-			return propertyTween;
+			register(tween);
+			return tween;
 		}
 
 		#endregion
@@ -248,37 +256,39 @@ namespace Frolics.Tweens.Factory {
 		#region SpriteRenderer Tweens
 
 		internal PropertyTween<SpriteRenderer, Color> TweenColor(SpriteRenderer sr, Color target, float duration) {
-			var propertyTween = tweenPool.Spawn<PropertyTween<SpriteRenderer, Color>>();
+			var tween = tweenPool.Spawn<PropertyTween<SpriteRenderer, Color>>();
 
-			propertyTween.Configure(
+			tween.Configure(
 				sr,
-				getter: s => s.color,
-				setter: (s, c) => s.color = c,
 				target: target,
 				duration: duration,
+				getter: s => s.color,
+				setter: (s, c) => s.color = c,
 				lerp: Color.Lerp
 			);
 
-			return propertyTween;
+			register(tween);
+			return tween;
 		}
 
 		internal PropertyTween<SpriteRenderer, float> TweenAlpha(SpriteRenderer sr, float targetAlpha, float duration) {
-			var propertyTween = tweenPool.Spawn<PropertyTween<SpriteRenderer, float>>();
+			var tween = tweenPool.Spawn<PropertyTween<SpriteRenderer, float>>();
 
-			propertyTween.Configure(
+			tween.Configure(
 				sr,
+				target: targetAlpha,
+				duration: duration,
 				getter: s => s.color.a,
 				setter: (s, a) => {
 					Color c = s.color;
 					c.a = a;
 					s.color = c;
 				},
-				target: targetAlpha,
-				duration: duration,
 				lerp: Mathf.Lerp
 			);
 
-			return propertyTween;
+			register(tween);
+			return tween;
 		}
 
 		#endregion

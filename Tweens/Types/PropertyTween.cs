@@ -22,21 +22,21 @@ namespace Frolics.Tweens.Types {
 
 		internal PropertyTween(
 			TTweener tweener,
-			Func<TTweener, TValue> getter,
-			Action<TTweener, TValue> setter,
 			TValue target,
 			float duration,
+			Func<TTweener, TValue> getter,
+			Action<TTweener, TValue> setter,
 			Func<TValue, TValue, float, TValue> lerp
 		) {
-			Configure(tweener, getter, setter, target, duration, lerp);
+			Configure(tweener, target, duration, getter, setter, lerp);
 		}
 
 		internal void Configure(
 			TTweener tweener,
-			Func<TTweener, TValue> getter,
-			Action<TTweener, TValue> setter,
 			TValue target,
 			float duration,
+			Func<TTweener, TValue> getter,
+			Action<TTweener, TValue> setter,
 			Func<TValue, TValue, float, TValue> lerp
 		) {
 			this.duration = duration;
@@ -50,8 +50,8 @@ namespace Frolics.Tweens.Types {
 			this.target = target;
 		}
 
-		protected override void UpdateTween() {
-			setter(tweener, lerp(initial, target, normalizedTime));
+		protected override void UpdateTween(float easedTime) {
+			setter(tweener, lerp(initial, target, easedTime));
 		}
 
 		protected override void SampleInitialState() {

@@ -28,7 +28,7 @@ namespace Frolics.Tweens.Types {
 			this.initialDirection = tweener.position - pivot;
 		}
 
-		protected override void UpdateTween() {
+		protected override void UpdateTween(float easedTime) {
 			// Current direction from pivot to tweener
 			Vector3 currentDirection = tweener.position - pivot;
 
@@ -36,7 +36,7 @@ namespace Frolics.Tweens.Types {
 			float currentAngle = Vector3.SignedAngle(initialDirection, currentDirection, axis);
 
 			// Target angle at this progress
-			float targetAngle = Mathf.Lerp(angle.initial, angle.target, normalizedTime);
+			float targetAngle = Mathf.Lerp(angle.initial, angle.target, easedTime);
 
 			// Rotate by the delta
 			float deltaAngle = targetAngle - currentAngle;

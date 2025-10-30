@@ -10,18 +10,18 @@ namespace Frolics.Tweens.Core {
 		private Func<float, float> easeFunction;
 
 		private float elapsedTime;
-		protected float normalizedTime;
+		protected float easedTime;
 		protected float duration;
 
 		protected Tween() => Reset();
 
-		protected abstract void UpdateTween();
+		protected abstract void UpdateTween(float easedTime);
 		protected abstract void SampleInitialState();
 		internal abstract void Recycle(ITweenPool pool);
 
 		internal void Reset() {
 			elapsedTime = 0;
-			normalizedTime = 0;
+			easedTime = 0;
 			duration = 1f;
 
 			onCompleteCallback = null;
@@ -30,19 +30,17 @@ namespace Frolics.Tweens.Core {
 
 		internal void UpdateProgress(float deltaTime) {
 			elapsedTime += deltaTime;
-			normalizedTime = easeFunction(Mathf.Clamp01(elapsedTime / duration));
+			easedTime = easeFunction(Mathf.Clamp01(elapsedTime / duration));
+			UpdateTween(easedTime);
 
-			UpdateTween();
-
-			// IDEA Callback can be called from TweenManager
-			if (normalizedTime >= 1)
+			if (easedTime >= 1)
 				onCompleteCallback?.Invoke();
 		}
-		
-		internal bool IsCompleted() => normalizedTime >= 1;
+
+		internal bool IsCompleted() => easedTime >= 1;
 
 		// TODO This is the same with !IsCompleted, instead check the play bool
-		internal bool IsPlaying() => normalizedTime is > 0 and < 1;
+		internal bool IsPlaying() => easedTime is > 0 and < 1;
 
 
 		// Interface
@@ -53,19 +51,15 @@ namespace Frolics.Tweens.Core {
 		// IDEA Stop might add a flag instead
 		// IDEA Complete method would invoke the callback and this wouldn't
 		public void Stop(bool invokeCallback = false) {
-			normalizedTime = 1;
+			easedTime = 1;
 			if (invokeCallback)
 				onCompleteCallback?.Invoke();
 		}
 
 		public void Rewind() {
-			normalizedTime = 0;
+			easedTime = 0;
 			elapsedTime = 0;
 			SampleInitialState();
-		}
-
-		public void SetDuration(float duration) {
-			this.duration = duration;
 		}
 
 		// This might be done by adding an empty tween to a sequence
