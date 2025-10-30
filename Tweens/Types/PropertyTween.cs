@@ -54,10 +54,6 @@ namespace Frolics.Tweens.Types {
 			setter(tweener, lerp(initial, target, easedTime));
 		}
 
-		protected override void SampleInitialState() {
-			initial = getter(tweener);
-		}
-
 		internal override void Recycle(ITweenPool pool) {
 			Reset();
 			pool.Despawn(this);

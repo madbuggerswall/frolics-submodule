@@ -28,7 +28,6 @@ namespace Frolics.Tweens.Core {
 		protected Tween() => Reset();
 
 		protected abstract void UpdateTween(float easedTime);
-		protected abstract void SampleInitialState();
 		internal abstract UnityEngine.Object GetTweener();
 		internal abstract void Recycle(ITweenPool pool);
 
@@ -91,12 +90,6 @@ namespace Frolics.Tweens.Core {
 		public void Complete() {
 			isCompleted = true;
 			onCompleteCallback?.Invoke();
-		}
-
-		public void Rewind() {
-			easedTime = 0;
-			elapsedTime = 0;
-			SampleInitialState();
 		}
 
 		public void SetDelay(float delay) {

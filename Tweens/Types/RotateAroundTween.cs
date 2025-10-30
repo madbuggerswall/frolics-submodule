@@ -43,10 +43,6 @@ namespace Frolics.Tweens.Types {
 			tweener.RotateAround(pivot, axis, deltaAngle);
 		}
 
-		protected override void SampleInitialState() {
-			throw new System.NotImplementedException();
-		}
-
 		internal override void Recycle(ITweenPool pool) {
 			Reset();
 			pool.Despawn(this);
