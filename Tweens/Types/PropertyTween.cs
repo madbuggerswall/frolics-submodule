@@ -62,5 +62,9 @@ namespace Frolics.Tweens.Types {
 			Reset();
 			pool.Despawn(this);
 		}
+
+		protected override UnityEngine.Object GetTweener() {
+			return tweener;
+		}
 	}
 }

@@ -6,54 +6,95 @@ using UnityEngine;
 namespace Frolics.Tweens.Core {
 	// TODO Sequence : ISequence
 	public abstract class Tween {
+		public enum CycleType { Restart, Yoyo }
+
+		private CycleType cycleType;
 		private Action onCompleteCallback;
 		private Func<float, float> easeFunction;
 
+		private bool includeDelay;
+		private float delay;
+
+		private int cyclesCompleted;
+		private int cycleCount;
+
 		private float elapsedTime;
-		protected float easedTime;
+		private float easedTime;
 		protected float duration;
+
+		private bool isStopped;
+		private bool isCompleted;
 
 		protected Tween() => Reset();
 
 		protected abstract void UpdateTween(float easedTime);
 		protected abstract void SampleInitialState();
+		protected abstract UnityEngine.Object GetTweener();
 		internal abstract void Recycle(ITweenPool pool);
 
 		internal void Reset() {
+			includeDelay = false;
+			delay = 0f;
+
+			cyclesCompleted = 0;
+			cycleCount = 1;
+
 			elapsedTime = 0;
 			easedTime = 0;
 			duration = 1f;
+
+			isStopped = false;
+			isCompleted = false;
 
 			onCompleteCallback = null;
 			easeFunction = Ease.Get(Ease.Type.Linear);
 		}
 
 		internal void UpdateProgress(float deltaTime) {
+			if (isCompleted || isStopped)
+				return;
+
+			if (GetTweener() == null) {
+				isStopped = true;
+				return;
+			}
+
 			elapsedTime += deltaTime;
-			easedTime = easeFunction(Mathf.Clamp01(elapsedTime / duration));
+			if (elapsedTime - delay <= 0f)
+				return;
+
+			float yoyoTime = (cycleType == CycleType.Yoyo && cyclesCompleted % 2 == 1) ? 1f : 0f;
+			easedTime = easeFunction(Mathf.Clamp01((elapsedTime - delay) / duration) - yoyoTime);
 			UpdateTween(easedTime);
 
-			if (easedTime >= 1)
-				onCompleteCallback?.Invoke();
+			if (easedTime < 1)
+				return;
+
+			cyclesCompleted++;
+			if (cycleCount - cyclesCompleted > 0) {
+				elapsedTime = includeDelay ? 0f : delay;
+				return;
+			}
+
+			Complete();
 		}
 
-		internal bool IsCompleted() => easedTime >= 1;
-
-		// TODO This is the same with !IsCompleted, instead check the play bool
-		internal bool IsPlaying() => easedTime is > 0 and < 1;
-
+		internal bool IsCompleted() => isCompleted;
+		internal bool IsStopped() => isStopped;
 
 		// Interface
 		public void Play() {
 			// IDEA Fire an event or set a bool flag 
 		}
 
-		// IDEA Stop might add a flag instead
-		// IDEA Complete method would invoke the callback and this wouldn't
-		public void Stop(bool invokeCallback = false) {
-			easedTime = 1;
-			if (invokeCallback)
-				onCompleteCallback?.Invoke();
+		public void Stop() {
+			isStopped = true;
+			onCompleteCallback?.Invoke();
+		}
+
+		public void Complete() {
+			isCompleted = true;
+			onCompleteCallback?.Invoke();
 		}
 
 		public void Rewind() {
@@ -62,9 +103,8 @@ namespace Frolics.Tweens.Core {
 			SampleInitialState();
 		}
 
-		// This might be done by adding an empty tween to a sequence
 		public void SetDelay(float delay) {
-			throw new NotImplementedException();
+			this.delay = delay;
 		}
 
 		public void SetEase(Ease.Type easeType) {
@@ -77,20 +117,14 @@ namespace Frolics.Tweens.Core {
 		}
 
 		// TODO Cycle type
-		public void SetRepeat(int cycleCount) {
-			throw new NotImplementedException();
+		public void SetCycles(CycleType cycleType, int cycleCount, bool includeDelay = false) {
+			this.cycleType = cycleType;
+			this.cycleCount = cycleCount;
+			this.includeDelay = includeDelay;
 		}
 
 		public void SetOnComplete(Action callback) {
 			onCompleteCallback = callback;
-		}
-
-		// TODO float normalizedTime/time, Action callback
-		// TODO Stop method should also invoke the inserted callbacks
-		public void InsertCallback(float time, Action callback) {
-			// IDEA Check an ordered list of (time, callback) tuples
-			// IDEA Check the first item and continue to the next one once the call time is reached
-			throw new NotImplementedException();
 		}
 	}
 }
