@@ -8,13 +8,13 @@ namespace Frolics.Tweens.Core {
 	internal class TweenManager : SingletonMono<TweenManager> {
 		private List<Tween> tweens;
 		private List<Tween> rigidbodyTweens;
-		
+
 		private ITweenPool tweenPool;
 		private TweenFactory tweenFactory;
 
 		protected override void Awake() {
 			base.Awake();
-			
+
 			tweens = new List<Tween>();
 			rigidbodyTweens = new List<Tween>();
 
@@ -31,8 +31,10 @@ namespace Frolics.Tweens.Core {
 		}
 
 		private void AddTween(Tween tween) {
-			// TODO check if the target is a RigidBody
-			tweens.Add(tween);
+			if (tween.GetTweener() is Rigidbody)
+				rigidbodyTweens.Add(tween);
+			else
+				tweens.Add(tween);
 		}
 
 		private void UpdateTweens(List<Tween> tweens) {
@@ -40,7 +42,7 @@ namespace Frolics.Tweens.Core {
 				Tween tween = tweens[i];
 
 				// Remove completed tween efficiently by swapping with last and popping
-				if (!tween.IsCompleted()) {
+				if (!tween.IsCompleted() || !tween.IsStopped()) {
 					tween.UpdateProgress(Time.deltaTime);
 				} else {
 					tweens[i].Recycle(tweenPool);
