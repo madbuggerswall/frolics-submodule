@@ -1,0 +1,55 @@
+using Frolics.Tweens.Core;
+using Frolics.Tweens.Pooling;
+using UnityEngine;
+
+namespace Frolics.Tweens.Types {
+	internal class RotateAroundTween : Tween {
+		private Transform tweener;
+		private Vector3 axis;
+		private Vector3 pivot;
+		private (float initial, float target) angle;
+
+		private Vector3 initialDirection;
+
+		public RotateAroundTween() { }
+
+		internal RotateAroundTween(Transform tweener, Vector3 axis, Vector3 pivot, float targetAngle, float duration) {
+			Configure(tweener, axis, pivot, targetAngle, duration);
+		}
+
+		internal void Configure(Transform tweener, Vector3 axis, Vector3 pivot, float targetAngle, float duration) {
+			this.tweener = tweener;
+			this.axis = axis.normalized;
+			this.pivot = pivot;
+			this.angle.target = targetAngle;
+			this.duration = duration;
+
+			// Store initial direction from pivot to object
+			this.initialDirection = tweener.position - pivot;
+		}
+
+		protected override void UpdateTween(float easedTime) {
+			// Current direction from pivot to tweener
+			Vector3 currentDirection = tweener.position - pivot;
+
+			// Signed angle between initial and current directions
+			float currentAngle = Vector3.SignedAngle(initialDirection, currentDirection, axis);
+
+			// Target angle at this progress
+			float targetAngle = Mathf.Lerp(angle.initial, angle.target, easedTime);
+
+			// Rotate by the delta
+			float deltaAngle = targetAngle - currentAngle;
+			tweener.RotateAround(pivot, axis, deltaAngle);
+		}
+
+		internal override void Recycle(ITweenPool pool) {
+			Reset();
+			pool.Despawn(this);
+		}
+
+		internal override UnityEngine.Object GetTweener() {
+			return tweener;
+		}
+	}
+}
