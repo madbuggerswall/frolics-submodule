@@ -52,7 +52,7 @@ namespace Frolics.Tweens.Types {
 			pool.Despawn(this);
 		}
 
-		protected override UnityEngine.Object GetTweener() {
+		internal override UnityEngine.Object GetTweener() {
 			return tweener;
 		}
 	}

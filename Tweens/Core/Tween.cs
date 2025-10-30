@@ -29,7 +29,7 @@ namespace Frolics.Tweens.Core {
 
 		protected abstract void UpdateTween(float easedTime);
 		protected abstract void SampleInitialState();
-		protected abstract UnityEngine.Object GetTweener();
+		internal abstract UnityEngine.Object GetTweener();
 		internal abstract void Recycle(ITweenPool pool);
 
 		internal void Reset() {
@@ -63,13 +63,12 @@ namespace Frolics.Tweens.Core {
 			if (elapsedTime - delay <= 0f)
 				return;
 
-			// Reflection about the vertical line x=a -> fr(x) = f(2a-x)  
 			float normalizedTime = Mathf.Clamp01((elapsedTime - delay) / duration);
 			bool isReflectionCycle = cycleType == CycleType.Reflected && cyclesCompleted % 2 == 1;
 			easedTime = easeFunction(isReflectionCycle ? 1 - normalizedTime : normalizedTime);
 			UpdateTween(easedTime);
 
-			if (!IsCycleComplete())
+			if (normalizedTime < 1f)
 				return;
 
 			cyclesCompleted++;
@@ -81,23 +80,12 @@ namespace Frolics.Tweens.Core {
 			Complete();
 		}
 
-		private bool IsCycleComplete() {
-			bool isReflectionCycle = cycleType == CycleType.Reflected && cyclesCompleted % 2 == 1;
-			return (isReflectionCycle) ? Mathf.Approximately(easedTime, 0f) : Mathf.Approximately(easedTime, 1f);
-		}
-
-
 		internal bool IsCompleted() => isCompleted;
 		internal bool IsStopped() => isStopped;
 
 		// Interface
-		public void Play() {
-			// IDEA Fire an event or set a bool flag 
-		}
-
 		public void Stop() {
 			isStopped = true;
-			onCompleteCallback?.Invoke();
 		}
 
 		public void Complete() {
@@ -124,7 +112,6 @@ namespace Frolics.Tweens.Core {
 			easeFunction = animationCurve.Evaluate;
 		}
 
-		// TODO Cycle type
 		public void SetCycles(CycleType cycleType, int cycleCount, bool includeDelay = false) {
 			this.cycleType = cycleType;
 			this.cycleCount = cycleCount;
