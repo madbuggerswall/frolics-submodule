@@ -135,7 +135,7 @@ namespace Frolics.Tweens.Factory {
 
 		#region Rigidbody Tweens
 
-		internal PropertyTween<Rigidbody, Vector3> TweenPosition(Rigidbody rb, Vector3 target, float duration) {
+		internal PropertyTween<Rigidbody, Vector3> TweenMovePosition(Rigidbody rb, Vector3 target, float duration) {
 			var tween = tweenPool.Spawn<PropertyTween<Rigidbody, Vector3>>();
 
 			tween.Configure(
@@ -151,7 +151,11 @@ namespace Frolics.Tweens.Factory {
 			return tween;
 		}
 
-		internal PropertyTween<Rigidbody, Quaternion> TweenRotation(Rigidbody rb, Quaternion target, float duration) {
+		internal PropertyTween<Rigidbody, Quaternion> TweenMoveRotation(
+			Rigidbody rb,
+			Quaternion target,
+			float duration
+		) {
 			var tween = tweenPool.Spawn<PropertyTween<Rigidbody, Quaternion>>();
 
 			tween.Configure(

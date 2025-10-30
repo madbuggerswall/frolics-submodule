@@ -83,6 +83,10 @@ namespace Frolics.Tweens.Core {
 		internal bool IsStopped() => isStopped;
 
 		// Interface
+		public bool IsPlaying() {
+			return !(isStopped || isCompleted);
+		}
+
 		public void Stop() {
 			isStopped = true;
 		}
