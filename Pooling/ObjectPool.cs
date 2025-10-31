@@ -6,34 +6,31 @@ namespace Frolics.Pooling {
 	/// Generic object pool for both GameObjects and MonoBehaviours.
 	/// Uses prefab reference as the key to avoid type collisions.
 	/// </summary>
-	public class ObjectPool<T> where T : Component {
-		private readonly Dictionary<T, Stack<T>> poolDictionary = new();
-		private readonly Dictionary<T, T> instanceToPrefab = new(); // reverse lookup
+	public class ObjectPool<T> where T : MonoBehaviour {
+		private readonly Dictionary<GameObject, Stack<T>> poolDictionary = new();
+		private readonly Dictionary<T, GameObject> instanceToPrefab = new(); // reverse lookup
 		private readonly Transform root;
 
 		public ObjectPool(Transform root) {
 			this.root = root;
 		}
 
-		private T AddObject(T prefab, Stack<T> pool) {
+		private T AddObject(T prefab) {
 			T instance = Object.Instantiate(prefab, root, true);
 			instance.gameObject.SetActive(false);
 			instance.name = prefab.name + " (Pooled)";
-
-			pool.Push(instance);
-			instanceToPrefab[instance] = prefab;
+			instanceToPrefab[instance] = prefab.gameObject;
 
 			return instance;
 		}
 
 		private T GetObject(T prefab) {
-			if (poolDictionary.TryGetValue(prefab, out Stack<T> pool))
-				return pool.Count > 0 ? pool.Pop() : AddObject(prefab, pool);
+			if (poolDictionary.TryGetValue(prefab.gameObject, out Stack<T> pool))
+				return pool.Count > 0 ? pool.Pop() : AddObject(prefab);
 
 			pool = new Stack<T>();
-			poolDictionary[prefab] = pool;
-
-			return pool.Count > 0 ? pool.Pop() : AddObject(prefab, pool);
+			poolDictionary[prefab.gameObject] = pool;
+			return AddObject(prefab);
 		}
 
 		/// <summary>
@@ -51,14 +48,14 @@ namespace Frolics.Pooling {
 		/// Returns an object to the pool.
 		/// </summary>
 		public void Despawn(T instance) {
-			if (!instanceToPrefab.TryGetValue(instance, out T prefab)) {
+			if (!instanceToPrefab.TryGetValue(instance, out GameObject prefabKey)) {
 				Debug.LogWarning($"Trying to despawn {instance.name}, but it was not pooled.");
 				return;
 			}
 
 			instance.gameObject.SetActive(false);
 			instance.transform.SetParent(root, false);
-			poolDictionary[prefab].Push(instance);
+			poolDictionary[prefabKey].Push(instance);
 		}
 	}
 }
