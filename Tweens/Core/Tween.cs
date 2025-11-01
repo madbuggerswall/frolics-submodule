@@ -17,6 +17,7 @@ namespace Frolics.Tweens.Core {
 
 		private int cyclesCompleted;
 		private int cycleCount;
+		private bool easeSymmetry;
 
 		private float elapsedTime;
 		private float easedTime;
@@ -37,6 +38,7 @@ namespace Frolics.Tweens.Core {
 
 			cyclesCompleted = 0;
 			cycleCount = 1;
+			easeSymmetry = false;
 
 			elapsedTime = 0;
 			easedTime = 0;
@@ -65,14 +67,16 @@ namespace Frolics.Tweens.Core {
 			float normalizedTime = Mathf.Clamp01((elapsedTime - delay) / duration);
 			bool isReflectionCycle = cycleType == CycleType.Reflected && cyclesCompleted % 2 == 1;
 
-			// Mirror the input domain
-			// easedTime = easeFunction(isReflectionCycle ? 1 - normalizedTime : normalizedTime);
-			// UpdateTween(easedTime);
-
-			// Mirror the output curve
-			easedTime = easeFunction(normalizedTime);
-			UpdateTween(isReflectionCycle ? 1 - easedTime : easedTime);
-
+			if (easeSymmetry) {
+				// Mirror the input domain
+				easedTime = easeFunction(isReflectionCycle ? 1 - normalizedTime : normalizedTime);
+				UpdateTween(easedTime);
+			} else {
+				// Mirror the output curve
+				easedTime = easeFunction(normalizedTime);
+				UpdateTween(isReflectionCycle ? 1 - easedTime : easedTime);
+			}
+			
 			if (normalizedTime < 1f)
 				return;
 
@@ -115,10 +119,16 @@ namespace Frolics.Tweens.Core {
 			easeFunction = animationCurve.Evaluate;
 		}
 
-		public void SetCycles(CycleType cycleType, int cycleCount, bool includeDelay = false) {
+		public void SetCycles(
+			CycleType cycleType,
+			int cycleCount,
+			bool includeDelay = false,
+			bool easeSymmetry = false
+		) {
 			this.cycleType = cycleType;
 			this.cycleCount = cycleCount;
 			this.includeDelay = includeDelay;
+			this.easeSymmetry = easeSymmetry;
 		}
 
 		public void SetOnComplete(Action callback) {
