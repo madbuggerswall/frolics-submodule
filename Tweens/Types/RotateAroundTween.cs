@@ -10,7 +10,6 @@ namespace Frolics.Tweens.Types {
 		private (float initial, float target) angle;
 
 		private Vector3 initialDirection;
-		private Quaternion initialRotation;
 
 		public RotateAroundTween() { }
 
@@ -22,12 +21,17 @@ namespace Frolics.Tweens.Types {
 			this.tweener = tweener;
 			this.axis = axis.normalized;
 			this.pivot = pivot;
-			this.angle = (initial: 0f, targetAngle);
+			this.angle.initial = Vector3.Dot(tweener.eulerAngles, axis.normalized);
+			this.angle.target = targetAngle;
 			this.duration = duration;
 
 			// Store initial direction from pivot to object
-			this.initialDirection = tweener.position - pivot;
-			this.initialRotation = tweener.rotation;
+			this.initialDirection = (tweener.position - pivot);
+			if (angle.initial <= angle.target)
+				return;
+
+			Quaternion rotation = Quaternion.AngleAxis(-angle.initial, axis);
+			this.initialDirection = rotation * initialDirection;
 		}
 
 		protected override void UpdateTween(float easedTime) {
@@ -42,7 +46,7 @@ namespace Frolics.Tweens.Types {
 			tweener.position = pivot + rotatedDirection;
 
 			// Rotation: Apply the same rotation to tweener's initial rotation
-			tweener.rotation = rotation * initialRotation;
+			tweener.rotation = rotation;
 		}
 
 		internal override void Recycle(ITweenPool pool) {
