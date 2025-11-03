@@ -1,7 +1,7 @@
 using UnityEngine;
 
-namespace Frolics.Utilities {
-	public static class VectorExtensionMethods {
+namespace Frolics.Utilities.Extensions {
+	public static class VectorExtensions {
 		public static Vector2 GetXY(this Vector3 vector) => new(vector.x, vector.y);
 		public static Vector2 GetXZ(this Vector3 vector) => new(vector.x, vector.z);
 		public static Vector2 GetYZ(this Vector3 vector) => new(vector.y, vector.z);
