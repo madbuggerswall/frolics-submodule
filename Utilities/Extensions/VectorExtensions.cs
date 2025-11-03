@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Frolics.Utilities.Extensions {
@@ -26,5 +27,23 @@ namespace Frolics.Utilities.Extensions {
 		public static Vector2Int WithX(this Vector2Int vector, int x) => new(x, vector.y);
 		public static Vector2Int WithY(this Vector2Int vector, int y) => new(vector.x, y);
 		public static Vector3Int WithZ(this Vector2Int vector, int z) => new(vector.x, vector.y, z);
+
+
+		public static Vector3 RoundToFactor(this Vector3 vector, float factor)
+			=> vector.RoundToFactor(Mathf.Round, factor);
+
+		public static Vector3 CeilToFactor(this Vector3 vector, float factor)
+			=> vector.RoundToFactor(Mathf.Ceil, factor);
+
+		public static Vector3 FloorToFactor(this Vector3 vector, float factor)
+			=> vector.RoundToFactor(Mathf.Floor, factor);
+
+		private static Vector3 RoundToFactor(this Vector3 vector, Func<float, float> roundingStrategy, float factor) {
+			return new Vector3(
+				roundingStrategy(vector.x / factor) * factor,
+				roundingStrategy(vector.y / factor) * factor,
+				roundingStrategy(vector.z / factor) * factor
+			);
+		}
 	}
 }
