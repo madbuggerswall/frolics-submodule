@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Frolics.Grids.SpatialHelpers;
-using UnityEngine;
 
 namespace Frolics.Grids {
 	// DictionaryLookup (default), SparseLookup, BidirectionalLookup (opt-in reverse map).

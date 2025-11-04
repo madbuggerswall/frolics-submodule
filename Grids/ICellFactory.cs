@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 
 namespace Frolics.Grids {
 	public interface ICellFactory<out TCell, in TCoord>
