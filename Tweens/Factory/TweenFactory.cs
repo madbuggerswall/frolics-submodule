@@ -117,6 +117,26 @@ namespace Frolics.Tweens.Factory {
 			return tween;
 		}
 
+		internal PropertyTween<Transform, Quaternion> TweenLocalRotation(
+			Transform tweener,
+			Quaternion target,
+			float duration
+		) {
+			var tween = tweenPool.Spawn<PropertyTween<Transform, Quaternion>>();
+
+			tween.Configure(
+				tweener: tweener,
+				target: target,
+				duration: duration,
+				getter: t => t.localRotation,
+				setter: (t, q) => t.localRotation = q,
+				lerp: Quaternion.Lerp
+			);
+
+			register(tween);
+			return tween;
+		}
+
 		internal RotateAroundTween TweenRotateAround(
 			Transform tweener,
 			Vector3 axis,

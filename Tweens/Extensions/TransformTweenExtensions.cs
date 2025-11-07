@@ -28,6 +28,10 @@ namespace Frolics.Tweens.Extensions {
 			return TweenManager.GetInstance().GetTweenFactory().TweenRotation(tweener, target, duration);
 		}
 
+		public static Tween TweenLocalRotation(this Transform tweener, Quaternion target, float duration) {
+			return TweenManager.GetInstance().GetTweenFactory().TweenLocalRotation(tweener, target, duration);
+		}
+
 		public static Tween TweenRotateAround(
 			this Transform tweener,
 			Vector3 axis,
