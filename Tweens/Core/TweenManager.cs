@@ -12,6 +12,12 @@ namespace Frolics.Tweens.Core {
 		private ITweenPool tweenPool;
 		private TweenFactory tweenFactory;
 
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+		private static void OnAfterAssembliesLoaded() {
+			GameObject gameObject = new($"{nameof(TweenManager)} (Auto-Generated)");
+			gameObject.AddComponent<TweenManager>();
+		}
+
 		protected override void Awake() {
 			base.Awake();
 
