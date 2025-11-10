@@ -1,0 +1,16 @@
+{
+    "name": "Frolics.Signals",
+    "rootNamespace": "",
+    "references": [
+        "GUID:a30f89fbfc57b6643b0f9731bc5a6c8d"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

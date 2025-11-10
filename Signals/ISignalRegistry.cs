@@ -1,5 +1,5 @@
 namespace Frolics.Signals {
-	public interface ISignalRegistry {
-		void Clear();
+	internal interface ISignalRegistry {
+		internal void Clear();
 	}
 }

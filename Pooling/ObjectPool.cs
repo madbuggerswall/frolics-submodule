@@ -6,7 +6,7 @@ namespace Frolics.Pooling {
 	/// Generic object pool for both GameObjects and MonoBehaviours.
 	/// Uses prefab reference as the key to avoid type collisions.
 	/// </summary>
-	public class ObjectPool<T> where T : MonoBehaviour {
+	public class ObjectPool<T> : IObjectPool<T> where T : MonoBehaviour {
 		private readonly Dictionary<GameObject, Stack<T>> poolDictionary = new();
 		private readonly Dictionary<T, GameObject> instanceToPrefab = new(); // reverse lookup
 		private readonly Transform root;
@@ -36,9 +36,17 @@ namespace Frolics.Pooling {
 		/// <summary>
 		/// Spawns an object from the pool.
 		/// </summary>
-		public T Spawn(T prefab, Transform parent = null) {
+		T IObjectPool<T>.Spawn(T prefab) {
 			T instance = GetObject(prefab);
-			instance.transform.SetParent(parent ?? root, false);
+			instance.transform.SetParent(root, false);
+			instance.gameObject.SetActive(true);
+
+			return instance;
+		}
+
+		T IObjectPool<T>.Spawn(T prefab, Transform parent) {
+			T instance = GetObject(prefab);
+			instance.transform.SetParent(parent, false);
 			instance.gameObject.SetActive(true);
 
 			return instance;
@@ -47,7 +55,7 @@ namespace Frolics.Pooling {
 		/// <summary>
 		/// Returns an object to the pool.
 		/// </summary>
-		public void Despawn(T instance) {
+		void IObjectPool<T>.Despawn(T instance) {
 			if (!instanceToPrefab.TryGetValue(instance, out GameObject prefabKey)) {
 				// Debug.LogWarning($"Trying to despawn {instance.name}, but it was not pooled.");
 				return;

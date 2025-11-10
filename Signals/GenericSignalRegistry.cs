@@ -5,13 +5,19 @@ namespace Frolics.Signals {
 	public class GenericSignalRegistry<T> : IGenericSignalRegistry<T> where T : ISignal {
 		private readonly HashSet<Action<T>> callbacks = new();
 
-		public void Add(Action<T> callback) => callbacks.Add(callback);
-		public void Remove(Action<T> callback) => callbacks.Remove(callback);
-		public void Clear() => callbacks.Clear();
+		void IGenericSignalRegistry<T>.Add(Action<T> callback) {
+			callbacks.Add(callback);
+		}
 
-		public void Invoke(T signal) {
+		void IGenericSignalRegistry<T>.Remove(Action<T> callback) {
+			callbacks.Remove(callback);
+		}
+
+		void IGenericSignalRegistry<T>.Invoke(T signal) {
 			foreach (Action<T> callback in callbacks)
 				callback(signal);
 		}
+
+		void ISignalRegistry.Clear() => callbacks.Clear();
 	}
 }
