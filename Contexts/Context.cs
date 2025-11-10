@@ -16,43 +16,42 @@ namespace Frolics.Contexts {
 				initializable.Initialize();
 		}
 
-		public T Get<T>() where T : class, IInitializable {
+		public T Get<T>() where T : class {
 			if (contextItems.TryGetValue(typeof(T), out IInitializable contextItem))
 				return contextItem as T;
 
 			throw new Exception($"Context item {typeof(T)} cannot be found in current context");
 		}
 
-		protected void Resolve<T>() where T : IInitializable, new() {
-			if (typeof(MonoBehaviour).IsAssignableFrom(typeof(T))) {
-				ResolveMonoBehaviour<T>();
-			} else {
-				ResolvePlainObject<T>();
+		protected BindingBuilder<T> Resolve<T>() where T : IInitializable, new() {
+			T dependency = typeof(MonoBehaviour).IsAssignableFrom(typeof(T))
+				? GetComponentInChildren<T>(true) ?? throw new Exception("Dependency not found: " + typeof(T))
+				: new T();
+
+			if (!contextItems.TryAdd(typeof(T), dependency))
+				Debug.LogWarning($"Dependency {typeof(T)} is already added to context");
+
+			return new BindingBuilder<T>(this, dependency);
+		}
+
+		protected class BindingBuilder<T> where T : IInitializable {
+			private readonly Context context;
+			private readonly T instance;
+
+			internal BindingBuilder(Context context, T instance) {
+				this.context = context;
+				this.instance = instance;
 			}
-		}
 
-		private void ResolveMonoBehaviour<T>() where T : IInitializable {
-			T dependency = GetComponentInChildren<T>(true);
+			public BindingBuilder<T> To<TInterface>() {
+				if (!typeof(TInterface).IsAssignableFrom(typeof(T)))
+					throw new InvalidOperationException($"Type {typeof(T)} is not assignable to {typeof(TInterface)}");
 
-			if (dependency is null)
-				throw new Exception("Dependency not found: " + typeof(T));
+				if (!context.contextItems.TryAdd(typeof(TInterface), instance))
+					Debug.LogWarning($"Interface {typeof(TInterface)} already bound in context");
 
-			// Try adding dependency to context dictionary
-			if (contextItems.TryAdd(typeof(T), dependency))
-				return;
-
-			// This can be an exception as dependent systems would be broken already
-			Debug.LogWarning($"Dependency {typeof(T)} is already added to context");
-		}
-
-		private void ResolvePlainObject<T>() where T : IInitializable, new() {
-			T dependency = new T();
-			// Try adding dependency to context dictionary
-			if (contextItems.TryAdd(typeof(T), dependency))
-				return;
-
-			// This can be an exception as dependent systems would be broken already
-			Debug.LogWarning($"Dependency {typeof(T)} is already added to context");
+				return this;
+			}
 		}
 	}
 }
