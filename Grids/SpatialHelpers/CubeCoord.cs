@@ -53,11 +53,21 @@ namespace Frolics.Grids.SpatialHelpers {
 
 			CubeCoord[] cubeCoords = new CubeCoord[distance + 1];
 			for (int i = 0; i <= distance; i++) {
-				(float q, float r, float s) floatingCube = Lerp(start, end, 1f / distance * i);
-				cubeCoords[i] = Round(floatingCube.q, floatingCube.r, floatingCube.s);
+				(float q, float r, float s) = Lerp(start, end, 1f / distance * i);
+				cubeCoords[i] = Round(q, r, s);
 			}
 
 			return cubeCoords;
+		}
+
+		// TODO Untested
+		public static CubeCoord Line(CubeCoord start, CubeCoord end, int i) {
+			int distance = Distance(start, end);
+			if (distance == 0)
+				return start;
+
+			(float q, float r, float s) = Lerp(start, end, 1f / distance * i);
+			return Round(q, r, s);
 		}
 
 		public static (float q, float r, float s) Lerp(CubeCoord start, CubeCoord end, float t) {

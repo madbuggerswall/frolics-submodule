@@ -23,10 +23,40 @@ namespace Frolics.Grids.SpatialHelpers {
 			this.y = y;
 		}
 
+		public static SquareCoord Round(float fractionalX, float fractionalY) {
+			return new SquareCoord(Mathf.RoundToInt(fractionalX), Mathf.RoundToInt(fractionalY));
+		}
+
+
+		public static SquareCoord[] Line(SquareCoord start, SquareCoord end) {
+			int distance = Distance(start, end);
+			if (distance == 0)
+				return new[] { start };
+
+			SquareCoord[] cubeCoords = new SquareCoord[distance + 1];
+			for (int i = 0; i <= distance; i++) {
+				(float x, float y) = Lerp(start, end, 1f / distance * i);
+				cubeCoords[i] = Round(x, y);
+			}
+
+			return cubeCoords;
+		}
+
+		public static SquareCoord Line(SquareCoord start, SquareCoord end, int i) {
+			int distance = Distance(start, end);
+			if (distance == 0)
+				return start;
+
+			(float x, float y) = Lerp(start, end, 1f / distance * i);
+			return Round(x, y);
+		}
+
+		public static (float x, float y) Lerp(SquareCoord start, SquareCoord end, float t) {
+			return (Mathf.Lerp(start.x, end.x, t), Mathf.Lerp(start.y, end.y, t));
+		}
+
 		public static SquareCoord PlaneToSquareCoord(Vector2 position, float cellDiameter) {
-			int x = Mathf.RoundToInt(position.x / cellDiameter);
-			int y = Mathf.RoundToInt(position.y / cellDiameter); // using z for 2D grid in XZ plane
-			return new SquareCoord(x, y);
+			return Round(position.x / cellDiameter, position.y / cellDiameter);
 		}
 
 		public static Vector2 SquareCoordToPlane(SquareCoord squareCoord, float cellDiameter) {
@@ -38,8 +68,12 @@ namespace Frolics.Grids.SpatialHelpers {
 		public static int Distance(SquareCoord from, SquareCoord to)
 			=> Math.Max(Math.Abs(from.x - to.x), Math.Abs(from.y - to.y));
 
+		// Operators
 		public static SquareCoord operator +(SquareCoord lhs, SquareCoord rhs) => new(lhs.x + rhs.x, lhs.y + rhs.y);
 		public static SquareCoord operator -(SquareCoord lhs, SquareCoord rhs) => new(lhs.x - rhs.x, lhs.y - rhs.y);
+		public static SquareCoord operator *(SquareCoord lhs, int rhs) => new(lhs.x * rhs, lhs.y * rhs);
+		public static SquareCoord operator *(int lhs, SquareCoord rhs) => new(rhs.x * lhs, rhs.y * lhs);
+
 
 		public bool Equals(SquareCoord other) => x == other.x && y == other.y;
 		public override bool Equals(object obj) => obj is SquareCoord other && Equals(other);
