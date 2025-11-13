@@ -2,6 +2,7 @@ using System;
 using Frolics.Tweens.Core;
 using Frolics.Tweens.Pooling;
 using Frolics.Tweens.Types;
+using Frolics.Utilities.Extensions;
 using UnityEngine;
 
 namespace Frolics.Tweens.Factory {
@@ -41,7 +42,7 @@ namespace Frolics.Tweens.Factory {
 				target: targetX,
 				duration: duration,
 				getter: t => t.position.x,
-				setter: (t, x) => t.position = new Vector3(x, t.position.y, t.position.z),
+				setter: (t, x) => t.position = t.position.WithX(x),
 				lerp: Mathf.Lerp
 			);
 
@@ -57,7 +58,7 @@ namespace Frolics.Tweens.Factory {
 				target: targetY,
 				duration: duration,
 				getter: t => t.position.y,
-				setter: (t, y) => t.position = new Vector3(t.position.x, y, t.position.z),
+				setter: (t, y) => t.position = t.position.WithY(y),
 				lerp: Mathf.Lerp
 			);
 
@@ -73,7 +74,7 @@ namespace Frolics.Tweens.Factory {
 				target: targetX,
 				duration: duration,
 				getter: t => t.position.z,
-				setter: (t, z) => t.position = new Vector3(t.position.x, t.position.y, z),
+				setter: (t, z) => t.position = t.position.WithZ(z),
 				lerp: Mathf.Lerp
 			);
 
@@ -303,11 +304,7 @@ namespace Frolics.Tweens.Factory {
 				target: targetAlpha,
 				duration: duration,
 				getter: s => s.color.a,
-				setter: (s, a) => {
-					Color c = s.color;
-					c.a = a;
-					s.color = c;
-				},
+				setter: (s, a) => s.color = s.color.WithAlpha(a),
 				lerp: Mathf.Lerp
 			);
 
