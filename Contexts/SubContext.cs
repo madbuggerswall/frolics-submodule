@@ -13,16 +13,19 @@ namespace Frolics.Contexts {
 			OnInitialized();
 		}
 
-		private void OnDestroy() {
-			if (instance == this)
-				instance = null;
-		}
-
+		// Singleton Operations
 		private void AssertSingleton() {
-			if (instance is not null)
-				Destroy(instance);
+			if (instance != null && instance != this) {
+				Destroy(gameObject);
+				return;
+			}
 
 			instance = this as T;
+		}
+
+		protected void OnDestroy() {
+			if (instance == this)
+				instance = null;
 		}
 
 		public static T GetInstance() => instance;
