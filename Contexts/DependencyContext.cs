@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Frolics.Contexts.Exceptions;
 using Frolics.Utilities;
 using UnityEngine;
 
@@ -63,23 +64,5 @@ namespace Frolics.Contexts {
 				return this;
 			}
 		}
-	}
-
-	public class DependencyBindingException : Exception {
-		public DependencyBindingException(Type abstractType, Type concreteType) : base(
-			$"Type {concreteType} is not assignable to {abstractType}"
-		) { }
-	}
-
-	public class DependencyResolutionException : Exception {
-		public DependencyResolutionException(string message) : base(message) { }
-
-		public DependencyResolutionException(Type dependencyType, DependencyContext context) : base(
-			$"Dependency ({dependencyType}) cannot be found in context ({context.GetType()})."
-		) { }
-
-		public DependencyResolutionException(Type dependencyType) : base(
-			$"Dependency ({dependencyType}) cannot be found in in any context."
-		) { }
 	}
 }
