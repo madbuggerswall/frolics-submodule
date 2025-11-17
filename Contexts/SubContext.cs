@@ -3,12 +3,12 @@ using UnityEngine;
 namespace Frolics.Contexts {
 	// Curiously recurring template pattern
 	[DefaultExecutionOrder(-24)]
-	public abstract class SubContext<T> : Context where T : SubContext<T> {
+	public abstract class SubContext<T> : DependencyContext where T : SubContext<T> {
 		private static T instance;
 
 		private void Awake() {
 			AssertSingleton();
-			ResolveContext();
+			BindContext();
 			InitializeContext();
 			OnInitialized();
 		}

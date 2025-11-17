@@ -2,12 +2,12 @@ using UnityEngine;
 
 namespace Frolics.Contexts {
 	[DefaultExecutionOrder(-28)]
-	public abstract class SceneContext : Context {
-		private static SceneContext instance;
+	public abstract class ProjectContext : DependencyContext {
+		private static ProjectContext instance;
 
 		private void Awake() {
 			AssertSingleton();
-			ResolveContext();
+			BindContext();
 			InitializeContext();
 			OnInitialized();
 		}
@@ -20,6 +20,6 @@ namespace Frolics.Contexts {
 			instance = this;
 		}
 
-		public static SceneContext GetInstance() => instance;
+		public static ProjectContext GetInstance() => instance;
 	}
 }
