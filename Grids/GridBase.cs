@@ -8,7 +8,6 @@ namespace Frolics.Grids {
 		protected readonly Vector2Int gridSize;
 		protected readonly float cellDiameter;
 		protected readonly GridPlane gridPlane;
-		protected readonly Vector3 pivotPoint;
 
 		private readonly ICellFactory<TCell, TCoord> cellFactory;
 		private readonly ICoordinateConverter<TCoord> converter;
@@ -18,7 +17,6 @@ namespace Frolics.Grids {
 		private readonly TCell[] cells;
 
 		protected GridBase(
-			Vector3 pivotPoint,
 			Vector2Int gridSize,
 			float cellDiameter,
 			GridPlane gridPlane,
@@ -30,7 +28,6 @@ namespace Frolics.Grids {
 			this.gridSize = gridSize;
 			this.cellDiameter = cellDiameter;
 			this.gridPlane = gridPlane;
-			this.pivotPoint = pivotPoint;
 
 			this.cellFactory = cellFactory;
 			this.converter = converter;
@@ -45,10 +42,10 @@ namespace Frolics.Grids {
 		}
 
 		private TCell[] GenerateCells() {
-			Vector2 pivotPlanePosition = gridPlane.WorldToPlanePosition(pivotPoint);
-			TCoord pivotCoord = converter.PlaneToCoord(pivotPlanePosition, cellDiameter);
+			// Vector2 pivotPlanePosition = gridPlane.WorldToPlanePosition(GetPivotPoint());
+			// TCoord pivotCoord = converter.PlaneToCoord(pivotPlanePosition, cellDiameter);
 
-			List<TCoord> cellCoords = generator.Generate(gridSize, pivotCoord);
+			List<TCoord> cellCoords = generator.Generate(gridSize);
 			TCell[] cells = new TCell[cellCoords.Count];
 
 			for (int i = 0; i < cellCoords.Count; i++)
@@ -58,35 +55,39 @@ namespace Frolics.Grids {
 		}
 
 		public Vector3 GetCenterPoint() {
-			Vector2 pivotPlanePos = gridPlane.WorldToPlanePosition(pivotPoint) - Vector2.one * cellDiameter * 0.5f;
-			Vector2 centerPlanePos = pivotPlanePos + GetGridLength() * .5f;
-			float planeHeight = gridPlane.GetOrthogonalCoordinate(pivotPoint);
+			Vector2 pivotPlanePos = gridPlane.WorldToPlanePosition(GetPivotPoint()) - Vector2.one * cellDiameter * 0.5f;
+			Vector2 centerPlanePos = pivotPlanePos + GetGridLength() * 0.5f;
+			float planeHeight = gridPlane.GetOrthogonalCoordinate(GetPivotPoint());
 			return gridPlane.PlaneToWorldPosition(centerPlanePos, planeHeight);
 		}
 
 		public Vector3 GetWorldPosition(TCell cell) {
-			float planeHeight = gridPlane.GetOrthogonalCoordinate(pivotPoint);
-			Vector2 planePosition = converter.CoordToPlane(cell.GetCoord(), cellDiameter);
+			float planeHeight = gridPlane.GetOrthogonalCoordinate(GetPivotPoint());
+			Vector2 pivotPlanePos = gridPlane.WorldToPlanePosition(GetPivotPoint());
+			Vector2 planePosition = pivotPlanePos + converter.CoordToPlane(cell.GetCoord(), cellDiameter);
 			Vector3 worldPosition = gridPlane.PlaneToWorldPosition(planePosition, planeHeight);
 			return worldPosition;
 		}
 
 		public bool TryGetCell(Vector3 worldPosition, out TCell cell) {
 			Vector2 planePosition = gridPlane.WorldToPlanePosition(worldPosition);
-			TCoord coord = converter.PlaneToCoord(planePosition, cellDiameter);
+			Vector2 pivotPlanePos = gridPlane.WorldToPlanePosition(GetPivotPoint());
+			Vector2 relativePlanePos = planePosition - pivotPlanePos;
+			TCoord coord = converter.PlaneToCoord(relativePlanePos, cellDiameter);
 			return lookup.TryGetCell(coord, out cell);
 		}
+
 
 		public bool TryGetCell(TCoord coord, out TCell cell) {
 			return lookup.TryGetCell(coord, out cell);
 		}
 
 		public abstract Vector2 GetGridLength();
+		public abstract Vector3 GetPivotPoint();
 
 		public GridPlane GetGridPlane() => gridPlane;
 		public Vector2Int GetGridSize() => gridSize;
 		public float GetCellDiameter() => cellDiameter;
-		public Vector3 GetPivotPoint() => pivotPoint;
 		public TCell[] GetCells() => cells;
 	}
 }

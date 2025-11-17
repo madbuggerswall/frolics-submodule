@@ -5,9 +5,8 @@ namespace Frolics.Grids {
 	/// <summary>
 	///	Represents a pointy-top hexagonal grid initialized with offset odd-r coords.
 	/// </summary>
-	public class HexGrid<TCell> : GridBase<TCell, AxialCoord> where TCell : HexCell {
+	public abstract class HexGrid<TCell> : GridBase<TCell, AxialCoord> where TCell : HexCell {
 		public HexGrid(
-			Vector3 pivotPoint,
 			Vector2Int gridSize,
 			float cellDiameter,
 			GridPlane gridPlane,
@@ -16,7 +15,6 @@ namespace Frolics.Grids {
 			ICoordinateGenerator<AxialCoord> generator = null,
 			ICellLookup<TCell, AxialCoord> lookup = null
 		) : base(
-			pivotPoint,
 			gridSize,
 			cellDiameter,
 			gridPlane,

@@ -2,9 +2,8 @@ using Frolics.Grids.SpatialHelpers;
 using UnityEngine;
 
 namespace Frolics.Grids {
-	public class SquareGrid<TCell> : GridBase<TCell, SquareCoord> where TCell : SquareCell {
+	public abstract class SquareGrid<TCell> : GridBase<TCell, SquareCoord> where TCell : SquareCell {
 		public SquareGrid(
-			Vector3 pivotPoint,
 			Vector2Int gridSize,
 			float cellDiameter,
 			GridPlane gridPlane,
@@ -13,7 +12,6 @@ namespace Frolics.Grids {
 			ICoordinateGenerator<SquareCoord> generator = null,
 			ICellLookup<TCell, SquareCoord> lookup = null
 		) : base(
-			pivotPoint,
 			gridSize,
 			cellDiameter,
 			gridPlane,
