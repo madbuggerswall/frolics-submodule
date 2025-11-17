@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace Frolics.Utilities {
@@ -9,19 +8,18 @@ namespace Frolics.Utilities {
 			AssertSingleton();
 		}
 
-		private void AssertSingleton() {
+		protected virtual void AssertSingleton() {
 			if (instance != null && instance != this) {
 				Destroy(gameObject);
 				return;
 			}
 
 			instance = this as T;
-			DontDestroyOnLoad(gameObject);
 		}
 
 		public static T GetInstance() => instance;
 
-		private void OnDestroy() {
+		protected void OnDestroy() {
 			if (instance != this)
 				return;
 

@@ -5,7 +5,7 @@ using Frolics.Utilities;
 using UnityEngine;
 
 namespace Frolics.Tweens.Core {
-	internal class TweenManager : SingletonMono<TweenManager> {
+	internal class TweenManager : PersistentSingletonMono<TweenManager> {
 		private List<Tween> tweens;
 		private List<Tween> rigidbodyTweens;
 
