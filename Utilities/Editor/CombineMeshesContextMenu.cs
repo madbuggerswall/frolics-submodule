@@ -26,7 +26,8 @@ namespace Frolics.Utilities.Editor {
 			}
 
 			// Prompt user for save location
-			string path = PromptUserForSaveLocation($"{root.name.Replace("Base", "")}Combined");
+			string defaultName = $"{PascalCaseFormatter.ToPascalCase(root.name).Replace("Base", "")}Combined";
+			string path = PromptUserForSaveLocation(defaultName);
 			if (string.IsNullOrEmpty(path)) {
 				Debug.Log("Mesh combination cancelled by user.");
 				return;
