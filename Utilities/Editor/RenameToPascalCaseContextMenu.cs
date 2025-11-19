@@ -2,7 +2,7 @@ using System.Globalization;
 using UnityEditor;
 using UnityEngine;
 
-namespace Core.Segments.Editor {
+namespace Frolics.Utilities.Editor {
 	public static class RenameToPascalCaseContextMenu {
 		[MenuItem("GameObject/Tools/Rename To PascalCase", false)]
 		private static void RenameToPascalCase(MenuCommand menuCommand) {
