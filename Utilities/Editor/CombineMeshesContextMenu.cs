@@ -25,6 +25,16 @@ namespace Frolics.Utilities.Editor {
 				return;
 			}
 
+			// Prompt user for save location
+			string path = PromptUserForSaveLocation($"{root.name.Replace("Base", "")}Combined");
+			if (string.IsNullOrEmpty(path)) {
+				Debug.Log("Mesh combination cancelled by user.");
+				return;
+			}
+
+			string folder = Path.GetDirectoryName(path) ?? "Assets/";
+			string fileName = Path.GetFileNameWithoutExtension(path);
+
 			// Group submeshes by material
 			Dictionary<Material, List<CombineInstance>> submeshesByMaterial = new();
 			for (int i = 0; i < Selection.gameObjects.Length; i++)
@@ -39,18 +49,7 @@ namespace Frolics.Utilities.Editor {
 			CombineMaterialGroups(submeshesByMaterial, out List<Mesh> groupMeshes, out List<Material> uniqueMaterials);
 
 			// Stitch group meshes into one mesh with multiple submeshes
-			string meshName = $"{root.name.Replace("Base", "")}Combined";
-			Mesh finalMesh = StitchGroupMeshes(meshName, groupMeshes);
-
-			// Prompt user for save location
-			string path = PromptUserForSaveLocation(finalMesh.name);
-			if (string.IsNullOrEmpty(path)) {
-				Debug.Log("Mesh combination cancelled by user.");
-				return;
-			}
-
-			string folder = Path.GetDirectoryName(path) ?? "Assets/";
-			string fileName = Path.GetFileNameWithoutExtension(path);
+			Mesh finalMesh = StitchGroupMeshes(fileName, groupMeshes);
 
 			// Save mesh
 			string meshPath = Path.Combine(folder, fileName + ".asset");
@@ -63,41 +62,46 @@ namespace Frolics.Utilities.Editor {
 			AssetDatabase.SaveAssets();
 			AssetDatabase.Refresh();
 
-			if (replaceObjects) {
-				if (prefab != null) {
-					// Instantiate prefab in scene
-					GameObject instance = (GameObject) PrefabUtility.InstantiatePrefab(prefab);
-
-					// Match root transform
-					instance.transform.SetParent(root.transform.parent, true);
-					instance.transform.SetPositionAndRotation(root.transform.position, root.transform.rotation);
-					instance.transform.localScale = root.transform.localScale;
-
-					// Register undo
-					Undo.RegisterCreatedObjectUndo(instance, "Instantiate Combined Prefab");
-
-					// Destroy old selection objects
-					for (int i = 0; i < Selection.gameObjects.Length; i++)
-						if (Selection.gameObjects[i] != null)
-							Undo.DestroyObjectImmediate(Selection.gameObjects[i]);
-
-					// Select the new instance
-					Selection.activeGameObject = instance;
-				}
-			}
+			if (replaceObjects)
+				ReplaceCombinedMeshes(prefab);
 
 			EditorGUIUtility.PingObject(prefab);
-			Debug.Log($"Combined Meshes: Mesh and prefab saved ({path}).");
+			Debug.Log($"Combined mesh and prefab saved ({path}).");
 		}
 
-		private static GameObject SavePrefab(Mesh finalMesh, List<Material> uniqueMaterials, string pathNoExtension) {
+		private static void ReplaceCombinedMeshes(GameObject prefab) {
+			if (prefab == null)
+				return;
+
+			// Instantiate prefab in scene
+			GameObject instance = (GameObject) PrefabUtility.InstantiatePrefab(prefab);
+
+			// Match root transform
+			GameObject root = Selection.gameObjects[0];
+			instance.transform.SetParent(root.transform.parent, true);
+			instance.transform.SetPositionAndRotation(root.transform.position, root.transform.rotation);
+			instance.transform.localScale = root.transform.localScale;
+
+			// Register undo
+			Undo.RegisterCreatedObjectUndo(instance, "Instantiate Combined Prefab");
+
+			// Destroy old selection objects
+			for (int i = Selection.gameObjects.Length - 1; i >= 0; i--)
+				if (Selection.gameObjects[i] != null)
+					Undo.DestroyObjectImmediate(Selection.gameObjects[i]);
+
+			// Select the new instance
+			Selection.activeGameObject = instance;
+		}
+
+		private static GameObject SavePrefab(Mesh finalMesh, List<Material> uniqueMaterials, string path) {
 			GameObject gameObject = new(finalMesh.name);
 			MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
 			MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
 			meshFilter.sharedMesh = finalMesh;
 			meshRenderer.sharedMaterials = uniqueMaterials.ToArray();
 
-			GameObject prefab = PrefabUtility.SaveAsPrefabAsset(gameObject, pathNoExtension + ".prefab");
+			GameObject prefab = PrefabUtility.SaveAsPrefabAsset(gameObject, path);
 			Object.DestroyImmediate(gameObject);
 			return prefab;
 		}
@@ -112,18 +116,21 @@ namespace Frolics.Utilities.Editor {
 			if (meshFilter == null || meshRenderer == null || meshFilter.sharedMesh == null)
 				return;
 
-			Mesh mesh = meshFilter.sharedMesh;
-			Matrix4x4 matrix = meshFilter.transform.localToWorldMatrix;
-			Material[] sharedMaterials = meshRenderer.sharedMaterials;
+			// Transform into root-local space instead of world space
+			GameObject root = Selection.gameObjects[0];
+			Matrix4x4 matrix = root.transform.worldToLocalMatrix * meshFilter.transform.localToWorldMatrix;
 
-			for (int j = 0; j < mesh.subMeshCount; j++) {
-				if (j >= sharedMaterials.Length)
+			Material[] sharedMaterials = meshRenderer.sharedMaterials;
+			Mesh mesh = meshFilter.sharedMesh;
+
+			for (int i = 0; i < mesh.subMeshCount; i++) {
+				if (i >= sharedMaterials.Length)
 					continue;
 
-				CombineInstance combineInstance = new() { mesh = mesh, subMeshIndex = j, transform = matrix };
-				if (!submeshesByMaterial.TryGetValue(sharedMaterials[j], out List<CombineInstance> submeshes)) {
+				CombineInstance combineInstance = new() { mesh = mesh, subMeshIndex = i, transform = matrix };
+				if (!submeshesByMaterial.TryGetValue(sharedMaterials[i], out List<CombineInstance> submeshes)) {
 					submeshes = new List<CombineInstance>();
-					submeshesByMaterial[sharedMaterials[j]] = submeshes;
+					submeshesByMaterial[sharedMaterials[i]] = submeshes;
 				}
 
 				submeshes.Add(combineInstance);
