@@ -1,4 +1,3 @@
-using System.Globalization;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,8 +10,7 @@ namespace Frolics.Utilities.Editor {
 				return;
 
 			Undo.RecordObject(gameObject, "Rename To PascalCase");
-
-			gameObject.name = RenameToPascalCase(gameObject.name);
+			gameObject.name = PascalCaseFormatter.ToPascalCase(gameObject.name);
 		}
 
 		[MenuItem("GameObject/Tools/Rename To PascalCase Recursive", false)]
@@ -27,27 +25,9 @@ namespace Frolics.Utilities.Editor {
 
 
 		private static void RenameRecursive(Transform transform) {
-			transform.gameObject.name = RenameToPascalCase(transform.gameObject.name);
+			transform.gameObject.name = PascalCaseFormatter.ToPascalCase(transform.gameObject.name);
 			for (int i = 0; i < transform.childCount; i++)
 				RenameRecursive(transform.GetChild(i));
-		}
-
-		private static string RenameToPascalCase(string text) {
-			string[] words = text.Split('.', ',', '_', '-', ' ');
-			return words.Length switch {
-				1 => words[0],
-				0 => "EmptyName",
-				_ => CreatePascalCaseName(words)
-			};
-		}
-
-		private static string CreatePascalCaseName(string[] words) {
-			TextInfo textInfo = CultureInfo.InvariantCulture.TextInfo;
-			for (int i = 0; i < words.Length; i++)
-				if (!string.IsNullOrWhiteSpace(words[i]))
-					words[i] = textInfo.ToTitleCase(words[i].Trim());
-
-			return string.Join("", words);
 		}
 	}
 }
