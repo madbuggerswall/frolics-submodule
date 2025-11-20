@@ -62,7 +62,7 @@ namespace Frolics.Pooling {
 			}
 
 			instance.gameObject.SetActive(false);
-			instance.transform.SetParent(root, false);
+			instance.transform.SetParent(root, true);
 			poolDictionary[prefabKey].Push(instance);
 		}
 	}
