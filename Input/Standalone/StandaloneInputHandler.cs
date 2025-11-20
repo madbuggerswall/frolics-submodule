@@ -1,23 +1,21 @@
 ﻿using System;
+using System.Diagnostics;
 using Frolics.Input.Common;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.InputSystem.Utilities;
+using Debug = UnityEngine.Debug;
 
 namespace Frolics.Input.Standalone {
 	public class StandaloneInputHandler : InputHandler {
-		public Vector2 MousePressPosition { get; private set; }
-		public Vector2 MouseDragPosition { get; private set; }
-		public Vector2 MouseReleasePosition { get; private set; }
+		public event Action<MouseData> MousePressEvent;
+		public event Action<MouseData> MouseDragEvent;
+		public event Action<MouseData> MouseReleaseEvent;
 
-		public Action<MouseData> MousePressEvent { get; set; } = delegate { };
-		public Action<MouseData> MouseDragEvent { get; set; } = delegate { };
-		public Action<MouseData> MouseReleaseEvent { get; set; } = delegate { };
-
-		public Action<KeyData> KeyPressEvent { get; set; } = delegate { };
-		public Action<KeyData> KeyPressHeldEvent { get; set; } = delegate { };
-		public Action<KeyData> KeyReleaseEvent { get; set; } = delegate { };
+		public event Action<KeyData> KeyPressEvent;
+		public event Action<KeyData> KeyPressHeldEvent;
+		public event Action<KeyData> KeyReleaseEvent;
 
 		private ReadOnlyArray<KeyControl> allKeys = Keyboard.current.allKeys;
 
@@ -31,31 +29,22 @@ namespace Frolics.Input.Standalone {
 			bool pressStarted = buttonControl.wasPressedThisFrame;
 			bool isPressHeld = buttonControl.isPressed;
 			bool pressReleased = buttonControl.wasReleasedThisFrame;
-
-			// Common
 			Vector2 currentPosition = Mouse.current.position.ReadValue();
-			PointerPosition = currentPosition;
 
-			// TODO MouseData should include mousePosition (currentPosition)
-			// Mouse Events
-			if (pressStarted) {
-				MousePressPosition = MouseDragPosition = MouseReleasePosition = currentPosition;
-				MousePressEvent.Invoke(new MouseData(buttonControl));
-			} else if (isPressHeld) {
-				MouseDragPosition = currentPosition;
-				MouseDragEvent.Invoke(new MouseData(buttonControl));
-			} else if (pressReleased) {
-				MouseReleasePosition = currentPosition;
-				MouseReleaseEvent.Invoke(new MouseData(buttonControl));
-			}
+			if (pressStarted)
+				MousePressEvent?.Invoke(new MouseData(buttonControl, currentPosition));
+			else if (isPressHeld)
+				MouseDragEvent?.Invoke(new MouseData(buttonControl, currentPosition));
+			else if (pressReleased)
+				MouseReleaseEvent?.Invoke(new MouseData(buttonControl, currentPosition));
 
 			// Common events
 			if (pressStarted && buttonControl == Mouse.current.leftButton)
-				PressEvent.Invoke(new PointerData(PointerPosition));
+				PressEvent?.Invoke(new PointerData(currentPosition));
 			else if (isPressHeld && buttonControl == Mouse.current.leftButton)
-				DragEvent.Invoke(new PointerData(PointerPosition));
+				DragEvent?.Invoke(new PointerData(currentPosition));
 			else if (pressReleased && buttonControl == Mouse.current.leftButton)
-				ReleaseEvent.Invoke(new PointerData(PointerPosition));
+				ReleaseEvent?.Invoke(new PointerData(currentPosition));
 		}
 
 		private void ReadKeyboardButtonInput() {
@@ -70,11 +59,11 @@ namespace Frolics.Input.Standalone {
 			bool pressReleased = keyControl.wasReleasedThisFrame;
 
 			if (pressStarted)
-				KeyPressEvent.Invoke(new KeyData(keyControl));
+				KeyPressEvent?.Invoke(new KeyData(keyControl));
 			else if (pressHeld)
-				KeyPressHeldEvent.Invoke(new KeyData(keyControl));
+				KeyPressHeldEvent?.Invoke(new KeyData(keyControl));
 			else if (pressReleased)
-				KeyReleaseEvent.Invoke(new KeyData(keyControl));
+				KeyReleaseEvent?.Invoke(new KeyData(keyControl));
 		}
 	}
 }

@@ -2,12 +2,11 @@ using System;
 using UnityEngine;
 
 namespace Frolics.Input.Common {
+	// IDEA This might be IPointerInputHandler
 	public abstract class InputHandler {
-		public Vector2 PointerPosition { get; protected set; }
-
-		public Action<PointerData> PressEvent { get; set; } = delegate { };
-		public Action<PointerData> DragEvent { get; set; } = delegate { };
-		public Action<PointerData> ReleaseEvent { get; set; } = delegate { };
+		public Action<PointerData> PressEvent;
+		public Action<PointerData> DragEvent;
+		public Action<PointerData> ReleaseEvent;
 
 		public abstract void HandleInput();
 	}
