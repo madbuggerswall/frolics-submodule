@@ -7,7 +7,7 @@ namespace Frolics.Collections.Generic {
 	/// A double-ended queue (Deque) implementation using a circular buffer.
 	/// Provides O(1) amortized operations for adding/removing at both ends.
 	/// </summary>
-	public class Deque<T> : IEnumerable<T> {
+	public class Deque<T> : IDeque<T>, IEnumerable<T> {
 		private T[] buffer;
 		private int head; // Index of the first element
 		private int tail; // Index after the last element (next free slot)

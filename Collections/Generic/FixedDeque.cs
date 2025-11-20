@@ -3,18 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace Frolics.Collections.Generic {
-	public class FixedDeque<T> : IEnumerable<T> {
-		// --- Internal state ---
-		private readonly T[] buffer; // backing array (circular buffer)
-		private int head;            // index of the first (front) element
-		private int tail;            // index AFTER the last (back) element
-		private int count;           // number of active elements
+	/// <summary>
+	/// A double-ended queue (Deque) implementation using a circular buffer, with limited capacity.
+	/// </summary>
+	public class FixedDeque<T> : IDeque<T>, IEnumerable<T> {
+		private readonly T[] buffer;
+		private int head;
+		private int tail;
+		private int count;
 
-		public int Count => count;            // current number of elements
-		public int Capacity => buffer.Length; // fixed maximum capacity
+		public int Count => count;
+		public int Capacity => buffer.Length;
 
+		/// <summary>
+		/// Determines whether new items overwrite the oldest ones when the deque is full.
+		/// </summary>
 		public bool OverwriteWhenFull { get; }
 
+		/// <summary>
+		/// Initializes a new instance with the specified capacity and overwrite behavior.
+		/// </summary>
 		public FixedDeque(int capacity, bool overwriteWhenFull = true) {
 			if (capacity < 1)
 				throw new ArgumentException("Capacity must be positive.", nameof(capacity));
@@ -26,14 +34,13 @@ namespace Frolics.Collections.Generic {
 			OverwriteWhenFull = overwriteWhenFull;
 		}
 
-
+		/// <summary>Adds an item to the front of the deque.</summary>
 		public void PushFront(T item) {
 			if (count == Capacity) {
 				if (!OverwriteWhenFull)
 					throw new InvalidOperationException("Deque is full.");
 
-				// Overwrite mode:
-				// Move head backwards, overwrite slot, and adjust tail to follow head.
+				// Overwrite mode: Move head backwards, overwrite slot, and adjust tail to follow head.
 				head = (head - 1 + Capacity) % Capacity;
 				buffer[head] = item;
 				tail = head; // tail must follow head in overwrite mode
@@ -45,14 +52,14 @@ namespace Frolics.Collections.Generic {
 			buffer[head] = item;                     // place item at new head
 			count++;
 		}
-		
+
+		/// <summary>Adds an item to the back of the deque.</summary>
 		public void PushBack(T item) {
 			if (count == Capacity) {
 				if (!OverwriteWhenFull)
 					throw new InvalidOperationException("Deque is full.");
 
-				// Overwrite mode:
-				// Write item at tail, advance tail, and move head forward (drop oldest).
+				// Overwrite mode: Write item at tail, advance tail, and move head forward (drop oldest).
 				buffer[tail] = item;
 				tail = (tail + 1) % Capacity;
 				head = tail; // oldest element is dropped
@@ -65,6 +72,7 @@ namespace Frolics.Collections.Generic {
 			count++;
 		}
 
+		/// <summary>Removes and returns the item at the front.</summary>
 		public T PopFront() {
 			if (count == 0)
 				throw new InvalidOperationException("Deque is empty.");
@@ -76,7 +84,7 @@ namespace Frolics.Collections.Generic {
 			return item;
 		}
 
-
+		/// <summary>Removes and returns the item at the back.</summary>
 		public T PopBack() {
 			if (count == 0)
 				throw new InvalidOperationException("Deque is empty.");
@@ -88,13 +96,12 @@ namespace Frolics.Collections.Generic {
 			return item;
 		}
 
+		/// <summary>Peeks at the front item without removing it.</summary>
 		public T PeekFront() {
-			if (count == 0)
-				throw new InvalidOperationException("Deque is empty.");
-
-			return buffer[head];
+			return count == 0 ? throw new InvalidOperationException("Deque is empty.") : buffer[head];
 		}
 
+		/// <summary>Peeks at the back item without removing it.</summary>
 		public T PeekBack() {
 			if (count == 0)
 				throw new InvalidOperationException("Deque is empty.");
@@ -103,6 +110,9 @@ namespace Frolics.Collections.Generic {
 			return buffer[lastIndex];
 		}
 
+		/// <summary>
+		/// Gets or sets the element at the specified index. Index 0 corresponds to the front of the deque.
+		/// </summary>
 		public T this[int index] {
 			get {
 				if (index < 0 || index >= count)
@@ -118,6 +128,7 @@ namespace Frolics.Collections.Generic {
 			}
 		}
 
+		/// <summary>Clears all elements from the deque.</summary>
 		public void Clear() {
 			Array.Clear(buffer, 0, buffer.Length);
 			head = 0;
@@ -125,6 +136,7 @@ namespace Frolics.Collections.Generic {
 			count = 0;
 		}
 
+		/// <summary>Returns an enumerator that iterates through the deque.</summary>
 		public IEnumerator<T> GetEnumerator() {
 			for (int i = 0; i < count; i++)
 				yield return buffer[(head + i) % Capacity];
