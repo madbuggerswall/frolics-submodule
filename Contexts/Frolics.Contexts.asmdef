@@ -2,7 +2,8 @@
     "name": "Frolics.Contexts",
     "rootNamespace": "",
     "references": [
-        "GUID:a30f89fbfc57b6643b0f9731bc5a6c8d"
+        "GUID:a30f89fbfc57b6643b0f9731bc5a6c8d",
+        "GUID:1a8e6622b627420068230e9e8a00d0af"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

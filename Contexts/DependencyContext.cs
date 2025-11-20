@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
 using Frolics.Contexts.Exceptions;
+using Frolics.Collections.Generic;
 using Frolics.Utilities;
 using UnityEngine;
 
 namespace Frolics.Contexts {
 	public abstract class DependencyContext : MonoBehaviour {
+		// TODO To<TAbstract> call adds 4 concrete types to initialize list
+		// TODO Initialize from a separate list
+
 		private readonly Dictionary<Type, IInitializable> contextItems = new();
 
 		protected abstract void BindContext();
@@ -13,8 +17,12 @@ namespace Frolics.Contexts {
 
 		protected void InitializeContext() {
 			//.NET Standard 2.1 preserves dictionary insertion order which is vital
+			HashList<IInitializable> initializables = new(contextItems.Count);
 			foreach ((Type _, IInitializable initializable) in contextItems)
-				initializable.Initialize();
+				initializables.TryAdd(initializable);
+
+			for (int i = 0; i < initializables.Count; i++)
+				initializables[i].Initialize();
 		}
 
 		public T Resolve<T>() where T : class {
