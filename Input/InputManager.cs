@@ -1,30 +1,28 @@
-using Frolics.Input.Common;
 using Frolics.Input.Mobile;
 using Frolics.Input.Standalone;
 using Frolics.Utilities;
 using UnityEngine;
 
 namespace Frolics.Input {
+	// TODO Do not handle standalone input on mobile platforms
 	[DefaultExecutionOrder(-32)]
-	public class InputManager : MonoBehaviour, IInitializable {
-		public MobileInputHandler MobileInputHandler { get; private set; }
-		public StandaloneInputHandler StandaloneInputHandler { get; private set; }
-		public InputHandler CommonInputHandler { get; private set; }
+	public class InputManager : MonoBehaviour, IInitializable, IInputManager {
+		public ITouchInputHandler TouchInputHandler { get; private set; }
+		public IKeyboardInputHandler KeyboardInputHandler { get; private set; }
+		public IMouseInputHandler MouseInputHandler { get; private set; }
 
 		public void Initialize() {
-			MobileInputHandler = new MobileInputHandler();
-			StandaloneInputHandler = new StandaloneInputHandler();
-			CommonInputHandler = GetPlatformDependentHandler();
+			TouchInputHandler = new TouchInputHandler();
+			KeyboardInputHandler = new KeyboardInputHandler();
+			MouseInputHandler = new MouseInputHandler();
 		}
 
 		private void Update() {
-			MobileInputHandler.HandleInput();
-			StandaloneInputHandler.HandleInput();
-		}
-
-		private InputHandler GetPlatformDependentHandler() {
-			bool isMobile = Application.platform is RuntimePlatform.Android or RuntimePlatform.IPhonePlayer;
-			return isMobile ? MobileInputHandler : StandaloneInputHandler;
+			TouchInputHandler.HandleInput();
+			KeyboardInputHandler.HandleInput();
+			MouseInputHandler.HandleInput();
 		}
 	}
 }
+
+// NOTE 20 Ultra 5G

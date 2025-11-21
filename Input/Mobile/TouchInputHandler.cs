@@ -1,21 +1,22 @@
 ﻿using System;
-using Frolics.Input.Common;
 using UnityEngine;
 using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 
 namespace Frolics.Input.Mobile {
-	public class MobileInputHandler : InputHandler {
+	// IDEA Rename to ITouchInputHandler (to comply with IKeyboard/MouseInputHandlers)
+
+	public class TouchInputHandler : ITouchInputHandler {
 		private const int MaxTouches = 1;
 
 		public event Action<TouchData> TouchPressEvent;
 		public event Action<TouchData> TouchDragEvent;
 		public event Action<TouchData> TouchReleaseEvent;
 
-		public MobileInputHandler() : base() {
+		public TouchInputHandler() {
 			UnityEngine.InputSystem.EnhancedTouch.EnhancedTouchSupport.Enable();
 		}
 
-		public override void HandleInput() {
+		public void HandleInput() {
 			ReadAllTouchInputs();
 		}
 
@@ -33,14 +34,6 @@ namespace Frolics.Input.Mobile {
 				TouchDragEvent?.Invoke(new TouchData(touch, touch.screenPosition));
 			else if (touch.ended)
 				TouchReleaseEvent?.Invoke(new TouchData(touch, touch.screenPosition));
-
-			// Common events
-			if (touch.began)
-				PressEvent?.Invoke(new PointerData(touch.screenPosition));
-			else if (touch.inProgress)
-				DragEvent?.Invoke(new PointerData(touch.screenPosition));
-			else if (touch.ended)
-				ReleaseEvent?.Invoke(new PointerData(touch.screenPosition));
 		}
 	}
 }
