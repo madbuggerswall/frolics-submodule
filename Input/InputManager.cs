@@ -24,5 +24,3 @@ namespace Frolics.Input {
 		}
 	}
 }
-
-// NOTE 20 Ultra 5G

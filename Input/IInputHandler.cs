@@ -1,4 +1,4 @@
-namespace Frolics.Input.Mobile {
+namespace Frolics.Input {
 	public interface IInputHandler {
 		public void HandleInput();
 	}
