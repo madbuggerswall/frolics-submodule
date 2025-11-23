@@ -1,5 +1,4 @@
 using System;
-using Frolics.Input.Mobile;
 
 namespace Frolics.Input.Standalone {
 	public interface IMouseInputHandler : IInputHandler {

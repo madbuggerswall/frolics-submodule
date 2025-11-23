@@ -4,6 +4,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
+#if UNITY_EDITOR
 namespace Frolics.Utilities.Editor {
 	public abstract class GenericManagedReferenceDrawer : PropertyDrawer {
 		// Cache per subclass
@@ -188,3 +189,4 @@ namespace Frolics.Utilities.Editor {
 		}
 	}
 }
+#endif

@@ -3,6 +3,7 @@ using System.Text;
 using JetBrains.Annotations;
 
 namespace Frolics.Utilities {
+	
 	public static class TypeNameFormatter {
 		[PublicAPI]
 		public static string Nicify(Type type) {

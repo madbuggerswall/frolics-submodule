@@ -3,6 +3,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
+#if UNITY_EDITOR
 namespace Frolics.Utilities.Editor {
 	public static class MeshCombinerWithAsset {
 		private const string MenuPath = "Assets/Create/Mesh/";
@@ -26,7 +27,7 @@ namespace Frolics.Utilities.Editor {
 			}
 
 			// Prompt user for save location
-			string defaultName = $"{PascalCaseFormatter.ToPascalCase(root.name).Replace("Base", "")}Combined";
+			string defaultName = $"{NameFormatter.ToPascalCase(root.name).Replace("Base", "")}Combined";
 			string path = PromptUserForSaveLocation(defaultName);
 			if (string.IsNullOrEmpty(path)) {
 				Debug.Log("Mesh combination cancelled by user.");
@@ -205,3 +206,4 @@ namespace Frolics.Utilities.Editor {
 		}
 	}
 }
+#endif
