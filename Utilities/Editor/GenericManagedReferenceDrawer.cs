@@ -66,7 +66,7 @@ namespace Frolics.Utilities.Editor {
 			// Button shows current type name or the default name
 			Type validType = GetValidType();
 			string defaultName = $"Select a {TypeNameFormatter.Nicify(validType)}";
-			string name = currentType == null ? defaultName : ObjectNames.NicifyVariableName(currentType.Name);
+			string name = currentType == null ? defaultName : NameFormatter.Nicify(currentType.Name);
 			if (!GUI.Button(buttonRect, name, EditorStyles.popup))
 				return;
 
@@ -85,7 +85,7 @@ namespace Frolics.Utilities.Editor {
 
 			for (int i = 0; i < assignableTypes.Count; i++) {
 				Type type = assignableTypes[i];
-				string typeName = ObjectNames.NicifyVariableName(type.Name);
+				string typeName = NameFormatter.Nicify(type.Name);
 
 				menu.AddItem(new GUIContent(typeName), type == currentType, AddTypeMenuFunction(property, type));
 			}
