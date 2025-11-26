@@ -29,11 +29,11 @@ namespace Frolics.Tweens.Core {
 		}
 
 		private void Update() {
-			UpdateTweens(tweens);
+			UpdateTweens(tweens, Time.deltaTime);
 		}
 
 		private void FixedUpdate() {
-			UpdateTweens(rigidbodyTweens);
+			UpdateTweens(rigidbodyTweens, Time.fixedDeltaTime);
 		}
 
 		private void AddTween(Tween tween) {
@@ -43,13 +43,13 @@ namespace Frolics.Tweens.Core {
 				tweens.Add(tween);
 		}
 
-		private void UpdateTweens(List<Tween> tweens) {
+		private void UpdateTweens(List<Tween> tweens, float deltaTime) {
 			for (int i = tweens.Count - 1; i >= 0; i--) {
 				Tween tween = tweens[i];
 
 				// Remove completed tween efficiently by swapping with last and popping
-				if (!tween.IsCompleted() || !tween.IsStopped()) {
-					tween.UpdateProgress(Time.deltaTime);
+				if (!tween.IsCompleted() && !tween.IsStopped()) {
+					tween.UpdateProgress(deltaTime);
 				} else {
 					tweens[i].Recycle(tweenPool);
 
