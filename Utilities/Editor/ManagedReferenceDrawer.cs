@@ -6,7 +6,8 @@ using UnityEngine;
 
 #if UNITY_EDITOR
 namespace Frolics.Utilities.Editor {
-	public abstract class GenericManagedReferenceDrawer : PropertyDrawer {
+	// TODO Let inheritors decide on PrefixLabel
+	public abstract class ManagedReferenceDrawer : PropertyDrawer {
 		// Cache per subclass
 		private List<Type> cachedTypes;
 
@@ -24,7 +25,7 @@ namespace Frolics.Utilities.Editor {
 			}
 
 			// Draw the label (e.g. Element 0), Unity handles indentation and prefix
-			position = EditorGUI.PrefixLabel(position, label);
+			// position = EditorGUI.PrefixLabel(position, label);
 
 			// Draw the dropdown to select/change type
 			DrawTypeDropdown(position, property);
