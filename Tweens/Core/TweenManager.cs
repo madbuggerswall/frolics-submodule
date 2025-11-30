@@ -48,7 +48,7 @@ namespace Frolics.Tweens.Core {
 				Tween tween = tweens[i];
 
 				// Remove completed tween efficiently by swapping with last and popping
-				if (!tween.IsCompleted() && !tween.IsStopped()) {
+				if (!tween.IsStopped()) {
 					tween.UpdateProgress(deltaTime);
 				} else {
 					tweens[i].Recycle(tweenPool);

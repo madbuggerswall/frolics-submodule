@@ -24,7 +24,7 @@ namespace Frolics.Tweens.Core {
 		protected float duration;
 
 		private bool isStopped;
-		private bool isCompleted;
+		private bool isActive;
 
 		protected Tween() => Reset();
 
@@ -44,15 +44,16 @@ namespace Frolics.Tweens.Core {
 			easedTime = 0;
 			duration = 1f;
 
+			// TODO Fix this
 			isStopped = false;
-			isCompleted = false;
+			isActive = false;
 
 			onCompleteCallback = null;
 			easeFunction = Ease.Get(Ease.Type.Linear);
 		}
 
 		internal void UpdateProgress(float deltaTime) {
-			if (isCompleted || isStopped)
+			if (isStopped)
 				return;
 
 			if (GetTweener() == null) {
@@ -60,6 +61,7 @@ namespace Frolics.Tweens.Core {
 				return;
 			}
 
+			isActive = true;
 			elapsedTime += deltaTime;
 			if (elapsedTime - delay <= 0f)
 				return;
@@ -76,7 +78,7 @@ namespace Frolics.Tweens.Core {
 				easedTime = easeFunction(normalizedTime);
 				UpdateTween(isReflectionCycle ? 1 - easedTime : easedTime);
 			}
-			
+
 			if (normalizedTime < 1f)
 				return;
 
@@ -89,12 +91,11 @@ namespace Frolics.Tweens.Core {
 			Complete();
 		}
 
-		internal bool IsCompleted() => isCompleted;
 		internal bool IsStopped() => isStopped;
 
 		// Interface
 		public bool IsPlaying() {
-			return !(isStopped || isCompleted);
+			return isActive && !isStopped;
 		}
 
 		public void Stop() {
@@ -102,7 +103,7 @@ namespace Frolics.Tweens.Core {
 		}
 
 		public void Complete() {
-			isCompleted = true;
+			isStopped = true;
 			onCompleteCallback?.Invoke();
 		}
 
