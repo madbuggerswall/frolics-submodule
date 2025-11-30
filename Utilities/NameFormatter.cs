@@ -11,7 +11,7 @@ namespace Frolics.Utilities {
 		/// </summary>
 		public static string Nicify(string input) {
 			string[] words = ToPascalCaseWords(input);
-			return string.Join(" ", words);
+			return string.Join(" ", words).Trim();
 		}
 
 		/// <summary>
@@ -22,7 +22,7 @@ namespace Frolics.Utilities {
 		/// </summary>
 		public static string ToPascalCase(string input) {
 			string[] words = ToPascalCaseWords(input);
-			return string.Join("", words);
+			return string.Join("", words).Trim();
 		}
 
 		private static string[] ToPascalCaseWords(string input) {
