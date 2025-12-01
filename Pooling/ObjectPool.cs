@@ -65,5 +65,29 @@ namespace Frolics.Pooling {
 			instance.transform.SetParent(root, true);
 			poolDictionary[prefabKey].Push(instance);
 		}
+
+		/// <summary>
+		/// Adopts an existing instance into the pool.
+		/// Useful if the object was instantiated outside the pool.
+		/// </summary>
+		void IObjectPool<T>.Adopt(T instance, T prefab) {
+			// If already tracked, ignore
+			if (!instanceToPrefab.TryAdd(instance, prefab.gameObject))
+				return;
+
+			// Ensure prefab key exists in dictionary
+			if (!poolDictionary.TryGetValue(prefab.gameObject, out Stack<T> pool)) {
+				pool = new Stack<T>();
+				poolDictionary[prefab.gameObject] = pool;
+			}
+
+			// Normalize state
+			instance.name = prefab.name + " (Pooled)";
+			instance.gameObject.SetActive(false);
+			instance.transform.SetParent(root, true);
+
+			// Push into pool
+			pool.Push(instance);
+		}
 	}
 }
