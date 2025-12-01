@@ -5,7 +5,7 @@ using UnityEngine;
 
 #if UNITY_EDITOR
 namespace Frolics.Utilities.Editor {
-	public static class MeshCombinerWithAsset {
+	public static class CombineMeshesContextMenu {
 		private const string MenuPath = "Assets/Create/Mesh/";
 
 		[MenuItem(MenuPath + "Combine Meshes")]
