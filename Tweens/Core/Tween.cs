@@ -1,90 +1,9 @@
 using System;
-using System.Collections.Generic;
 using Frolics.Tweens.Easing;
 using Frolics.Tweens.Pooling;
 using UnityEngine;
 
 namespace Frolics.Tweens.Core {
-	internal readonly struct SequenceEntry {
-		public readonly Tween tween;
-		public readonly float startTime; // IDEA rename to startOffset
-		public readonly float duration; // IDEA Might be redundant
-
-		public SequenceEntry(Tween tween, float startTime) {
-			this.tween = tween;
-			this.startTime = startTime;
-			this.duration = tween.GetDuration();
-		}
-
-		public float GetEndTime() => startTime + duration;
-	}
-
-	public sealed class Sequence : Tween {
-		private readonly List<SequenceEntry> entries = new();
-		private float totalDuration;
-
-		public Sequence Append(Tween tween) {
-			if (tween is null)
-				throw new ArgumentNullException(nameof(tween));
-
-			SequenceEntry entry = new SequenceEntry(tween, totalDuration);
-			entries.Add(entry);
-
-			totalDuration = entry.GetEndTime();
-			duration = totalDuration;
-
-			updatePhase = tween.GetUpdatePhase();
-			return this;
-		}
-
-		public Sequence Join(Tween tween) {
-			if (tween is null)
-				throw new ArgumentNullException(nameof(tween));
-
-			float start = entries.Count > 0 ? entries[^1].startTime : 0f;
-			SequenceEntry entry = new SequenceEntry(tween, start);
-			entries.Add(entry);
-
-			totalDuration = Mathf.Max(totalDuration, entry.GetEndTime());
-			duration = totalDuration;
-
-			updatePhase = tween.GetUpdatePhase();
-			return this;
-		}
-
-		// Tween
-		protected override void UpdateTween(float easedTime) {
-			float sequenceTime = easedTime * duration;
-			float deltaTime = updatePhase is UpdatePhase.Normal ? Time.deltaTime : Time.fixedDeltaTime;
-			for (int i = 0; i < entries.Count; i++) {
-				SequenceEntry entry = entries[i];
-				if (sequenceTime >= entry.startTime && sequenceTime <= entry.GetEndTime())
-					entry.tween.UpdateProgress(deltaTime);
-			}
-		}
-
-		internal override bool IsTargetAlive() {
-			for (int i = 0; i < entries.Count; i++)
-				if (!entries[i].tween.IsTargetAlive())
-					return false;
-
-			return true;
-		}
-
-
-		internal override void Recycle(ITweenPool pool) {
-			for (int i = 0; i < entries.Count; i++) {
-				Tween tween = entries[i].tween;
-				tween.Recycle(pool);
-			}
-
-			entries.Clear();
-			totalDuration = 0;
-			Reset();
-			pool.Despawn(this);
-		}
-	}
-
 	// TODO Sequence : ISequence
 	public abstract class Tween {
 		public enum CycleType { Restart, Reflected }
