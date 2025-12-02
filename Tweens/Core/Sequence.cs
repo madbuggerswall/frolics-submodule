@@ -40,6 +40,9 @@ namespace Frolics.Tweens.Core {
 		}
 
 		// Tween
+		// Sequences don’t have a single target; children will sample themselves on their first valid frame
+		protected override void SampleInitialState() { }
+
 		protected override void UpdateTween(float easedTime) {
 			float sequenceTime = easedTime * duration;
 			float deltaTime = updatePhase is UpdatePhase.Normal ? Time.deltaTime : Time.fixedDeltaTime;
@@ -50,6 +53,7 @@ namespace Frolics.Tweens.Core {
 			}
 		}
 
+		// TODO This logic may need improvement
 		internal override bool IsTargetAlive() {
 			for (int i = 0; i < entries.Count; i++)
 				if (!entries[i].tween.IsTargetAlive())
@@ -60,10 +64,8 @@ namespace Frolics.Tweens.Core {
 
 
 		internal override void Recycle(ITweenPool pool) {
-			for (int i = 0; i < entries.Count; i++) {
-				Tween tween = entries[i].tween;
-				tween.Recycle(pool);
-			}
+			for (int i = 0; i < entries.Count; i++)
+				entries[i].tween.Recycle(pool);
 
 			entries.Clear();
 			totalDuration = 0;

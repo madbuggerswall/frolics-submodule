@@ -52,6 +52,10 @@ namespace Frolics.Tweens.Types {
 			this.updatePhase = tweener is Rigidbody ? UpdatePhase.Physics : UpdatePhase.Normal;
 		}
 
+		protected override void SampleInitialState() {
+			this.initial = getter(tweener);
+		}
+
 		protected override void UpdateTween(float easedTime) {
 			setter(tweener, lerp(initial, target, easedTime));
 		}

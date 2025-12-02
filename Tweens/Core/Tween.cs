@@ -27,11 +27,13 @@ namespace Frolics.Tweens.Core {
 
 		private bool isStopped;
 		private bool isActive;
+		private bool isInitialized;
 
 		protected UpdatePhase updatePhase;
 
 		protected Tween() => Reset();
 
+		protected abstract void SampleInitialState();
 		protected abstract void UpdateTween(float easedTime);
 		internal abstract bool IsTargetAlive();
 		internal abstract void Recycle(ITweenPool pool);
@@ -48,9 +50,9 @@ namespace Frolics.Tweens.Core {
 			easedTime = 0;
 			duration = 1f;
 
-			// TODO Fix this
 			isStopped = false;
 			isActive = false;
+			isInitialized = false;
 
 			onCompleteCallback = null;
 			easeFunction = Ease.Get(Ease.Type.Linear);
@@ -59,35 +61,45 @@ namespace Frolics.Tweens.Core {
 		}
 
 		internal void UpdateProgress(float deltaTime) {
+			// If the tween has already been stopped, exit early
 			if (isStopped)
 				return;
 
+			// If the target object is no longer valid, stop the tween
 			if (!IsTargetAlive()) {
 				isStopped = true;
 				return;
 			}
 
-			isActive = true; // IDEA Migrate to Play? 
+			// Activate the tween on its first update call
+			if (!isActive)
+				isActive = true;
+
+			// Wait until the delay has elapsed
 			elapsedTime += deltaTime;
 			if (elapsedTime - delay <= 0f)
 				return;
 
-			float normalizedTime = Mathf.Clamp01((elapsedTime - delay) / duration);
-			bool isReflectionCycle = cycleType == CycleType.Reflected && cyclesCompleted % 2 == 1;
-
-			if (easeSymmetry) {
-				// Mirror the input domain
-				easedTime = easeFunction(isReflectionCycle ? 1 - normalizedTime : normalizedTime);
-				UpdateTween(easedTime);
-			} else {
-				// Mirror the output curve
-				easedTime = easeFunction(normalizedTime);
-				UpdateTween(isReflectionCycle ? 1 - easedTime : easedTime);
+			// First valid frame after delay: sample initial state
+			if (!isInitialized) {
+				SampleInitialState();
+				isInitialized = true;
 			}
 
-			if (normalizedTime < 1f)
+			// Normalized time
+			float time = Mathf.Clamp01((elapsedTime - delay) / duration);
+
+			// Is reflection cycle
+			bool reflect = cycleType == CycleType.Reflected && cyclesCompleted % 2 == 1;
+
+			// EaseSymmetry -> Mirror the input domain : Mirror the output curve
+			easedTime = easeSymmetry ? easeFunction(reflect ? 1 - time : time) : easeFunction(time);
+			UpdateTween(easeSymmetry ? easedTime : reflect ? 1 - easedTime : easedTime);
+
+			if (time < 1f)
 				return;
 
+			// Increment cycle count once a full duration has completed
 			cyclesCompleted++;
 			if (cycleCount < 0 || cycleCount - cyclesCompleted > 0) {
 				elapsedTime = includeDelay ? 0f : delay;

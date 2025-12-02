@@ -35,6 +35,17 @@ namespace Frolics.Tweens.Types {
 			this.initialDirection = rotation * initialDirection;
 		}
 
+		// TODO Untested
+		protected override void SampleInitialState() {
+			this.angle.initial = Vector3.Dot(tweener.eulerAngles, axis.normalized);
+			this.initialDirection = (tweener.position - pivot);
+			if (angle.initial <= angle.target)
+				return;
+
+			Quaternion rotation = Quaternion.AngleAxis(-angle.initial, axis);
+			this.initialDirection = rotation * initialDirection;
+		}
+
 		protected override void UpdateTween(float easedTime) {
 			// Target angle at this progress
 			float targetAngle = Mathf.Lerp(angle.initial, angle.target, easedTime);
