@@ -1,6 +1,7 @@
 using System;
 using Frolics.Tweens.Core;
 using Frolics.Tweens.Pooling;
+using UnityEngine;
 
 namespace Frolics.Tweens.Types {
 	/// <summary>
@@ -48,19 +49,20 @@ namespace Frolics.Tweens.Types {
 
 			this.initial = getter(tweener);
 			this.target = target;
+			this.updatePhase = tweener is Rigidbody ? UpdatePhase.Physics : UpdatePhase.Normal;
 		}
 
 		protected override void UpdateTween(float easedTime) {
 			setter(tweener, lerp(initial, target, easedTime));
 		}
 
+		internal override bool IsTargetAlive() {
+			return tweener != null;
+		}
+
 		internal override void Recycle(ITweenPool pool) {
 			Reset();
 			pool.Despawn(this);
-		}
-
-		internal override UnityEngine.Object GetTweener() {
-			return tweener;
 		}
 	}
 }

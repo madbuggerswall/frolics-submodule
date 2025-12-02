@@ -24,6 +24,7 @@ namespace Frolics.Tweens.Types {
 			this.angle.initial = Vector3.Dot(tweener.eulerAngles, axis.normalized);
 			this.angle.target = targetAngle;
 			this.duration = duration;
+			this.updatePhase = UpdatePhase.Normal;
 
 			// Store initial direction from pivot to object
 			this.initialDirection = (tweener.position - pivot);
@@ -49,13 +50,13 @@ namespace Frolics.Tweens.Types {
 			tweener.rotation = rotation;
 		}
 
+		internal override bool IsTargetAlive() {
+			return tweener != null;
+		}
+
 		internal override void Recycle(ITweenPool pool) {
 			Reset();
 			pool.Despawn(this);
-		}
-
-		internal override UnityEngine.Object GetTweener() {
-			return tweener;
 		}
 	}
 }

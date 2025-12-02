@@ -1,5 +1,3 @@
-using System;
-using Frolics.Tweens.Core;
 using Frolics.Tweens.Pooling;
 using Frolics.Tweens.Types;
 using Frolics.Utilities.Extensions;
@@ -8,11 +6,9 @@ using UnityEngine;
 namespace Frolics.Tweens.Factory {
 	internal class TweenFactory {
 		private readonly ITweenPool tweenPool;
-		private readonly Action<Tween> register;
 
-		internal TweenFactory(ITweenPool tweenPool, Action<Tween> register) {
+		internal TweenFactory(ITweenPool tweenPool) {
 			this.tweenPool = tweenPool;
-			this.register = register;
 		}
 
 
@@ -30,7 +26,6 @@ namespace Frolics.Tweens.Factory {
 				lerp: Vector3.Lerp
 			);
 
-			register(tween);
 			return tween;
 		}
 
@@ -46,7 +41,6 @@ namespace Frolics.Tweens.Factory {
 				lerp: Mathf.Lerp
 			);
 
-			register(tween);
 			return tween;
 		}
 
@@ -62,7 +56,6 @@ namespace Frolics.Tweens.Factory {
 				lerp: Mathf.Lerp
 			);
 
-			register(tween);
 			return tween;
 		}
 
@@ -78,7 +71,6 @@ namespace Frolics.Tweens.Factory {
 				lerp: Mathf.Lerp
 			);
 
-			register(tween);
 			return tween;
 		}
 
@@ -94,7 +86,6 @@ namespace Frolics.Tweens.Factory {
 				lerp: Vector3.Lerp
 			);
 
-			register(tween);
 			return tween;
 		}
 
@@ -114,7 +105,6 @@ namespace Frolics.Tweens.Factory {
 				lerp: Quaternion.Lerp
 			);
 
-			register(tween);
 			return tween;
 		}
 
@@ -134,7 +124,6 @@ namespace Frolics.Tweens.Factory {
 				lerp: Quaternion.Lerp
 			);
 
-			register(tween);
 			return tween;
 		}
 
@@ -148,7 +137,6 @@ namespace Frolics.Tweens.Factory {
 			var tween = tweenPool.Spawn<RotateAroundTween>();
 			tween.Configure(tweener, axis, pivot, targetAngle, duration);
 
-			register(tween);
 			return tween;
 		}
 
@@ -168,7 +156,6 @@ namespace Frolics.Tweens.Factory {
 				lerp: Vector3.Lerp
 			);
 
-			register(tween);
 			return tween;
 		}
 
@@ -188,7 +175,6 @@ namespace Frolics.Tweens.Factory {
 				lerp: Quaternion.Lerp
 			);
 
-			register(tween);
 			return tween;
 		}
 
@@ -212,7 +198,6 @@ namespace Frolics.Tweens.Factory {
 				lerp: Vector2.Lerp
 			);
 
-			register(tween);
 			return tween;
 		}
 
@@ -232,7 +217,6 @@ namespace Frolics.Tweens.Factory {
 				lerp: Vector3.Lerp
 			);
 
-			register(tween);
 			return tween;
 		}
 
@@ -252,7 +236,6 @@ namespace Frolics.Tweens.Factory {
 				lerp: Vector3.Lerp
 			);
 
-			register(tween);
 			return tween;
 		}
 
@@ -272,7 +255,6 @@ namespace Frolics.Tweens.Factory {
 				lerp: Mathf.Lerp
 			);
 
-			register(tween);
 			return tween;
 		}
 
@@ -292,7 +274,6 @@ namespace Frolics.Tweens.Factory {
 				lerp: Color.Lerp
 			);
 
-			register(tween);
 			return tween;
 		}
 
@@ -308,7 +289,6 @@ namespace Frolics.Tweens.Factory {
 				lerp: Mathf.Lerp
 			);
 
-			register(tween);
 			return tween;
 		}
 

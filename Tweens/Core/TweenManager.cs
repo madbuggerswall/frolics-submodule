@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Frolics.Tweens.Factory;
 using Frolics.Tweens.Pooling;
@@ -6,8 +7,8 @@ using UnityEngine;
 
 namespace Frolics.Tweens.Core {
 	internal class TweenManager : PersistentSingletonMono<TweenManager> {
-		private List<Tween> tweens;
-		private List<Tween> rigidbodyTweens;
+		private List<Tween> normalTweens;
+		private List<Tween> physicsTweens;
 
 		private ITweenPool tweenPool;
 		private TweenFactory tweenFactory;
@@ -21,26 +22,24 @@ namespace Frolics.Tweens.Core {
 		protected override void Awake() {
 			base.Awake();
 
-			tweens = new List<Tween>();
-			rigidbodyTweens = new List<Tween>();
+			normalTweens = new List<Tween>();
+			physicsTweens = new List<Tween>();
 
 			tweenPool = new TweenPool();
-			tweenFactory = new TweenFactory(tweenPool, AddTween);
+			tweenFactory = new TweenFactory(tweenPool);
 		}
 
-		private void Update() {
-			UpdateTweens(tweens, Time.deltaTime);
-		}
+		private void Update() => UpdateTweens(normalTweens, Time.deltaTime);
+		private void FixedUpdate() => UpdateTweens(physicsTweens, Time.fixedDeltaTime);
 
-		private void FixedUpdate() {
-			UpdateTweens(rigidbodyTweens, Time.fixedDeltaTime);
-		}
-
-		private void AddTween(Tween tween) {
-			if (tween.GetTweener() is Rigidbody)
-				rigidbodyTweens.Add(tween);
+		internal void Register(Tween tween) {
+			Tween.UpdatePhase updatePhase = tween.GetUpdatePhase();
+			if (updatePhase is Tween.UpdatePhase.Normal)
+				normalTweens.Add(tween);
+			else if (updatePhase is Tween.UpdatePhase.Physics)
+				physicsTweens.Add(tween);
 			else
-				tweens.Add(tween);
+				throw new ArgumentException();
 		}
 
 		private void UpdateTweens(List<Tween> tweens, float deltaTime) {
