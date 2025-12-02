@@ -1,3 +1,4 @@
+using Frolics.Tweens.Core;
 using Frolics.Tweens.Pooling;
 using Frolics.Tweens.Types;
 using Frolics.Utilities.Extensions;
@@ -11,6 +12,14 @@ namespace Frolics.Tweens.Factory {
 			this.tweenPool = tweenPool;
 		}
 
+		#region Sequence
+
+		internal Sequence TweenSequence() {
+			Sequence sequence = tweenPool.Spawn<Sequence>();
+			return sequence;
+		}
+
+		#endregion
 
 		#region Transform Tweens
 

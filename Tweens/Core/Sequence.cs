@@ -8,6 +8,8 @@ namespace Frolics.Tweens.Core {
 		private readonly List<SequenceEntry> entries = new();
 		private float totalDuration;
 
+		public Sequence() { }
+
 		public void Append(Tween tween) {
 			if (tween is null)
 				throw new ArgumentNullException(nameof(tween));
@@ -67,6 +69,11 @@ namespace Frolics.Tweens.Core {
 			totalDuration = 0;
 			Reset();
 			pool.Despawn(this);
+		}
+
+		// Static Factory Method
+		public static Sequence Create() {
+			return TweenManager.GetInstance().GetTweenFactory().TweenSequence();
 		}
 	}
 }
