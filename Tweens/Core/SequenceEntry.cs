@@ -7,7 +7,7 @@ namespace Frolics.Tweens.Core {
 		public SequenceEntry(Tween tween, float startTime) {
 			this.tween = tween;
 			this.startTime = startTime;
-			this.duration = tween.GetDuration();
+			this.duration = tween.GetDuration() * tween.GetCycleCount();
 		}
 
 		public float GetEndTime() => startTime + duration;

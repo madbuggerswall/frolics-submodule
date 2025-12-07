@@ -111,6 +111,7 @@ namespace Frolics.Tweens.Core {
 
 		internal UpdatePhase GetUpdatePhase() => updatePhase;
 		internal float GetDuration() => duration;
+		internal float GetCycleCount() => cycleCount;
 		internal bool IsStopped() => isStopped;
 
 		// Interface
