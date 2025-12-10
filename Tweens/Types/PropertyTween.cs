@@ -65,6 +65,10 @@ namespace Frolics.Tweens.Types {
 		}
 
 		internal override void Recycle(ITweenPool pool) {
+			tweener = null;
+			getter = null;
+			setter = null;
+			lerp = null;
 			Reset();
 			pool.Despawn(this);
 		}
