@@ -7,9 +7,6 @@ using UnityEngine;
 
 namespace Frolics.Contexts {
 	public abstract class DependencyContext : MonoBehaviour {
-		// TODO To<TAbstract> call adds 4 concrete types to initialize list
-		// TODO Initialize from a separate list
-
 		private readonly Dictionary<Type, IInitializable> contextItems = new();
 
 		protected abstract void BindContext();

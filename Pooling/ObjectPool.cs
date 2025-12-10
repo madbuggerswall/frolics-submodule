@@ -9,6 +9,7 @@ namespace Frolics.Pooling {
 	public class ObjectPool<T> : IObjectPool<T> where T : MonoBehaviour {
 		private readonly Dictionary<GameObject, Stack<T>> poolDictionary = new();
 		private readonly Dictionary<T, GameObject> instanceToPrefab = new(); // reverse lookup
+		private readonly HashSet<T> pooledInstances = new();                 // explicit inactive tracking
 		private readonly Transform root;
 
 		public ObjectPool(Transform root) {
@@ -19,18 +20,22 @@ namespace Frolics.Pooling {
 			T instance = Object.Instantiate(prefab, root, true);
 			instance.gameObject.SetActive(false);
 			instance.name = prefab.name + " (Pooled)";
+
 			instanceToPrefab[instance] = prefab.gameObject;
+			pooledInstances.Add(instance); // new instances start pooled
 
 			return instance;
 		}
 
 		private T GetObject(T prefab) {
-			if (poolDictionary.TryGetValue(prefab.gameObject, out Stack<T> pool))
-				return pool.Count > 0 ? pool.Pop() : AddObject(prefab);
+			if (!poolDictionary.TryGetValue(prefab.gameObject, out Stack<T> pool)) {
+				pool = new Stack<T>();
+				poolDictionary[prefab.gameObject] = pool;
+			}
 
-			pool = new Stack<T>();
-			poolDictionary[prefab.gameObject] = pool;
-			return AddObject(prefab);
+			T instance = pool.Count > 0 ? pool.Pop() : AddObject(prefab);
+			pooledInstances.Remove(instance);
+			return instance;
 		}
 
 		/// <summary>
@@ -57,13 +62,21 @@ namespace Frolics.Pooling {
 		/// </summary>
 		void IObjectPool<T>.Despawn(T instance) {
 			if (!instanceToPrefab.TryGetValue(instance, out GameObject prefabKey)) {
-				// Debug.LogWarning($"Trying to despawn {instance.name}, but it was not pooled.");
+				Debug.LogWarning($"Trying to despawn {instance.name}, but it was not pooled.");
+				return;
+			}
+
+			// Guard against double-despawn
+			if (pooledInstances.Contains(instance)) {
+				Debug.LogWarning($"Instance {instance.name} already despawned!");
 				return;
 			}
 
 			instance.gameObject.SetActive(false);
 			instance.transform.SetParent(root, true);
+
 			poolDictionary[prefabKey].Push(instance);
+			pooledInstances.Add(instance); // mark inactive
 		}
 
 		/// <summary>

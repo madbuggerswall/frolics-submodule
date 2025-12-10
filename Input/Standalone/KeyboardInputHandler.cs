@@ -4,8 +4,6 @@ using UnityEngine.InputSystem.Controls;
 using UnityEngine.InputSystem.Utilities;
 
 namespace Frolics.Input.Standalone {
-	// IDEA IKeyboardInputHandler & IMouseInputHandler
-
 	public class KeyboardInputHandler : IKeyboardInputHandler {
 		public event Action<KeyData> KeyPressEvent;
 		public event Action<KeyData> KeyPressHeldEvent;
