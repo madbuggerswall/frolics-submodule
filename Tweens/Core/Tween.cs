@@ -4,9 +4,8 @@ using Frolics.Tweens.Pooling;
 using UnityEngine;
 
 namespace Frolics.Tweens.Core {
-	// TODO Sequence : ISequence
 	public abstract class Tween {
-		public enum CycleType { Restart, Reflected }
+		public enum CycleType { Restart, Reflect }
 
 		protected internal enum UpdatePhase { Normal, Physics }
 
@@ -90,7 +89,7 @@ namespace Frolics.Tweens.Core {
 			float time = Mathf.Clamp01((elapsedTime - delay) / duration);
 
 			// Is reflection cycle
-			bool reflect = cycleType == CycleType.Reflected && cyclesCompleted % 2 == 1;
+			bool reflect = cycleType == CycleType.Reflect && cyclesCompleted % 2 == 1;
 
 			// EaseSymmetry -> Mirror the input domain : Mirror the output curve
 			easedTime = easeSymmetry ? easeFunction(reflect ? 1 - time : time) : easeFunction(time);
@@ -154,6 +153,7 @@ namespace Frolics.Tweens.Core {
 			this.cycleType = cycleType;
 			this.cycleCount = cycleCount;
 			this.includeDelay = includeDelay;
+			// TODO This should be  CycleType.Rewind 
 			this.easeSymmetry = easeSymmetry;
 		}
 
