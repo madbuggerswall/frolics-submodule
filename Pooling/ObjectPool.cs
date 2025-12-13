@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Frolics.Utilities;
+using UnityEditor;
 using UnityEngine;
 
 namespace Frolics.Pooling {
@@ -62,13 +64,13 @@ namespace Frolics.Pooling {
 		/// </summary>
 		void IObjectPool<T>.Despawn(T instance) {
 			if (!instanceToPrefab.TryGetValue(instance, out GameObject prefabKey)) {
-				Debug.LogWarning($"Trying to despawn {instance.name}, but it was not pooled.");
+				EditorLog.LogWarning($"Trying to despawn {instance.name}, but it was not pooled.");
 				return;
 			}
 
 			// Guard against double-despawn
 			if (pooledInstances.Contains(instance)) {
-				Debug.LogWarning($"Instance {instance.name} already despawned!");
+				EditorLog.LogWarning($"Instance {instance.name} already despawned!");
 				return;
 			}
 
