@@ -2,6 +2,7 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 
+#if UNITY_EDITOR
 namespace Frolics.Utilities.Extensions {
 	public static class ObjectExtensions {
 		public static void ListProperties(this Object component) {
@@ -16,3 +17,5 @@ namespace Frolics.Utilities.Extensions {
 		}
 	}
 }
+
+#endif
