@@ -33,13 +33,13 @@ namespace Frolics.Grids.SpatialHelpers {
 			if (distance == 0)
 				return new[] { start };
 
-			SquareCoord[] cubeCoords = new SquareCoord[distance + 1];
+			SquareCoord[] coords = new SquareCoord[distance + 1];
 			for (int i = 0; i <= distance; i++) {
 				(float x, float y) = Lerp(start, end, 1f / distance * i);
-				cubeCoords[i] = Round(x, y);
+				coords[i] = Round(x, y);
 			}
 
-			return cubeCoords;
+			return coords;
 		}
 
 		public static SquareCoord Line(SquareCoord start, SquareCoord end, int i) {
@@ -49,6 +49,55 @@ namespace Frolics.Grids.SpatialHelpers {
 
 			(float x, float y) = Lerp(start, end, 1f / distance * i);
 			return Round(x, y);
+		}
+
+		// TODO Untested
+		public static SquareCoord[] Range(SquareCoord center, int range) {
+			if (range < 0)
+				throw new ArgumentException("Range must be non-negative", nameof(range));
+
+			// The number of tiles in a square of radius 'range' is (2n + 1)^2
+			int coordCount = GetRangeCoordCount(range);
+
+			SquareCoord[] results = new SquareCoord[coordCount];
+			int i = 0;
+
+			for (int x = -range; x <= range; x++) {
+				for (int y = -range; y <= range; y++) {
+					results[i++] = new SquareCoord(center.x + x, center.y + y);
+				}
+			}
+
+			return results;
+		}
+
+		/// <summary>
+		/// Returns a specific coordinate within a range based on an index.
+		/// Index ranges from 0 to ((2 * range + 1)^2) - 1.
+		/// </summary>
+		public static SquareCoord Range(SquareCoord center, int range, int i) {
+			if (range < 0)
+				throw new ArgumentException("Range must be non-negative", nameof(range));
+
+			int sideLength = 2 * range + 1;
+			int totalTiles = sideLength * sideLength;
+
+			if (i < 0 || i >= totalTiles)
+				throw new IndexOutOfRangeException($"Index {i} is out of bounds for range {range}");
+
+			// Calculate local x and y from the flat index i
+			// This maps i to a grid starting at (-range, -range) and ending at (range, range)
+			// The order is strictly bottom-to-top, left-to-right ,starting from the bottom-left corner of the range.
+			int localX = i % sideLength - range;
+			int localY = i / sideLength - range;
+
+			return new SquareCoord(center.x + localX, center.y + localY);
+		}
+
+		// The number of tiles in a square of radius 'range' is (2n + 1)^2
+		public static int GetRangeCoordCount(int range) {
+			int sideLength = 2 * range + 1;
+			return sideLength * sideLength;
 		}
 
 		public static (float x, float y) Lerp(SquareCoord start, SquareCoord end, float t) {
