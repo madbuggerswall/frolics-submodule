@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Frolics.Grids {
 	public abstract class GridBase<TCell, TCoord>
-		where TCell : CellBase<TCoord> where TCoord : struct, IEquatable<TCoord> {
+	where TCell : CellBase<TCoord> where TCoord : struct, IEquatable<TCoord> {
 		protected readonly Vector2Int gridSize;
 		protected readonly float cellDiameter;
 		protected readonly GridPlane gridPlane;
@@ -42,9 +42,6 @@ namespace Frolics.Grids {
 		}
 
 		private TCell[] GenerateCells() {
-			// Vector2 pivotPlanePosition = gridPlane.WorldToPlanePosition(GetPivotPoint());
-			// TCoord pivotCoord = converter.PlaneToCoord(pivotPlanePosition, cellDiameter);
-
 			List<TCoord> cellCoords = generator.Generate(gridSize);
 			TCell[] cells = new TCell[cellCoords.Count];
 
@@ -61,13 +58,6 @@ namespace Frolics.Grids {
 			return gridPlane.PlaneToWorldPosition(centerPlanePos, planeHeight);
 		}
 
-		public Vector3 GetWorldPosition(TCell cell) {
-			float planeHeight = gridPlane.GetOrthogonalCoordinate(GetPivotPoint());
-			Vector2 pivotPlanePos = gridPlane.WorldToPlanePosition(GetPivotPoint());
-			Vector2 planePosition = pivotPlanePos + converter.CoordToPlane(cell.GetCoord(), cellDiameter);
-			Vector3 worldPosition = gridPlane.PlaneToWorldPosition(planePosition, planeHeight);
-			return worldPosition;
-		}
 
 		public bool TryGetCell(Vector3 worldPosition, out TCell cell) {
 			Vector2 planePosition = gridPlane.WorldToPlanePosition(worldPosition);
@@ -77,10 +67,44 @@ namespace Frolics.Grids {
 			return lookup.TryGetCell(coord, out cell);
 		}
 
-
-		public bool TryGetCell(TCoord coord, out TCell cell) {
-			return lookup.TryGetCell(coord, out cell);
+		public bool TryGetCell(TCoord localCoord, out TCell cell) {
+			return lookup.TryGetCell(localCoord, out cell);
 		}
+
+		public Vector3 GetWorldPosition(TCell cell) {
+			float planeHeight = gridPlane.GetOrthogonalCoordinate(GetPivotPoint());
+			Vector2 pivotPlanePos = gridPlane.WorldToPlanePosition(GetPivotPoint());
+			Vector2 planePosition = pivotPlanePos + converter.CoordToPlane(cell.GetCoord(), cellDiameter);
+			Vector3 worldPosition = gridPlane.PlaneToWorldPosition(planePosition, planeHeight);
+			return worldPosition;
+		}
+
+		/// <summary>
+		/// Pivot point in plane space<br/>
+		/// Local coord → plane offset<br/>
+		/// World plane position = pivot + local offset<br/>
+		/// Convert back into coord space
+		/// </summary>
+		public TCoord GetWorldCoord(TCoord localCoord) {
+			Vector2 pivotPlanePos = gridPlane.WorldToPlanePosition(GetPivotPoint());
+			Vector2 localPlanePos = converter.CoordToPlane(localCoord, cellDiameter);
+			Vector2 worldPlanePos = pivotPlanePos + localPlanePos;
+			return converter.PlaneToCoord(worldPlanePos, cellDiameter);
+		}
+
+		/// <summary>
+		/// World coord → plane position<br/>
+		/// Pivot point in plane space<br/>
+		/// Local plane position = world - pivot<br/>
+		/// Convert back into coord space
+		/// </summary>
+		public TCoord GetLocalCoord(TCoord worldCoord) {
+			Vector2 worldPlanePos = converter.CoordToPlane(worldCoord, cellDiameter);
+			Vector2 pivotPlanePos = gridPlane.WorldToPlanePosition(GetPivotPoint());
+			Vector2 localPlanePos = worldPlanePos - pivotPlanePos;
+			return converter.PlaneToCoord(localPlanePos, cellDiameter);
+		}
+
 
 		public abstract Vector2 GetGridLength();
 		public abstract Vector3 GetPivotPoint();
