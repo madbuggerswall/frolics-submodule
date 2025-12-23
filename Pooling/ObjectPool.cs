@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Frolics.Utilities;
 using UnityEngine;
 
 namespace Frolics.Pooling {
@@ -62,16 +61,12 @@ namespace Frolics.Pooling {
 		/// Returns an object to the pool.
 		/// </summary>
 		void IObjectPool<T>.Despawn(T instance) {
-			if (!instanceToPrefab.TryGetValue(instance, out GameObject prefabKey)) {
-				EditorLog.LogWarning($"Trying to despawn {instance.name}, but it was not pooled.");
-				return;
-			}
+			bool isPooledInstance = instanceToPrefab.TryGetValue(instance, out GameObject prefabKey);
+			Debug.Assert(isPooledInstance, $"Trying to despawn {instance.name}, but it was not pooled.");
 
 			// Guard against double-despawn
-			if (pooledInstances.Contains(instance)) {
-				EditorLog.LogWarning($"Instance {instance.name} already despawned!");
-				return;
-			}
+			bool isDespawned = pooledInstances.Contains(instance);
+			Debug.Assert(!isDespawned, $"Instance {instance.name} already despawned!");
 
 			instance.gameObject.SetActive(false);
 			instance.transform.SetParent(root, true);
@@ -86,8 +81,8 @@ namespace Frolics.Pooling {
 		/// </summary>
 		void IObjectPool<T>.Adopt(T instance, T prefab) {
 			// If already tracked, ignore
-			if (!instanceToPrefab.TryAdd(instance, prefab.gameObject))
-				return;
+			bool isTracked = !instanceToPrefab.TryAdd(instance, prefab.gameObject);
+			Debug.Assert(!isTracked, $"{instance.name} already tracked!");
 
 			// Ensure prefab key exists in dictionary
 			if (!poolDictionary.TryGetValue(prefab.gameObject, out Stack<T> pool)) {

@@ -11,7 +11,7 @@ namespace Frolics.Input {
 		public IKeyboardInputHandler KeyboardInputHandler { get; private set; }
 		public IMouseInputHandler MouseInputHandler { get; private set; }
 
-		public void Initialize() {
+		void IInitializable.Initialize() {
 			TouchInputHandler = new TouchInputHandler();
 			KeyboardInputHandler = new KeyboardInputHandler();
 			MouseInputHandler = new MouseInputHandler();
