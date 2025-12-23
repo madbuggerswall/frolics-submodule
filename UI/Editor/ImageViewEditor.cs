@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 using UnityEditor;
 using UnityEngine;
 
@@ -13,14 +15,14 @@ namespace Frolics.UI.Editor {
 			DrawSpriteRendererEditor();
 			ToggleHiddenChildrenButton();
 		}
-		
+
 		private void DrawSpriteRendererEditor() {
 			ImageView imageView = (ImageView) target;
 			SpriteRenderer spriteRenderer = imageView.GetSpriteRenderer();
 			if (spriteRenderer == null)
 				return;
 
-			UnityEditor.Editor.CreateCachedEditor(spriteRenderer, null, ref spriteRendererEditor);
+			CreateCachedEditor(spriteRenderer, null, ref spriteRendererEditor);
 			EditorGUILayout.Space();
 			EditorGUILayout.LabelField(spriteRenderer.name, EditorStyles.boldLabel);
 			spriteRendererEditor.OnInspectorGUI();
@@ -38,3 +40,5 @@ namespace Frolics.UI.Editor {
 		}
 	}
 }
+
+#endif

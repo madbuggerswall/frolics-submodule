@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 using UnityEditor;
 using UnityEngine;
 
@@ -17,7 +19,7 @@ namespace Frolics.UI.Editor {
 			// Select the new parent
 			Selection.activeObject = gameObject;
 		}
-		
+
 		[MenuItem("GameObject/Frolics/UI/ImageView", false)]
 		private static void CreateImageView(MenuCommand menuCommand) {
 			// Create parent GameObject with RectTransform
@@ -52,7 +54,7 @@ namespace Frolics.UI.Editor {
 			GameObject gameObject = new GameObject("TextView", typeof(RectTransform), typeof(TextView));
 			gameObject.layer = LayerMask.NameToLayer("UI");
 			GameObjectUtility.SetParentAndAlign(gameObject, menuCommand.context as GameObject);
-			
+
 			// Register undo operations
 			Undo.RegisterCreatedObjectUndo(gameObject, "Create TextView");
 
@@ -66,7 +68,7 @@ namespace Frolics.UI.Editor {
 			GameObject gameObject = new GameObject("ButtonView", typeof(RectTransform), typeof(ButtonView));
 			gameObject.layer = LayerMask.NameToLayer("UI");
 			GameObjectUtility.SetParentAndAlign(gameObject, menuCommand.context as GameObject);
-			
+
 			// Register undo operations
 			Undo.RegisterCreatedObjectUndo(gameObject, "Create ButtonView");
 
@@ -75,3 +77,5 @@ namespace Frolics.UI.Editor {
 		}
 	}
 }
+
+#endif

@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -47,3 +49,5 @@ namespace Frolics.UI.Editor {
 		}
 	}
 }
+
+#endif

@@ -11,6 +11,8 @@ namespace Frolics.UI {
 
 		private enum UIScaleMode { ConstantPixelSize, ScaleWithScreenSize }
 
+		// TODO Separate screenSpace Overlay and Camera modes
+		// TODO To support multiple canvases in different mode.
 		[SerializeField, HideInInspector] private Camera mainCamera;
 		[SerializeField, HideInInspector] private ScreenSpaceCamera screenSpaceCamera;
 		[SerializeField, HideInInspector] private WorldSpaceCamera worldSpaceCamera;
