@@ -2,6 +2,7 @@ using Frolics.Tweens.Core;
 using Frolics.Tweens.Pooling;
 using Frolics.Tweens.Types;
 using Frolics.Utilities.Extensions;
+using TMPro;
 using UnityEngine;
 
 namespace Frolics.Tweens.Factory {
@@ -291,6 +292,40 @@ namespace Frolics.Tweens.Factory {
 
 			tween.Configure(
 				sr,
+				target: targetAlpha,
+				duration: duration,
+				getter: s => s.color.a,
+				setter: (s, a) => s.color = s.color.WithAlpha(a),
+				lerp: Mathf.Lerp
+			);
+
+			return tween;
+		}
+
+		#endregion
+
+		#region TextMeshPro Tweens
+
+		internal PropertyTween<TextMeshPro, Color> TweenColor(TextMeshPro text, Color target, float duration) {
+			var tween = tweenPool.Spawn<PropertyTween<TextMeshPro, Color>>();
+
+			tween.Configure(
+				text,
+				target: target,
+				duration: duration,
+				getter: s => s.color,
+				setter: (s, c) => s.color = c,
+				lerp: Color.Lerp
+			);
+
+			return tween;
+		}
+
+		internal PropertyTween<TextMeshPro, float> TweenAlpha(TextMeshPro tex, float targetAlpha, float duration) {
+			var tween = tweenPool.Spawn<PropertyTween<TextMeshPro, float>>();
+
+			tween.Configure(
+				tex,
 				target: targetAlpha,
 				duration: duration,
 				getter: s => s.color.a,
