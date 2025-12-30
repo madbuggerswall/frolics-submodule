@@ -21,17 +21,6 @@ namespace Frolics.Tweens.Types {
 
 		public PropertyTween() { }
 
-		internal PropertyTween(
-			TTweener tweener,
-			TValue target,
-			float duration,
-			Func<TTweener, TValue> getter,
-			Action<TTweener, TValue> setter,
-			Func<TValue, TValue, float, TValue> lerp
-		) {
-			Configure(tweener, target, duration, getter, setter, lerp);
-		}
-
 		internal void Configure(
 			TTweener tweener,
 			TValue target,

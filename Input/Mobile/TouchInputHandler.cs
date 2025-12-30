@@ -3,8 +3,6 @@ using UnityEngine;
 using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 
 namespace Frolics.Input.Mobile {
-	// IDEA Rename to ITouchInputHandler (to comply with IKeyboard/MouseInputHandlers)
-
 	public class TouchInputHandler : ITouchInputHandler {
 		private const int MaxTouches = 1;
 

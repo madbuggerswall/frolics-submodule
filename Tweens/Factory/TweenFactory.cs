@@ -1,3 +1,4 @@
+using System;
 using Frolics.Tweens.Core;
 using Frolics.Tweens.Pooling;
 using Frolics.Tweens.Types;
@@ -18,6 +19,16 @@ namespace Frolics.Tweens.Factory {
 		internal Sequence TweenSequence() {
 			Sequence sequence = tweenPool.Spawn<Sequence>();
 			return sequence;
+		}
+
+		#endregion
+
+		#region Virtual
+
+		internal FloatTween TweenFloat(float target, float duration, Func<float> getter, Action<float> setter) {
+			FloatTween tween = tweenPool.Spawn<FloatTween>();
+			tween.Configure(target, duration, getter, setter);
+			return tween;
 		}
 
 		#endregion

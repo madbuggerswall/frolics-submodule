@@ -7,6 +7,7 @@ namespace Frolics.Tweens.Core {
 	public abstract class Tween {
 		public enum CycleType { Restart, Reflect }
 
+		// TODO Rename to Fixed and Scaled
 		protected internal enum UpdatePhase { Normal, Physics }
 
 		private CycleType cycleType;
