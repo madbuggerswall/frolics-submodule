@@ -14,7 +14,7 @@ namespace Frolics.Input.Mobile {
 			UnityEngine.InputSystem.EnhancedTouch.EnhancedTouchSupport.Enable();
 		}
 
-		public void HandleInput() {
+		void IInputHandler.HandleInput() {
 			ReadAllTouchInputs();
 		}
 

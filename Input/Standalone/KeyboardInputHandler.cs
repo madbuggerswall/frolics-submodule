@@ -11,7 +11,7 @@ namespace Frolics.Input.Standalone {
 
 		private ReadOnlyArray<KeyControl> allKeys = Keyboard.current.allKeys;
 
-		public void HandleInput() {
+		void IInputHandler.HandleInput() {
 			ReadKeyboardButtonInput();
 		}
 

@@ -9,7 +9,7 @@ namespace Frolics.Input.Standalone {
 		public event Action<MouseData> MouseDragEvent;
 		public event Action<MouseData> MouseReleaseEvent;
 
-		public void HandleInput() {
+		void IInputHandler.HandleInput() {
 			ReadMouseButtonInput(Mouse.current.leftButton);
 			ReadMouseButtonInput(Mouse.current.rightButton);
 		}

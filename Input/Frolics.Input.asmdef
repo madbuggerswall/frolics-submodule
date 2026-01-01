@@ -1,0 +1,17 @@
+{
+    "name": "Frolics.Input",
+    "rootNamespace": "",
+    "references": [
+        "GUID:a30f89fbfc57b6643b0f9731bc5a6c8d",
+        "GUID:75469ad4d38634e559750d17036d5f7c"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
