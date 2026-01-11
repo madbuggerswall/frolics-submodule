@@ -2,9 +2,11 @@ using System;
 using Frolics.Tweens.Core;
 using Frolics.Tweens.Pooling;
 using Frolics.Tweens.Types;
+using Frolics.Utilities;
 using Frolics.Utilities.Extensions;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Animations;
 
 namespace Frolics.Tweens.Factory {
 	internal class TweenFactory {
@@ -28,6 +30,67 @@ namespace Frolics.Tweens.Factory {
 		internal FloatTween TweenFloat(float target, float duration, Func<float> getter, Action<float> setter) {
 			FloatTween tween = tweenPool.Spawn<FloatTween>();
 			tween.Configure(target, duration, getter, setter);
+			return tween;
+		}
+
+		#endregion
+
+		#region Constraint Tweens
+
+		internal PropertyTween<PositionConstraint, float> TweenWeight(
+			PositionConstraint tweener,
+			float target,
+			float duration
+		) {
+			var tween = tweenPool.Spawn<PropertyTween<PositionConstraint, float>>();
+
+			tween.Configure(
+				tweener: tweener,
+				target: target,
+				duration: duration,
+				getter: constraint => constraint.weight,
+				setter: (constraint, weight) => constraint.weight = weight,
+				lerp: Mathf.Lerp
+			);
+
+			return tween;
+		}
+
+		internal PropertyTween<RotationConstraint, float> TweenWeight(
+			RotationConstraint tweener,
+			float target,
+			float duration
+		) {
+			var tween = tweenPool.Spawn<PropertyTween<RotationConstraint, float>>();
+
+			tween.Configure(
+				tweener: tweener,
+				target: target,
+				duration: duration,
+				getter: constraint => constraint.weight,
+				setter: (constraint, weight) => constraint.weight = weight,
+				lerp: Mathf.Lerp
+			);
+
+			return tween;
+		}
+
+		internal PropertyTween<WeightedParentConstraint, float> TweenWeight(
+			WeightedParentConstraint tweener,
+			float target,
+			float duration
+		) {
+			var tween = tweenPool.Spawn<PropertyTween<WeightedParentConstraint, float>>();
+
+			tween.Configure(
+				tweener: tweener,
+				target: target,
+				duration: duration,
+				getter: constraint => constraint.GetWeight(),
+				setter: (constraint, weight) => constraint.SetWeight(weight),
+				lerp: Mathf.Lerp
+			);
+
 			return tween;
 		}
 
