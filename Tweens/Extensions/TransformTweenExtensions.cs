@@ -1,5 +1,4 @@
 using Frolics.Tweens.Core;
-using Frolics.Tweens.Factory;
 using UnityEngine;
 
 namespace Frolics.Tweens.Extensions {
@@ -32,15 +31,8 @@ namespace Frolics.Tweens.Extensions {
 			return TweenManager.GetInstance().GetTweenFactory().TweenLocalRotation(tweener, target, duration);
 		}
 
-		public static Tween TweenRotateAround(
-			this Transform tweener,
-			Vector3 axis,
-			Vector3 pivot,
-			float targetAngle,
-			float duration
-		) {
-			TweenFactory tweenFactory = TweenManager.GetInstance().GetTweenFactory();
-			return tweenFactory.TweenRotateAround(tweener, axis, pivot, targetAngle, duration);
+		public static Tween TweenLocalEulerAngles(this Transform tweener, Vector3 target, float duration) {
+			return TweenManager.GetInstance().GetTweenFactory().TweenEulerAngles(tweener, target, duration);
 		}
 	}
 }

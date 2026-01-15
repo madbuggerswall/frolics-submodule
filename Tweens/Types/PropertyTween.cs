@@ -1,4 +1,3 @@
-using System;
 using Frolics.Tweens.Core;
 using Frolics.Tweens.Pooling;
 using UnityEngine;
@@ -9,55 +8,43 @@ namespace Frolics.Tweens.Types {
 	/// Avoids closures by storing the target reference and using a strongly typed
 	/// apply function.
 	/// </summary>
-	internal sealed class PropertyTween<TTweener, TValue> : Tween where TTweener : UnityEngine.Object {
+	internal sealed class PropertyTween<TTweener, TValue, TAccessor, TLerp> : Tween
+	where TTweener : UnityEngine.Object
+	where TAccessor : struct, IPropertyAccessor<TTweener, TValue>
+	where TLerp : struct, ILerp<TValue> {
 		private TTweener tweener;
-
-		private Func<TTweener, TValue> getter;
-		private Action<TTweener, TValue> setter;
-		private Func<TValue, TValue, float, TValue> lerp;
-
 		private TValue initial;
 		private TValue target;
 
+		private TAccessor accessor;
+		private TLerp lerp;
+
 		public PropertyTween() { }
 
-		internal void Configure(
-			TTweener tweener,
-			TValue target,
-			float duration,
-			Func<TTweener, TValue> getter,
-			Action<TTweener, TValue> setter,
-			Func<TValue, TValue, float, TValue> lerp
-		) {
+		internal void Configure(TTweener tweener, TValue target, float duration) {
+			this.tweener = tweener;
+			this.target = target;
 			this.duration = duration;
 
-			this.tweener = tweener;
-			this.getter = getter;
-			this.setter = setter;
-			this.lerp = lerp;
+			accessor = default;
+			lerp = default;
 
-			this.initial = getter(tweener);
-			this.target = target;
+			this.initial = accessor.Get(tweener);
 			this.updatePhase = tweener is Rigidbody ? UpdatePhase.Physics : UpdatePhase.Normal;
 		}
 
 		protected override void SampleInitialState() {
-			this.initial = getter(tweener);
+			this.initial = accessor.Get(tweener);
 		}
 
 		protected override void UpdateTween(float easedTime) {
-			setter(tweener, lerp(initial, target, easedTime));
+			accessor.Set(tweener, lerp.Evaluate(initial, target, easedTime));
 		}
 
-		internal override bool IsTargetAlive() {
-			return tweener != null;
-		}
+		internal override bool IsTargetAlive() => tweener != null;
 
 		internal override void Recycle(ITweenPool pool) {
 			tweener = null;
-			getter = null;
-			setter = null;
-			lerp = null;
 			Reset();
 			pool.Despawn(this);
 		}
