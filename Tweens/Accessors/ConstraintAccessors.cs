@@ -1,6 +1,6 @@
 using Frolics.Tweens.Types;
+using Frolics.Utilities;
 using UnityEngine.Animations;
-using ParentConstraint = Frolics.Utilities.ParentConstraint;
 
 namespace Frolics.Tweens.Accessors {
 	internal struct PositionConstraintWeight : IPropertyAccessor<PositionConstraint, float> {
@@ -14,8 +14,8 @@ namespace Frolics.Tweens.Accessors {
 	}
 
 	// Frolics.Utilities.ParentConstraintWeight
-	internal struct ParentConstraintWeight : IPropertyAccessor<ParentConstraint, float> {
-		public float Get(ParentConstraint tweener) => tweener.GetWeight();
-		public void Set(ParentConstraint tweener, float value) => tweener.SetWeight(value);
+	internal struct SoftParentConstraintWeight : IPropertyAccessor<SoftParentConstraint, float> {
+		public float Get(SoftParentConstraint tweener) => tweener.GetWeight();
+		public void Set(SoftParentConstraint tweener, float value) => tweener.SetWeight(value);
 	}
 }

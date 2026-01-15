@@ -4,10 +4,10 @@ using Frolics.Tweens.Core;
 using Frolics.Tweens.Pooling;
 using Frolics.Tweens.PropertyLerps;
 using Frolics.Tweens.Types;
+using Frolics.Utilities;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Animations;
-using ParentConstraint = Frolics.Utilities.ParentConstraint;
 
 
 namespace Frolics.Tweens.Factory {
@@ -55,8 +55,8 @@ namespace Frolics.Tweens.Factory {
 			return tween;
 		}
 
-		internal Tween TweenWeight(ParentConstraint tweener, float target, float duration) {
-			var tween = tweenPool.Spawn<PropertyTween<ParentConstraint, float, ParentConstraintWeight, FloatLerp>>();
+		internal Tween TweenWeight(SoftParentConstraint tweener, float target, float duration) {
+			var tween = tweenPool.Spawn<PropertyTween<SoftParentConstraint, float, SoftParentConstraintWeight, FloatLerp>>();
 			tween.Configure(tweener, target, duration);
 			return tween;
 		}
@@ -85,6 +85,30 @@ namespace Frolics.Tweens.Factory {
 
 		internal Tween TweenPositionZ(Transform tweener, float target, float duration) {
 			var tween = tweenPool.Spawn<PropertyTween<Transform, float, PositionZ, FloatLerp>>();
+			tween.Configure(tweener, target, duration);
+			return tween;
+		}
+
+		internal Tween TweenLocalPosition(Transform tweener, Vector3 target, float duration) {
+			var tween = tweenPool.Spawn<PropertyTween<Transform, Vector3, LocalPosition, Vector3Lerp>>();
+			tween.Configure(tweener, target, duration);
+			return tween;
+		}
+
+		internal Tween TweenLocalPositionX(Transform tweener, float target, float duration) {
+			var tween = tweenPool.Spawn<PropertyTween<Transform, float, LocalPositionX, FloatLerp>>();
+			tween.Configure(tweener, target, duration);
+			return tween;
+		}
+
+		internal Tween TweenLocalPositionY(Transform tweener, float target, float duration) {
+			var tween = tweenPool.Spawn<PropertyTween<Transform, float, LocalPositionY, FloatLerp>>();
+			tween.Configure(tweener, target, duration);
+			return tween;
+		}
+
+		internal Tween TweenLocalPositionZ(Transform tweener, float target, float duration) {
+			var tween = tweenPool.Spawn<PropertyTween<Transform, float, LocalPositionZ, FloatLerp>>();
 			tween.Configure(tweener, target, duration);
 			return tween;
 		}

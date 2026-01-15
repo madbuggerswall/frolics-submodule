@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace Frolics.Utilities {
-	public class ParentConstraint : MonoBehaviour {
+	public class SoftParentConstraint : MonoBehaviour {
 		[SerializeField] private Transform parent;
 		[SerializeField, Range(0f, 1f)] private float weight;
 
