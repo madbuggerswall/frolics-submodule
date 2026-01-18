@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Frolics.Grids.SpatialHelpers;
 using UnityEngine;
 
 namespace Frolics.Grids {
@@ -79,13 +80,20 @@ namespace Frolics.Grids {
 			return worldPosition;
 		}
 
+		public Vector3 ToWorldPosition(TCoord worldCoord) {
+			Vector2 planePos = converter.CoordToPlane(worldCoord, cellDiameter);
+			float planeHeight = gridPlane.GetOrthogonalCoordinate(GetPivotPoint());
+			Vector3 worldPosition = gridPlane.PlaneToWorldPosition(planePos, planeHeight);
+			return worldPosition;
+		}
+
 		/// <summary>
 		/// Pivot point in plane space<br/>
 		/// Local coord → plane offset<br/>
 		/// World plane position = pivot + local offset<br/>
 		/// Convert back into coord space
 		/// </summary>
-		public TCoord GetWorldCoord(TCoord localCoord) {
+		public TCoord ToWorldCoord(TCoord localCoord) {
 			Vector2 pivotPlanePos = gridPlane.WorldToPlanePosition(GetPivotPoint());
 			Vector2 localPlanePos = converter.CoordToPlane(localCoord, cellDiameter);
 			Vector2 worldPlanePos = pivotPlanePos + localPlanePos;
@@ -98,7 +106,7 @@ namespace Frolics.Grids {
 		/// Local plane position = world - pivot<br/>
 		/// Convert back into coord space
 		/// </summary>
-		public TCoord GetLocalCoord(TCoord worldCoord) {
+		public TCoord ToLocalCoord(TCoord worldCoord) {
 			Vector2 worldPlanePos = converter.CoordToPlane(worldCoord, cellDiameter);
 			Vector2 pivotPlanePos = gridPlane.WorldToPlanePosition(GetPivotPoint());
 			Vector2 localPlanePos = worldPlanePos - pivotPlanePos;

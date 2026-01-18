@@ -6,13 +6,9 @@ namespace Frolics.Grids.SpatialHelpers {
 	public struct SquareCoord : IEquatable<SquareCoord> {
 		public static readonly SquareCoord[] DirectionVectors = {
 			new(1, 0),   // Right
-			new(1, 1),   // Up Right  
-			new(0, 1),   // Up
-			new(-1, 1),  // Up Left
+			new(0, 1),   // Forward
 			new(-1, 0),  // Left
-			new(-1, -1), // Down Left
-			new(0, -1),  // Down
-			new(1, -1)   // Down Right (FIXED!)
+			new(0, -1),  // Back
 		};
 
 		public int x;
