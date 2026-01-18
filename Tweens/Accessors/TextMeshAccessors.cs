@@ -11,6 +11,6 @@ namespace Frolics.Tweens.Accessors {
 
 	internal struct TextAlpha : IPropertyAccessor<TextMeshPro, float> {
 		public float Get(TextMeshPro tweener) => tweener.color.a;
-		public void Set(TextMeshPro tweener, float value) => tweener.color.WithAlpha(value);
+		public void Set(TextMeshPro tweener, float value) => tweener.color = tweener.color.WithAlpha(value);
 	}
 }
