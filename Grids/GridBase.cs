@@ -80,10 +80,11 @@ namespace Frolics.Grids {
 			return worldPosition;
 		}
 
-		public Vector3 ToWorldPosition(TCoord worldCoord) {
-			Vector2 planePos = converter.CoordToPlane(worldCoord, cellDiameter);
+		public Vector3 ToWorldPosition(TCoord localCoord) {
 			float planeHeight = gridPlane.GetOrthogonalCoordinate(GetPivotPoint());
-			Vector3 worldPosition = gridPlane.PlaneToWorldPosition(planePos, planeHeight);
+			Vector2 pivotPlanePos = gridPlane.WorldToPlanePosition(GetPivotPoint());
+			Vector2 planePosition = pivotPlanePos + converter.CoordToPlane(localCoord, cellDiameter);
+			Vector3 worldPosition = gridPlane.PlaneToWorldPosition(planePosition, planeHeight);
 			return worldPosition;
 		}
 
