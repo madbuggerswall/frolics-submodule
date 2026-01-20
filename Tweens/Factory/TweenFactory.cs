@@ -56,7 +56,9 @@ namespace Frolics.Tweens.Factory {
 		}
 
 		internal Tween TweenWeight(SoftParentConstraint tweener, float target, float duration) {
-			var tween = tweenPool.Spawn<PropertyTween<SoftParentConstraint, float, SoftParentConstraintWeight, FloatLerp>>();
+			var tween = tweenPool
+				.Spawn<PropertyTween<SoftParentConstraint, float, SoftParentConstraintWeight, FloatLerp>>();
+
 			tween.Configure(tweener, target, duration);
 			return tween;
 		}
@@ -115,6 +117,24 @@ namespace Frolics.Tweens.Factory {
 
 		internal Tween TweenLocalScale(Transform tweener, Vector3 target, float duration) {
 			var tween = tweenPool.Spawn<PropertyTween<Transform, Vector3, LocalScale, Vector3Lerp>>();
+			tween.Configure(tweener, target, duration);
+			return tween;
+		}
+
+		internal Tween TweenLocalScaleX(Transform tweener, float target, float duration) {
+			var tween = tweenPool.Spawn<PropertyTween<Transform, float, LocalScaleX, FloatLerp>>();
+			tween.Configure(tweener, target, duration);
+			return tween;
+		}
+
+		internal Tween TweenLocalScaleY(Transform tweener, float target, float duration) {
+			var tween = tweenPool.Spawn<PropertyTween<Transform, float, LocalScaleY, FloatLerp>>();
+			tween.Configure(tweener, target, duration);
+			return tween;
+		}
+
+		internal Tween TweenLocalScaleZ(Transform tweener, float target, float duration) {
+			var tween = tweenPool.Spawn<PropertyTween<Transform, float, LocalScaleZ, FloatLerp>>();
 			tween.Configure(tweener, target, duration);
 			return tween;
 		}

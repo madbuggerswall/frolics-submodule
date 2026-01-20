@@ -39,6 +39,18 @@ namespace Frolics.Tweens.Extensions {
 			return TweenManager.GetInstance().GetTweenFactory().TweenLocalScale(tweener, target, duration);
 		}
 
+		public static Tween TweenLocalScaleX(this Transform tweener, float targetX, float duration) {
+			return TweenManager.GetInstance().GetTweenFactory().TweenLocalScaleX(tweener, targetX, duration);
+		}
+
+		public static Tween TweenLocalScaleY(this Transform tweener, float targetY, float duration) {
+			return TweenManager.GetInstance().GetTweenFactory().TweenLocalScaleY(tweener, targetY, duration);
+		}
+
+		public static Tween TweenLocalScaleZ(this Transform tweener, float targetZ, float duration) {
+			return TweenManager.GetInstance().GetTweenFactory().TweenLocalScaleZ(tweener, targetZ, duration);
+		}
+
 		public static Tween TweenRotation(this Transform tweener, Quaternion target, float duration) {
 			return TweenManager.GetInstance().GetTweenFactory().TweenRotation(tweener, target, duration);
 		}

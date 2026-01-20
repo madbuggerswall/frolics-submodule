@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Frolics.Grids.SpatialHelpers;
 using UnityEngine;
 
 namespace Frolics.Grids {

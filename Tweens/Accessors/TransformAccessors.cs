@@ -47,6 +47,21 @@ namespace Frolics.Tweens.Accessors {
 		public Vector3 Get(Transform tweener) => tweener.localScale;
 		public void Set(Transform tweener, Vector3 value) => tweener.localScale = value;
 	}
+	
+	internal struct LocalScaleX : IPropertyAccessor<Transform, float> {
+		public float Get(Transform tweener) => tweener.localScale.x;
+		public void Set(Transform tweener, float value) => tweener.localScale = tweener.localScale.WithX(value);
+	}
+
+	internal struct LocalScaleY : IPropertyAccessor<Transform, float> {
+		public float Get(Transform tweener) => tweener.localScale.y;
+		public void Set(Transform tweener, float value) => tweener.localScale = tweener.localScale.WithY(value);
+	}
+
+	internal struct LocalScaleZ : IPropertyAccessor<Transform, float> {
+		public float Get(Transform tweener) => tweener.localScale.z;
+		public void Set(Transform tweener, float value) => tweener.localScale = tweener.localScale.WithZ(value);
+	}
 
 	internal struct Rotation : IPropertyAccessor<Transform, Quaternion> {
 		public Quaternion Get(Transform tweener) => tweener.rotation;
