@@ -42,5 +42,9 @@ namespace Frolics.Utilities {
 		public static bool Exists(string filePath) {
 			return File.Exists(filePath);
 		}
+
+		public static void Delete(string filePath) {
+			File.Delete(filePath);
+		}
 	}
 }
