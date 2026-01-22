@@ -39,15 +39,17 @@ namespace Frolics.Tweens.Core {
 		protected override void UpdateTween(float easedTime) {
 			float sequenceTime = easedTime * duration;
 			float deltaTime = updatePhase is UpdatePhase.Normal ? Time.deltaTime : Time.fixedDeltaTime;
-			for (int i = 0; i < entries.Count; i++)
-				if (sequenceTime >= entries[i].startTime)
-					entries[i].tween.UpdateProgress(deltaTime);
+			for (int i = 0; i < entries.Count; i++) {
+				if (sequenceTime < entries[i].startTime)
+					continue;
+
+				Tween tween = entries[i].tween;
+				tween.UpdateProgress(deltaTime);
+				isTargetValid = isTargetValid && tween.IsTargetValid();
+			}
 		}
 
-		// TODO This logic may need improvement
-		internal override bool IsTargetAlive() {
-			return true;
-		}
+		internal override bool IsTargetAlive() => isTargetValid;
 
 
 		internal override void Recycle(ITweenPool pool) {
