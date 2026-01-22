@@ -28,6 +28,7 @@ namespace Frolics.Tweens.Core {
 		private bool isStopped;
 		private bool isActive;
 		private bool isInitialized;
+		protected bool isTargetValid;
 
 		protected UpdatePhase updatePhase;
 
@@ -53,6 +54,7 @@ namespace Frolics.Tweens.Core {
 			isStopped = false;
 			isActive = false;
 			isInitialized = false;
+			isTargetValid = true;
 
 			onCompleteCallback = null;
 			easeFunction = Ease.Get(Ease.Type.Linear);
@@ -68,6 +70,7 @@ namespace Frolics.Tweens.Core {
 			// If the target object is no longer valid, stop the tween
 			if (!IsTargetAlive()) {
 				isStopped = true;
+				isTargetValid = false;
 				return;
 			}
 
@@ -113,6 +116,7 @@ namespace Frolics.Tweens.Core {
 		internal float GetDuration() => duration;
 		internal float GetCycleCount() => cycleCount;
 		internal bool IsStopped() => isStopped;
+		internal bool IsTargetValid() => isTargetValid;
 
 		// Interface
 		public void Play() {
