@@ -17,6 +17,11 @@ namespace Frolics.Contexts {
 			if (!contexts.TryAdd(typeof(T), dependencyContext))
 				Debug.LogWarning($"Dependency ({typeof(T)}) is already registered!");
 		}
+		
+		// Panic
+		internal void ClearContext() {
+			contexts.Clear();
+		}
 
 
 		private T ResolveFromContext<T>() where T : class {

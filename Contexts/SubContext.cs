@@ -24,6 +24,8 @@ namespace Frolics.Contexts {
 		}
 
 		protected void OnDestroy() {
+			// Panic
+			Context.GetInstance().ClearContext();
 			if (instance == this)
 				instance = null;
 		}
